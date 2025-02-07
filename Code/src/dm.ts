@@ -56,6 +56,15 @@ function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
 
+function getDay(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).day;
+}
+
+function getTime(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).time;
+}
+
+
 const dmMachine = setup({
   types: {
     /** you might need to extend these */
@@ -92,7 +101,11 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
-      initial: "Prompt",
+      entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
+      on: { SPEAK_COMPLETE: "Questions"}
+    },
+    Questions: {
+      initial: "PersonPrompt",
       on: {
         LISTEN_COMPLETE: [
           {
@@ -103,8 +116,8 @@ const dmMachine = setup({
         ],
       },
       states: {
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+        PersonPrompt: {
+          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
