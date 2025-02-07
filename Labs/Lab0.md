@@ -165,7 +165,7 @@ Resources:
 
 Create an interface in HTML for Exercise 1. Replace `alert()` (or
 `console.log()`) and `prompt()` with appropriate HTML elements. You
-should have an input box,  a button to submit the input in the
+should have an input box, a button to submit the input in the
 box.
 
 Edit the HTML so that your page looks better: write a title, write a

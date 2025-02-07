@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini guessing game!</title>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <h1>Guess the number!</h1>
+        <div class="card">
+          <p>Try to guess which number, between 1 and 10 (inclusive), the program came up with! <br>
+            Enter an integer, then click 'Submit'. See if you've guessed correctly!</p>
+          <input type="text" id="numGuess"><br><br>
+          <button id="submit" type="button">Submit</button>
+          <p id="output">Waiting for guess...</p>
+        </div>
+        <h1>Click the counter!</h2>
+        <div class="card">
+          <p>Click the counter & watch it increase!</p>
+          <button id="counter" type="button"></button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
