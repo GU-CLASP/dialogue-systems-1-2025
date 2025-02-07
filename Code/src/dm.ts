@@ -31,10 +31,21 @@ const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
+  matteo: { person: "Matteo Ripamonti " },
+  roxana: { person: "Roxana Dimofte" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
+  wednesday: { day: "Wednesday" },
+  thursday: { day: "Thursday" },
+  friday: { day: "Friday" },
+  saturday: { day: "Saturday" },
+  sunday: { day: "Sunday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  "11 30": { time: "11:30" },
+  "13": { time: "13:00" },
+  "14": { time: "14:00" },
+  "15 30": { time: "15:30" },
 };
 
 function isInGrammar(utterance: string) {
