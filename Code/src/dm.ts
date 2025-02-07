@@ -31,8 +31,8 @@ const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
-  matteo: { person: "Matteo Ripamonti " },
-  roxana: { person: "Roxana Dimofte" },
+  matteo: { person: "Matteo" },
+  roxana: { person: "Roxana" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
   wednesday: { day: "Wednesday" },
@@ -84,11 +84,21 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
+    "save_person": ({ context }) =>
+      context.person = getPerson(context.lastResult![0].utterance) ,
+    "save_day": ({ context }) =>
+      context.day = getDay(context.lastResult![0].utterance) ,
+    "save_tome": ({ context }) =>
+      context.time = getTime(context.lastResult![0].utterance) ,
+
   },
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    person: null,
+    day: null,
+    time: null
   }),
   id: "DM",
   initial: "Prepare",
@@ -102,10 +112,73 @@ const dmMachine = setup({
     },
     Greeting: {
       entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
-      on: { SPEAK_COMPLETE: "Questions"}
+      on: { SPEAK_COMPLETE: "PersonQuestion"}
     },
-    Questions: {
+    PersonQuestion: {
       initial: "PersonPrompt",
+      on: {
+        LISTEN_COMPLETE: [
+          {
+            target: "CheckPerson",
+            guard: ({ context }) => !!context.lastResult,
+          },
+          { target: ".NoInput" },
+        ],
+      },
+      states: {
+        PersonPrompt: {
+          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NoInput: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `I can't hear you!` },
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: {
+              actions: assign(({ event }) => {
+                return { lastResult: event.value };
+              }),
+            },
+            ASR_NOINPUT: {
+              actions: assign({ lastResult: null }),
+            },
+          },
+        },
+      },
+    },
+    CheckPerson: {
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({
+          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+          } in the grammar.`,
+        }),
+      },
+      on: { SPEAK_COMPLETE: [
+        {
+          target: "SavePerson",
+          guard: ({ context }) => isInGrammar(context.lastResult![0].utterance),
+        },
+        { target: "PersonQuestion" }]
+      },
+    },
+    SavePerson: {
+      entry: {
+        type: "save_person"
+      },
+      on: {
+        CLICK: "DayQuestion"
+      }
+    },
+    DayQuestion: {
+      initial: "DayPrompt",
       on: {
         LISTEN_COMPLETE: [
           {
@@ -117,7 +190,7 @@ const dmMachine = setup({
       },
       states: {
         PersonPrompt: {
-          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+          entry: { type: "spst.speak", params: { utterance: "On which day is your meeting?" } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
