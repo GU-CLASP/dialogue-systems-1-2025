@@ -3,6 +3,7 @@ import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
+import { grammar, isYes, isNo, isInGrammar } from "./grammars.ts";
 
 const inspector = createBrowserInspector();
 
@@ -21,46 +22,6 @@ const settings: Settings = {
   ttsDefaultVoice: "en-US-DavisNeural",
 };
 
-interface GrammarEntry {
-  person?: string;
-  day?: string;
-  time?: string;
-}
-
-const grammar: { [index: string]: GrammarEntry } = {
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
-  caroline: {person: "Caroline Grand-Clement"},
-  matteo: { person: "Matteo" },
-  roxana: { person: "Roxana" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  wednesday: { day: "Wednesday" },
-  thursday: { day: "Thursday" },
-  friday: { day: "Friday" },
-  saturday: { day: "Saturday" },
-  sunday: { day: "Sunday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
-  "11 30": { time: "11:30" },
-  "13": { time: "13:00" },
-  "14": { time: "14:00" },
-  "15 30": { time: "15:30" },
-};
-
-const yesGrammar = [
-  "yes", "of course", "sure", "yeah", "yep"
-]
-
-const noGrammar = [
-  "no", "hell no", "no way", "nah"
-]
-
-function isInGrammar(utterance: string) {
-  return utterance.toLowerCase() in grammar;
-}
-
 function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
@@ -71,14 +32,6 @@ function getDay(utterance: string) {
 
 function getTime(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).time;
-}
-
-function isYes(utterance: string){
-  return utterance.toLowerCase() in yesGrammar;
-}
-
-function isNo(utterance: string) {
-  return utterance.toLowerCase() in noGrammar;
 }
 
 const dmMachine = setup({
