@@ -20,10 +20,10 @@ export const grammar: { [index: string]: GrammarEntry } = {
     sunday: { day: "Sunday" },
     "10": { time: "10:00" },
     "11": { time: "11:00" },
-    "11 30": { time: "11:30" },
+    "11:30": { time: "11:30" },
     "13": { time: "13:00" },
     "14": { time: "14:00" },
-    "15 30": { time: "15:30" },
+    "15:30": { time: "15:30" },
 };
 
 const yesNoGrammar = {
@@ -36,9 +36,9 @@ export function isInGrammar(utterance: string) {
 }
 
 export function isYes(utterance: string){
-    return utterance.toLowerCase() in yesNoGrammar["yes"];
+    return yesNoGrammar["yes"].includes(utterance.toLowerCase());
 }
 
 export function isNo(utterance: string) {
-    return utterance.toLowerCase() in yesNoGrammar["no"];
+    return yesNoGrammar["no"].includes(utterance.toLowerCase());
 }

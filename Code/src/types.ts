@@ -9,4 +9,4 @@ export interface DMContext {
   time: string | null | undefined;
 }
 
-export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
+export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" } ;
