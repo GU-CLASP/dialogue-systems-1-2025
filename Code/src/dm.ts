@@ -17,24 +17,37 @@ const settings: Settings = {
   azureRegion: "northeurope",
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
-  locale: "en-US",
-  ttsDefaultVoice: "en-US-DavisNeural",
+  locale: "en-AU",
+  ttsDefaultVoice: "en-AU-NatashaNeural",
 };
 
 interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
+  answer?: string[];
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
+  lucia: { person: "Lucia" },
+  paula: { person: "Paula" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
+  wednesday: { day: "Wednesday" },
+  thursday: { day: "Thursday" },
+  friday: { day: "Friday" },
+  saturday: {day: "Saturday" },
+  sunday: {day: "Sunday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  "12": { time: "12:00" },
+  "13": { time: "13:00" },
+  "14": { time: "14:00" },
+  "no": { answer: ["no", "no way"] },
+  "yes": { answer: ["yes", "of course"] },
 };
 
 function isInGrammar(utterance: string) {
@@ -93,7 +106,7 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `Let's create an appointment! Who are you meeting with?` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -123,7 +136,9 @@ const dmMachine = setup({
         type: "spst.speak",
         params: ({ context }) => ({
           utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+            isInGrammar(context.lastResult![0].utterance) 
+            ? "is" 
+            : "is not"
           } in the grammar.`,
         }),
       },
