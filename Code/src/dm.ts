@@ -93,7 +93,7 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter!` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -136,6 +136,99 @@ const dmMachine = setup({
     },
   },
 });
+
+
+  AskWho: { // State for "Who do you want to meet?"
+    entry: {
+      type: "spst.speak",
+      params: { utterance: `Who do you want to meet with?` }
+    },
+    initial: "Prompt", 
+    states: {
+      Prompt: {
+        on: { SPEAK_COMPLETE: "ListenForWho" }, 
+      },
+      ListenForWho: { 
+        entry: { type: "spst.listen" },
+        on: {
+          RECOGNISED: {
+            target: "#DM.GetWho1", /
+            actions: assign(({ event }) => {
+              const utterance = event.value[0].utterance;
+              // have to implement the logic to extract person's name from the utterance but for now i will use a placeholder
+              
+              const meetingPartnerName = utterance; 
+              return { meetingPartnerName }; 
+            }),
+          },
+          ASR_NOINPUT: { target: ".NoInput" }, 
+        },
+      },
+      NoInput: { 
+        entry: {
+          type: "spst.speak",
+          params: { utterance: `Please tell me again who you want to meet with.` }, 
+        },
+        on: { SPEAK_COMPLETE: "ListenForWho" }, 
+      },
+    },
+    
+  },
+
+  // state that validates getwho
+  GetWho1: { 
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `You said you want to meet with ${context.meetingPartnerName}. Is that correct?`, // Confirmation
+      }),
+    },
+    // need to Add  transitions to handle validation + "yes/no" responses about the name but i will transition to GetWhen
+    
+    on: { SPEAK_COMPLETE: "GetWhen" }, 
+  },
+
+  GetWhen: { 
+    entry: {
+      type: "spst.speak",
+      params: { utterance: `On which day do you want to meet?` }, 
+    },
+    initial: "Prompt", 
+      Prompt: {
+        on: { SPEAK_COMPLETE: "ListenForWhen" }, 
+      },
+      ListenForWhen: {
+        entry: { type: "spst.listen" },
+        on: {
+          RECOGNISED: {
+            //transitioning to
+            target: "#DM.AskMeetingTime", 
+            actions: assign(({ event }) => {
+              const utterance = event.value[0].utterance;
+              //  have to Implement logic to extract day from utterance
+              // 
+              const meetingDay = utterance; 
+              return { meetingDay }; 
+            }),
+          },
+          ASR_NOINPUT: { target: ".NoInput" }, 
+        },
+      },
+      NoInput: { 
+        entry: {
+          type: "spst.speak",
+          params: { utterance: `Please tell me the day for the meeting.` }, 
+        },
+        on: { SPEAK_COMPLETE: "ListenForWhen" },
+      },
+    },
+    
+  },
+
+  
+},
+
+
 
 const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
