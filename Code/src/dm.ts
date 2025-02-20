@@ -25,7 +25,14 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
-}
+  // validation :string for yes and no 
+  confirmation?: string;
+  intent: string;
+  entities: {
+    [index: string]: string;
+  };
+};
+
 
 const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
@@ -35,7 +42,111 @@ const grammar: { [index: string]: GrammarEntry } = {
   tuesday: { day: "Tuesday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  
+  lecture: {
+    intent: "None",
+    entities: { title: "Karaoke night" },
+  },
+  lunch: {
+    intent: "None",
+    entities: { title: "Lunch at Mercado" },
+  },
+  "on friday": {
+    intent: "None",
+    entities: { day: "Friday" },
+  },
+  "at 8:00 am": { 
+    intent: "None",
+    entities: { time: "8:00 AM" },
+  },
+  "at 9:00 am": { 
+    intent: "None",
+    entities: { time: "9:00 AM" },
+  },
+  "at 10:00 am": { 
+    intent: "None",
+    entities: { time: "10:00 AM" },
+  },
+  "at 11:00 am": { 
+    intent: "None",
+    entities: { time: "11:00 AM" },
+  },
+  "at noon": { 
+    intent: "None",
+    entities: { time: "12:00 PM" },
+  },
+  "at 12:00 am": { 
+    intent: "None",
+    entities: { time: "12:00 PM" },
+  },
+  "at 1:00 pm": { 
+    intent: "None",
+    entities: { time: "1:00 PM" },
+  },
+  "at 2:00 pm": { 
+    intent: "None",
+    entities: { time: "2:00 PM" },
+  },
+  "at 3:00 pm": { 
+    intent: "None",
+    entities: { time: "3:00 PM" },
+  },
+  "at 4:00 pm": { 
+    intent: "None",
+    entities: { time: "4:00 PM" },
+  },
+  "at 5:00 pm": { 
+    intent: "None",
+    entities: { time: "5:00 PM" },
+  },
+  "at 6:00 pm": { 
+    intent: "None",
+    entities: { time: "6:00 PM" },
+  },
+  "at 7:00 pm": { 
+    intent: "None",
+    entities: { time: "7:00 PM" },
+  },
+  "on monday": {
+    intent: "None",
+    entities: { day: "Monday" },
+  },
+  "on tuesday": {
+    intent: "None",
+    entities: { day: "Tuesday" },
+  },
+  "on wednesday": {
+    intent: "None",
+    entities: { day: "Wednesday" },
+  },
+  "on thursday": {
+    intent: "None",
+    entities: { day: "Thursday" },
+  },
+  "on saturday": {
+    intent: "None",
+    entities: { day: "Saturday" },
+  },
+  "on sunday": {
+    intent: "None",
+    entities: { day: "Sunday" },
+  },
+  "yes": {
+    intent: "None",
+    entities: { whole: "Yes", decision: "Yes", meeting:"Yes" },
+  },
+  "no": {
+    intent: "None",
+    entities: { whole: "No", decision: "No", meeting: "No" },
+  },
+  "create a meeting": {
+    intent: "None",
+    entities: { menu: "meeting"},
+  }
+  
 };
+
+
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
@@ -137,8 +248,8 @@ const dmMachine = setup({
   },
 });
 
-
-  AskWho: { // State for "Who do you want to meet?"
+ // add intro,on whichDay,wholeDay,whatTime,
+  AskWho: { 
     entry: {
       type: "spst.speak",
       params: { utterance: `Who do you want to meet with?` }
@@ -226,7 +337,7 @@ const dmMachine = setup({
   },
 
   
-},
+
 
 
 
