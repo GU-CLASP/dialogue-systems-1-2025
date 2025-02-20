@@ -507,7 +507,7 @@ const dmMachine = setup({
     },
 
 
-    //2.  this is has button, but not waiting for an answer, let us improve it
+    //2.  this has button, but not waiting for an answer, let us improve it
 
     Step5ConfirmAppointment: {
       entry: [
@@ -537,7 +537,7 @@ const dmMachine = setup({
       },
     },
 
-    //  this is has button, but not waiting for an answer, let us improve it
+    //  this  has button, but not waiting for an answer, let us improve it
     // Step5ConfirmAppointment: {
     //   entry: [
     //     {
