@@ -57,7 +57,8 @@ const grammar: { [index: string]: GrammarEntry } = {
   // Confirmation
   yes: { confirmation: "yes" },
   no: { confirmation: "no" },
-  "whole day": { confirmation: "whole day" },
+  "whole day": { confirmation: "yes" },
+  "of course": { confirmation: "yes" },
 };
 
 function isInGrammar(utterance: string) {
@@ -389,7 +390,7 @@ const dmMachine = setup({
         SPEAK_COMPLETE: [
           {
             target: "Step5AskConfirmation", 
-            guard: ({ context }) => context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day" , // Only proceed if a valid day is assigned
+            guard: ({ context }) => context.appointment.confirmation === "yes", // Only proceed if a valid day is assigned
           },
 
           {
@@ -571,7 +572,7 @@ const dmMachine = setup({
             {
               type: "spst.speak",
               params: ({ context }) => ({
-                utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
+                utterance: context.appointment.confirmation === "yes" 
                   ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
                   : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
               }),
