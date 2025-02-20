@@ -27,8 +27,8 @@ export const grammar: { [index: string]: GrammarEntry } = {
 };
 
 const yesNoGrammar = {
-    "yes": ["yes", "of course", "sure", "yeah", "yep"],
-    "no": ["no", "hell no", "no way", "nah"]
+    "yes": ["yes", "of course", "sure", "yeah", "yep", "ok", "okay", "alright", "fine", "good", "great"],
+    "no": ["no", "hell no", "no way", "nah", "nope", "negative", "not really", "not at all", "not sure"]
 }
 
 export function isInGrammar(utterance: string) {

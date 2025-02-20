@@ -87,7 +87,8 @@ const dmMachine = setup({
     lastResult: null,
     person: null,
     day: null,
-    time: null
+    time: null,
+    currentQuestion: null
   }),
   id: "DM",
   initial: "Prepare",
@@ -100,10 +101,12 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
+      id: "Greeting",
       entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
       on: { SPEAK_COMPLETE: "PersonQuestion"}
     },
     PersonQuestion: {
+      id: "PersonQuestion",
       initial: "PersonPrompt",
       on: {
         LISTEN_COMPLETE: [
@@ -161,12 +164,13 @@ const dmMachine = setup({
             type: "save_person"
           },
           on: {
-            SPEAK_COMPLETE: "DayQuestion"
+            SPEAK_COMPLETE: "#DayQuestion"
           }
         },
       },
     },
     DayQuestion: {
+      id: "DayQuestion",
       initial: "DayPrompt",
       on: {
         LISTEN_COMPLETE: [
@@ -224,12 +228,13 @@ const dmMachine = setup({
             type: "save_day"
           },
           on: {
-            SPEAK_COMPLETE: "WholeDayQuestion"
+            SPEAK_COMPLETE: "#WholeDayQuestion"
           }
         },
       },
     },
     WholeDayQuestion: {
+      id: "WholeDayQuestion",
       initial: "WholePrompt",
       on: {
         LISTEN_COMPLETE: [
@@ -276,11 +281,11 @@ const dmMachine = setup({
           },
           on: { SPEAK_COMPLETE: [
             {
-              target: "TimeQuestion",
+              target: "#TimeQuestion",
               guard: ({ context }) => isNo(context.lastResult![0].utterance),
             },
             {
-              target: "Confirm",
+              target: "#Confirm",
               guard: ({ context }) => isYes(context.lastResult![0].utterance),
             },
             { target: "WholePrompt" }]
@@ -289,6 +294,7 @@ const dmMachine = setup({
       },
     },
     TimeQuestion: {
+      id: "TimeQuestion",
       initial: "TimePrompt",
       on: {
         LISTEN_COMPLETE: [
@@ -346,12 +352,13 @@ const dmMachine = setup({
             type: "save_time"
           },
           on: {
-            SPEAK_COMPLETE: "Confirm"
+            SPEAK_COMPLETE: "#Confirm"
           }
         },
       },
     },
     Confirm:{ 
+      id: "Confirm",
       initial: "ConfirmPrompt",
       on: {
         LISTEN_COMPLETE: [
@@ -402,11 +409,11 @@ const dmMachine = setup({
           },
           on: { SPEAK_COMPLETE: [
             {
-              target: "Greeting",
+              target: "#Greeting",
               guard: ({ context }) => isNo(context.lastResult![0].utterance),
             },
             {
-              target: "Done",
+              target: "#Done",
               guard: ({ context }) => isYes(context.lastResult![0].utterance),
             },
             { target: "ConfirmPrompt" }]
@@ -414,9 +421,11 @@ const dmMachine = setup({
         }, 
       },
     },
-    Done: { entry: {
-      type: "spst.speak", params : {utterance: "Your appointment has been created"}
-    },
+    Done: { 
+      id: "Done",
+      entry: {
+        type: "spst.speak", params : {utterance: "Your appointment has been created"}
+      },
     },
   },
 });
