@@ -1,7 +1,7 @@
 import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
-import { KEY } from "./ak";
+import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
 
 const inspector = createBrowserInspector();

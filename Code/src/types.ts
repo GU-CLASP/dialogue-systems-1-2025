@@ -8,8 +8,8 @@ export interface DMContext {
   meetingDay: string | null; 
   meetingTime: string | null;
   beeninWith: boolean;
-  beeninTime: boolean;
   beeninDay: boolean;
+  beeninTime: boolean;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
