@@ -34,8 +34,6 @@ const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
-  viktor: { person: "Viktor Rydbergsgatan48"},
-  tim : { person: "Tim Wang"},
 
   // Days
   monday: { day: "Monday" },
@@ -125,6 +123,7 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
+      entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
       initial: "Createconversation",
       on: {
         LISTEN_COMPLETE: [
@@ -346,7 +345,7 @@ const dmMachine = setup({
         Ask3: {
           entry: { type: "spst.listen" },
           on: {
-            RECOGNISED: {
+            RECOGNISED: { 
               actions: assign(({ event }) => {
                 
                 return { lastResult: event.value };
@@ -389,7 +388,7 @@ const dmMachine = setup({
       on: {
         SPEAK_COMPLETE: [
           {
-            target: "Step5ConfirmAppointment", 
+            target: "Step5AskConfirmation", 
             guard: ({ context }) => context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day" , // Only proceed if a valid day is assigned
           },
 
@@ -495,7 +494,7 @@ const dmMachine = setup({
         SPEAK_COMPLETE: [
           {
             // target: "AppointmentCreated", 
-            target: "Step5ConfirmAppointment", 
+            target: "Step5AskConfirmation", 
 
             guard: ({ context }) => !!context.appointment.time, // Only proceed if a valid day is assigned
           },
@@ -506,56 +505,266 @@ const dmMachine = setup({
       },
     },
 
+    // try4, no button is shown on the screen.
 
-    //2.  this has button, but not waiting for an answer, let us improve it
+//     Step5AskConfirmation: {
+//       initial: "AskConfirmation",
+//       states: {
+//         AskConfirmation: {
+//           entry: [
+//             {
+//               type: "spst.speak",
+//               params: ({ context }) => ({
+//                 utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
+//                   ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
+//                   : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
+//               }),
+//             },
+//           ], 
+//           on: { SPEAK_COMPLETE: "GrammarCheck5" }, // After speaking, go to listening
+//         },
+    
+//         NoInput: {
+//           entry: {
+//             type: "spst.speak",
+//             params: { utterance: `I can't hear you! Please say yes or no.` },
+//           },
+//           on: { SPEAK_COMPLETE: "GrammarCheck5" }, // Retry listening
+//         },
+    
+    
+//     GrammarCheck5: {
+//       entry: { type: "spst.listen" }, // Start listening
+//       on: {
+//         RECOGNISED: [
+//           {
+//             // target: "#DM.AppointmentCreated",
+//             target: "#AppointmentCreated",
 
-    Step5ConfirmAppointment: {
+//             guard: ({ event }) => event.value?.[0]?.utterance?.toLowerCase() === "yes",
+//           },
+//           {
+//             target: "#Greeting",
+//             // target: "#DM.Greeting",
+
+//             guard: ({ event }) => event.value?.[0]?.utterance?.toLowerCase() === "no",
+//           },
+//           {
+//             target: "#Step5AskConfirmation", // Ask again if input is unrecognized
+//           },
+//         ],
+//         ASR_NOINPUT: {
+//           target: "#Step5AskConfirmation.NoInput", // Handle no input
+//         },
+//       },
+//     },
+    
+//   },
+// },
+
+    //try5 a copy of try3, which button appeared, but logic is not right, //  not in the grammar - > Greeting
+    Step5AskConfirmation:  {
+      initial: "AskConfirmation",
+      states: {
+        AskConfirmation: {
+          entry: [
+            {
+              type: "spst.speak",
+              params: ({ context }) => ({
+                utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
+                  ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
+                  : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
+              }),
+            },
+          ], // something wrong with this entry.
+          on: { SPEAK_COMPLETE: "Ask5" },
+        },
+        NoInput: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `I can't hear you! Please say yes or no` },
+          },
+          on: { SPEAK_COMPLETE: "Ask5" },
+        },
+        Ask5: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: {
+              target: "CheckGrammarAskConfirmation5",
+              actions: assign(({ event }) => ({ lastResult: event.value })),
+            },
+            ASR_NOINPUT: {
+              target: "NoInput",
+            },
+          },
+        },
+      },
+    },
+
+    CheckGrammarAskConfirmation5: {
       entry: [
         {
           type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
-              ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
-              : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
-          }),
-        },
-        { type: "spst.listen" }, // Start listening for a response
-      ],
+          params: ({ context }) => {
+            const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || "";  // ✅ Temporary variable
     
-      on: {
-        RECOGNISED: [
-          {
-            target: "AppointmentCreated",
-            guard: ({ event }) => event.value?.[0]?.utterance.toLowerCase() === "yes",
+            return {
+              utterance: `You just said: ${utterance}. And it ${
+                isInGrammar(utterance) ? "is" : "is not"
+              } in your given list.`,
+            };
           },
-          {
-            target: "Greeting.AskPerson", 
-            guard: ({ event }) => event.value?.[0]?.utterance.toLowerCase() === "no",
-          },
+        },
+      ],
 
+      on: {
+        SPEAK_COMPLETE: [
+          {
+            target: "AppointmentCreated", 
+            guard: ({ context }) => {
+              const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || ""; // ✅ Temporary variable
+              return utterance === "yes";
+            },
+          },
+          {
+            target: "Greeting", 
+            guard: ({ context }) => {
+              const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || ""; // ✅ Temporary variable
+              return utterance === "no";
+            },
+          },
+          {
+            target: "Step5AskConfirmation.Ask5",  // ✅ Goes back to listening if unrecognized
+          },
         ],
       },
     },
 
-    //  this  has button, but not waiting for an answer, let us improve it
-    // Step5ConfirmAppointment: {
+
+
+
+  
+
+    //try3, button appeared, but logic is not right, //  not in the grammar - > Greeting
+
+    // Step5AskConfirmation:  {
+    //   initial: "AskConfirmation",
+    //   on: {
+    //     LISTEN_COMPLETE: [
+    //       {
+    //         target: "CheckGrammarAskConfirmation5",
+    //         guard: ({ context }) => !!context.lastResult,
+    //       },
+    //       { target: ".NoInput" },
+    //     ],
+    //   },
+    //   states: {
+    //     AskConfirmation: {
+    //       entry: [
+    //         {
+    //           type: "spst.speak",
+    //           params: ({ context }) => ({
+    //             utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
+    //               ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
+    //               : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
+    //           }),
+    //         },
+    //       ], // something wrong with this entry.
+    //       on: { SPEAK_COMPLETE: "Ask5" },
+    //     },
+    //     NoInput: {
+    //       entry: {
+    //         type: "spst.speak",
+    //         params: { utterance: `I can't hear you! Please say yes or no` },
+    //       },
+    //       on: { SPEAK_COMPLETE: "Ask5" },
+    //     },
+    //     Ask5: {
+    //       entry: { type: "spst.listen" },
+    //       on: {
+    //         RECOGNISED: { 
+    //           actions: assign(({ event }) => {
+                
+    //             return { lastResult: event.value };
+    //           }),
+    //         },
+    //         ASR_NOINPUT: {
+    //           actions: assign({ lastResult: null }),
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
+
+    // CheckGrammarAskConfirmation5: {
     //   entry: [
+    //     // Assign extracted day information from user's input to the context
+    //     assign(({ context }) => {
+    //       // Get the latest recognized speech (convert it to lowercase for consistency)
+    //       const utterance = context.lastResult?.[0]?.utterance.toLowerCase() || "";
+    
+    //       return {
+    //         appointment: {
+    //           ...context.appointment, // Keep existing appointment details
+    //           confirmation: getConfirmation(utterance) || context.appointment.confirmation, // Extract day if available
+    //         },
+    //       };
+    //     }),
+    
+    //     // Speak out the recognized utterance and check if it's in the grammar list
     //     {
     //       type: "spst.speak",
     //       params: ({ context }) => ({
-    //         utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
-    //           ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
-    //           : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
+    //         utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+    //           isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+    //         } in your given list.`,
     //       }),
     //     },
-    //     { type: "spst.listen" }, // Start listening for a response
+
     //   ],
+
+    //   on: {
+    //     SPEAK_COMPLETE: [
+    //       {
+    //         target: "AppointmentCreated", 
+    //         guard: ({ context }) => context.appointment.confirmation === "yes", // Only proceed if a valid day is assigned
+    //       },
+
+    //       {
+    //         target: "Greeting", 
+    //         guard: ({ context }) => context.appointment.confirmation === "no", 
+    //       },
+    //       {
+    //         target: "Step5AskConfirmation.NoInput",  //  not in the grammar - > 
+    //       },
+    //     ],
+    //   },
+
+    // },
+
+
+
+
+    // //2.  this has button, but not waiting for an answer, let us improve it
+
+    // Step5AskConfirmation: {
+      // entry: [
+      //   {
+      //     type: "spst.speak",
+      //     params: ({ context }) => ({
+      //       utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
+      //         ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
+      //         : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
+      //     }),
+      //   },
+      //   { type: "spst.listen" }, // Start listening for a response, it listen and speak at the same time.
+      // ],
     
     //   on: {
-    //     RECOGNISED: [
+    //     RECOGNISED: [ //has a result came back, compared with LISTEN_COMPLETE: this does not wait and give you a result
     //       {
     //         target: "AppointmentCreated",
-    //         guard: ({ event }) => event.value?.[0]?.utterance.toLowerCase() === "yes",
+    //         guard: ({ event }) => event.value?.[0]?.utterance.toLowerCase() === "yes", // also could reuse confirmation parameter, but I am not sure about this part.
     //       },
     //       {
     //         target: "Greeting.AskPerson", 
@@ -565,6 +774,7 @@ const dmMachine = setup({
     //     ],
     //   },
     // },
+
 
 
     AppointmentCreated: {
@@ -586,8 +796,8 @@ const dmActor = createActor(dmMachine, {
 
 dmActor.subscribe((state) => {
   console.group("State update");
-  console.log("State value:", state.value);
-  console.log("State context:", state.context);
+  console.debug("State value:", state.value);
+  console.debug("State context:", state.context);
   console.groupEnd();
 });
 

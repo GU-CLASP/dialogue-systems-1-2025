@@ -12,6 +12,7 @@ export interface DMContext {
     confirmation: string | null;
     // confirmation2: string | null; // Whether the information for meeting is right
   };
+
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
