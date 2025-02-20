@@ -25,18 +25,6 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
-<<<<<<< HEAD
-}
-
-const grammar: { [index: string]: GrammarEntry } = {
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
-=======
   confirmation?: string; // Whether the meeting is for the whole day
 }
 
@@ -72,7 +60,6 @@ const grammar: { [index: string]: GrammarEntry } = {
   yes: { confirmation: "yes" },
   no: { confirmation: "no" },
   "whole day": { confirmation: "whole day" },
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
 };
 
 function isInGrammar(utterance: string) {
@@ -82,8 +69,6 @@ function isInGrammar(utterance: string) {
 function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
-<<<<<<< HEAD
-=======
 // Add helper function to extract information 
 
 function getDay(utterance: string) {
@@ -97,7 +82,6 @@ function getTime(utterance: string) {
 function getConfirmation(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).confirmation;
 }
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
 
 const dmMachine = setup({
   types: {
@@ -123,15 +107,12 @@ const dmMachine = setup({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
-<<<<<<< HEAD
-=======
     appointment: {
       person: null,
       day: null,
       time: null,
       confirmation: null,
     },
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
   }),
   id: "DM",
   initial: "Prepare",
@@ -144,11 +125,7 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
-<<<<<<< HEAD
-      initial: "Prompt",
-=======
       initial: "Createconversation",
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
       on: {
         LISTEN_COMPLETE: [
           {
@@ -159,10 +136,6 @@ const dmMachine = setup({
         ],
       },
       states: {
-<<<<<<< HEAD
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
-=======
         // start the conversation
         Createconversation: {
           entry: { type: "spst.speak", params: { utterance: `Let's create an appointment! ` } },
@@ -171,17 +144,12 @@ const dmMachine = setup({
 
         AskPerson: {
           entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
           entry: {
             type: "spst.speak",
-<<<<<<< HEAD
-            params: { utterance: `I can't hear you!` },
-=======
             params: { utterance: `I can't hear you! Who are you meeting with?` },
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
@@ -200,19 +168,6 @@ const dmMachine = setup({
         },
       },
     },
-<<<<<<< HEAD
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
-      },
-      on: { SPEAK_COMPLETE: "Done" },
-    },
-=======
     // CheckGrammar: {
     //   entry: {
     //     type: "spst.speak",
@@ -617,7 +572,6 @@ const dmMachine = setup({
       on: { CLICK: "Done" },
     },
 
->>>>>>> f69be74 (Lab 2 submission:  code working on the confirmation)
     Done: {
       on: {
         CLICK: "Greeting",
