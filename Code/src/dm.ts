@@ -25,8 +25,9 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
-  // validation :string for yes and no 
-  confirmation?: string;
+  whole?: string;
+  decision?: string;
+  menu?: string;
   intent: string;
   entities: {
     [index: string]: string;
@@ -42,8 +43,8 @@ const grammar: { [index: string]: GrammarEntry } = {
   tuesday: { day: "Tuesday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
-  
-  lecture: {
+
+  "karoake night": {
     intent: "None",
     entities: { title: "Karaoke night" },
   },
@@ -55,55 +56,55 @@ const grammar: { [index: string]: GrammarEntry } = {
     intent: "None",
     entities: { day: "Friday" },
   },
-  "at 8:00 am": { 
+  "at 8:00 am": {
     intent: "None",
     entities: { time: "8:00 AM" },
   },
-  "at 9:00 am": { 
+  "at 9:00 am": {
     intent: "None",
     entities: { time: "9:00 AM" },
   },
-  "at 10:00 am": { 
+  "at 10:00 am": {
     intent: "None",
     entities: { time: "10:00 AM" },
   },
-  "at 11:00 am": { 
+  "at 11:00 am": {
     intent: "None",
     entities: { time: "11:00 AM" },
   },
-  "at noon": { 
+  "at noon": {
     intent: "None",
     entities: { time: "12:00 PM" },
   },
-  "at 12:00 am": { 
+  "at 12:00 am": {
     intent: "None",
     entities: { time: "12:00 PM" },
   },
-  "at 1:00 pm": { 
+  "at 1:00 pm": {
     intent: "None",
     entities: { time: "1:00 PM" },
   },
-  "at 2:00 pm": { 
+  "at 2:00 pm": {
     intent: "None",
     entities: { time: "2:00 PM" },
   },
-  "at 3:00 pm": { 
+  "at 3:00 pm": {
     intent: "None",
     entities: { time: "3:00 PM" },
   },
-  "at 4:00 pm": { 
+  "at 4:00 pm": {
     intent: "None",
     entities: { time: "4:00 PM" },
   },
-  "at 5:00 pm": { 
+  "at 5:00 pm": {
     intent: "None",
     entities: { time: "5:00 PM" },
   },
-  "at 6:00 pm": { 
+  "at 6:00 pm": {
     intent: "None",
     entities: { time: "6:00 PM" },
   },
-  "at 7:00 pm": { 
+  "at 7:00 pm": {
     intent: "None",
     entities: { time: "7:00 PM" },
   },
@@ -133,7 +134,7 @@ const grammar: { [index: string]: GrammarEntry } = {
   },
   "yes": {
     intent: "None",
-    entities: { whole: "Yes", decision: "Yes", meeting:"Yes" },
+    entities: { whole: "Yes", decision: "Yes", meeting: "Yes" },
   },
   "no": {
     intent: "None",
@@ -141,29 +142,37 @@ const grammar: { [index: string]: GrammarEntry } = {
   },
   "create a meeting": {
     intent: "None",
-    entities: { menu: "meeting"},
+    entities: { menu: "meeting" },
 
-  yes: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-  yeah: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-  yep: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-  no: { whole: "No", decision: "No", meeting: "No" },
-  nope: { whole: "No", decision: "No", meeting: "No" },
-  "create a meeting": { menu: "meeting" },
-  "set up a meeting": { menu: "meeting" },
-  "book a meeting": { menu: "meeting" },
-};
+    yes: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+    yeah: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+    yep: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+    no: { whole: "No", decision: "No", meeting: "No" },
+    nope: { whole: "No", decision: "No", meeting: "No" },
+    "create a meeting": { menu: "meeting" },
+    "set up a meeting": { menu: "meeting" },
+    "book a meeting": { menu: "meeting" },
+  };
 
+
+
+
+
+
+  function isInGrammar(utterance: string) {
+    return utterance.toLowerCase() in grammar;
+  }
+
+
+  // function for getEntity
+  function getEntity(utterance: string, entityType: keyof GrammarEntry) { // <--- Function Definition
+    return (grammar[utterance.toLowerCase()] || {})[entityType];
+  }
   
 
-
-
-function isInGrammar(utterance: string) {
-  return utterance.toLowerCase() in grammar;
-}
-
-function getPerson(utterance: string) {
+ function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
-}
+ }
 
 const dmMachine = setup({
   types: {
@@ -181,10 +190,13 @@ const dmMachine = setup({
             utterance: params.utterance,
           },
         }),
+      },
+
       "spst.listen": ({ context }) =>
         context.spstRef.send({
           type: "LISTEN",
         }),
+
       "assignMeetingPartner": assign(({ event }) => {
         const utterance = event.value[0].utterance;
         return { meetingPartnerName: getEntity(utterance, 'person') || utterance };
@@ -217,222 +229,409 @@ const dmMachine = setup({
 
     },
 
-}).createMachine({
-  context: ({ spawn }) => ({
-    spstRef: spawn(speechstate, { input: settings }),
-    lastResult: null,
-    meetingPartnerName:null
-    meetingDay:null
-    meetingTime:null
-    wholeDayAppoitment:false,
-    finalDecision:false
+  }).createMachine({
+    context: ({ spawn }): DMContext => ({
+      spstRef: spawn(speechstate, { input: settings }),
+      lastResult: null,
+      meetingPartnerName: null,
+      meetingDay: null,
+      meetingTime: null,
+      wholeDayAppointment: false,
+      finalDecision: false
 
-  }),
-  id: "DM",
-  initial: "Prepare",
-  states: {
-    Prepare: {
-      entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
-      on: { ASRTTS_READY: "WaitToStart" },
-    },
-    WaitToStart: {
-      on: { CLICK: "Greeting" },
-    },
-    Greeting: {
-      initial: "Prompt",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "AskMenu",
-            guard: ({ context }) => !!context.lastResult && isInGrammar(context.lastResult![0].utterance),
-          },
-          { target: ".NoInput" },
-        ],
+    }),
+    id: "DM",
+    initial: "Prepare",
+    states: {
+      Prepare: {
+        entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
+        on: { ASRTTS_READY: "WaitToStart" },
       },
-      states: {
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter! Would you like to create a meeting` } },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
-          },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        Ask: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
+      WaitToStart: {
+        on: { CLICK: "Greeting" },
+      },
+      Greeting: {
+        initial: "Prompt",
+        on: {
+          LISTEN_COMPLETE: [
+            {
+              target: "AskMenu",
+              guard: ({ context }) => !!context.lastResult && isInGrammar(context.lastResult![0].utterance),
             },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
+            { target: ".NoInput" },
+          ],
+        },
+        states: {
+          Prompt: {
+            entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter! Would you like to create a meeting` } },
+            on: { SPEAK_COMPLETE: "Ask" },
+          },
+          NoInput: {
+            entry: {
+              type: "spst.speak",
+              params: { utterance: `I can't hear you!` },
+            },
+            on: { SPEAK_COMPLETE: "Ask" },
+          },
+          Ask: {
+            entry: { type: "spst.listen" },
+            on: {
+              RECOGNISED: {
+                actions: assign(({ event }) => {
+                  return { lastResult: event.value };
+                }),
+              },
+              ASR_NOINPUT: {
+                actions: assign({ lastResult: null }),
+              },
             },
           },
         },
       },
-    },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
-      },
-      on: { SPEAK_COMPLETE: "Done" },
-    },
-    Done: {
-      on: {
-        CLICK: "Greeting",
-      },
-    },
-  },
-});
 
-on: {
-  SPEAK_COMPLETE: [
-    { target: "AskMenu", guard: ({ context }) => isInGrammar(context.lastResult![0].utterance) && getConfirmation(context.lastResult![0].utterance) !== "No" }, // Go to AskMenu if in grammar
-    { target: "Done" } 
-    ]
-  },
- },
+      CheckGrammar: {
+        entry: {
+          type: "spst.speak",
+          params: ({ context }) => ({
+            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+              } in the grammar.`,
+          }),
+        },
+        on: { SPEAK_COMPLETE: "Done" },
+      },
+      Done: {
+        on: {
+          CLICK: "Greeting",
+        },
+      },
+    },
+  });
 
-  AskMenu: {
+AskMenu: { 
     entry: {
       type: "spst.speak",
       params: { utterance: `What do you want to do? You can say "Create a meeting".` },
-   },
-   initial: "Prompt",
-   states: {
-     Prompt: {
-    on: { SPEAK_COMPLETE: "ListenForMenu" },
-  },
-  ListenForMenu: {
-    entry: { type: "spst.listen" },
-    on: {
-      RECOGNISED: {
-        target: "#DM.AskWho",
-        guard: ({ context, event }) => {
-          const utterance = event.value[0].utterance;
-          return isInGrammar(utterance) && (grammar[utterance.toLowerCase()] || {}).entities?.menu === "meeting";
-        },
-        actions: assign(({ event }) => {
-          return { lastResult: event.value };
-        }),
-      },
-      ASR_NOINPUT: { target: ".NoInputMenu" },
     },
-  },
-  NoInputMenu: {
-    entry: {
-      type: "spst.speak",
-      params: { utterance: `Sorry, I didn't catch that. Please say "Create a meeting" to book an appointment.` },
-    },
-    on: { SPEAK_COMPLETE: "ListenForMenu" },
-    },
-  },
-},
-
-
-
- // add intro,on whichDay,wholeDay,whatTime,
-  AskWho: { 
-    entry: {
-      type: "spst.speak",
-      params: { utterance: `Who do you want to meet with?` }
-    },
-    initial: "Prompt", 
+    initial: "Prompt",
     states: {
       Prompt: {
-        on: { SPEAK_COMPLETE: "ListenForWho" }, 
+        on: { SPEAK_COMPLETE: "ListenForMenu" },
       },
-      ListenForWho: { 
+      ListenForMenu: {
         entry: { type: "spst.listen" },
         on: {
-          RECOGNISED: {
-            target: "#DM.GetWho1", /
-            actions: assign(({ event }) => {
-              const utterance = event.value[0].utterance;
-              // have to implement the logic to extract person's name from the utterance but for now i will use a placeholder
-              
-              const meetingPartnerName = utterance; 
-              return { meetingPartnerName }; 
-            }),
-          },
-          ASR_NOINPUT: { target: ".NoInput" }, 
+          RECOGNISED: [
+            {
+              target: "#DM.info_meeting",
+              cond: ({ event }) => getEntity(event.value[0].utterance, "menu") === "meeting",
+            },
+            {
+              target: ".NoInputMenu",
+            },
+          ],
+          ASR_NOINPUT: { target: ".NoInputMenu" },
         },
       },
-      NoInput: { 
+      NoInputMenu: {
         entry: {
           type: "spst.speak",
-          params: { utterance: `Please tell me again who you want to meet with.` }, 
+          params: { utterance: `Sorry, I didn't catch that. You can say "Create a meeting" to book an appointment.` },
         },
-        on: { SPEAK_COMPLETE: "ListenForWho" }, 
+        on: { SPEAK_COMPLETE: "ListenForMenu" },
       },
     },
-    
   },
 
-  // state that validates getwho
-  GetWho1: { 
+  info_meeting: {
+    entry: {
+      type: "spst.speak",
+      params: { utterance: "OK, let's create a meeting. Who are you meeting with?" },
+    },
+    on: { SPEAK_COMPLETE: "getName" },
+  },
+  getName: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: { type: "spst.speak", params: { utterance: "Who are you meeting with?" } },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+      ask: {
+        entry: { type: "spst.listen" },
+      },
+      nomatch: {
+        entry: {
+          type: "spst.speak",
+          params: { utterance: "Sorry, I didn't catch the name. Could you repeat it?" },
+        },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+    },
+    on: {
+      RECOGNISED: [
+        {
+          target: "info_name",
+          actions: "assignMeetingPartner",
+          cond: ({ event }) => !!getEntity(event.value[0].utterance, "person") || !!event.value[0].utterance,
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
+  },
+
+  info_name: {
     entry: {
       type: "spst.speak",
       params: ({ context }) => ({
-        utterance: `You said you want to meet with ${context.meetingPartnerName}. Is that correct?`, // Confirmation
+        utterance: `OK, meeting with ${context.meetingPartnerName}. On which day is your meeting?`,
       }),
     },
-    // need to Add  transitions to handle validation + "yes/no" responses about the name but i will transition to GetWhen
-    
-    on: { SPEAK_COMPLETE: "GetWhen" }, 
+    on: { SPEAK_COMPLETE: "day" },
   },
-
-  GetWhen: { 
-    entry: {
-      type: "spst.speak",
-      params: { utterance: `On which day do you want to meet?` }, 
-    },
-    initial: "Prompt", 
-      Prompt: {
-        on: { SPEAK_COMPLETE: "ListenForWhen" }, 
+  day: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: { type: "spst.speak", params: { utterance: "On which day is it?" } },
+        on: { SPEAK_COMPLETE: "ask" },
       },
-      ListenForWhen: {
+      ask: {
         entry: { type: "spst.listen" },
-        on: {
-          RECOGNISED: {
-            //transitioning to
-            target: "#DM.AskMeetingTime", 
-            actions: assign(({ event }) => {
-              const utterance = event.value[0].utterance;
-              //  have to Implement logic to extract day from utterance
-              // 
-              const meetingDay = utterance; 
-              return { meetingDay }; 
-            }),
-          },
-          ASR_NOINPUT: { target: ".NoInput" }, 
-        },
       },
-      NoInput: { 
+      nomatch: {
         entry: {
           type: "spst.speak",
-          params: { utterance: `Please tell me the day for the meeting.` }, 
+          params: { utterance: "Sorry, I don't understand which day you are referring to." },
         },
-        on: { SPEAK_COMPLETE: "ListenForWhen" },
+        on: { SPEAK_COMPLETE: "ask" },
       },
     },
     
+    on: {
+      RECOGNISED: [
+        {
+          target: "info_day",
+          actions: "assignMeetingDay",
+          cond: ({ event }) => !!getEntity(event.value[0].utterance, "day") || !!event.value[0].utterance,
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
   },
-
-  
-
-
-
+  info_day: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `OK, ${context.meetingDay}. Will it take the whole day?`,
+      }),
+    },
+    on: { SPEAK_COMPLETE: "whole" },
+  },
+  whole: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: { type: "spst.speak", params: { utterance: "Will it take the whole day?" } },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+      ask: {
+        entry: { type: "spst.listen" },
+      },
+      nomatch: {
+        entry: {
+          type: "spst.speak",
+          params: { utterance: "Sorry, I don't understand your answer. Please answer yes or no." },
+        },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+    },
+    on: {
+      RECOGNISED: [
+        {
+          target: "info_whole",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "whole") === "Yes",
+          actions: "assignWholeDay",
+        },
+        {
+          target: "info_whole_no",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "whole") === "No",
+          actions: "assignWholeDay",
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
+  },
+  info_whole_no: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `OK, not the whole day. What time is your meeting?`,
+      }),
+    },
+    on: { SPEAK_COMPLETE: "time" },
+  },
+  time: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: { type: "spst.speak", params: { utterance: "What time is your meeting?" } },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+      ask: {
+        entry: { type: "spst.listen" },
+      },
+      nomatch: {
+        entry: {
+          type: "spst.speak",
+          params: { utterance: "Sorry, I don't understand what time you are referring to." },
+        },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+    },
+    on: {
+      RECOGNISED: [
+        {
+          target: "final_time_ask",
+          actions: "assignMeetingTime",
+          cond: ({ event }) => !!getEntity(event.value[0].utterance, "time") || !!event.value[0].utterance,
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
+  },
+  final_time_ask: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: {
+          type: "spst.speak",
+          params: ({ context }) => ({
+            utterance: `Do you want me to create a meeting with ${context.meetingPartnerName} on ${context.meetingDay} at ${context.meetingTime}?`,
+          }),
+        },
+        on: { ENDSPEECH: "ask" },
+      },
+      ask: {
+        entry: { type: "spst.listen" },
+      },
+      nomatch: {
+        entry: {
+          type: "spst.speak",
+          params: { utterance: "Sorry, please confirm again if you want to create the meeting." },
+        },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+    },
+    on: {
+      RECOGNISED: [
+        {
+          target: "info_final_ask",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "Yes",
+          actions: "assignDecision",
+        },
+        {
+          target: "idle",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "No",
+          actions: "assignDecision",
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
+  },
+  info_whole: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `OK, i understdoo ! Whole day meeting.`,
+      }),
+    },
+    on: { SPEAK_COMPLETE: "final_ask" },
+  },
+  final_ask: {
+    initial: "prompt",
+    states: {
+      prompt: {
+        entry: {
+          type: "spst.speak",
+          params: ({ context }) => ({
+            utterance: `Do you want me to create a meeting with ${context.meetingPartnerName} on ${context.meetingDay} for the whole day?`,
+          }),
+        },
+        on: { ENDSPEECH: "ask" },
+      },
+      ask: {
+        entry: { type: "spst.listen" },
+      },
+      nomatch: {
+        entry: {
+          type: "spst.speak",
+          params: { utterance: "Sorry, please confirm again if you want to create the meeting (yes or no)." },
+        },
+        on: { SPEAK_COMPLETE: "ask" },
+      },
+    },
+    on: {
+      RECOGNISED: [
+        {
+          target: "info_final_ask",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "Yes",
+          actions: "assignDecision",
+        },
+        {
+          target: "idle",
+          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "No",
+          actions: "assignDecision",
+        },
+        {
+          target: ".nomatch",
+        },
+      ],
+      TIMEOUT: ".prompt",
+    },
+  },
+  info_final_ask: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `OK, I'll take that as ${context.finalDecision ? 'yes' : 'no'}.`,
+      }),
+    },
+    on: { ENDSPEECH: "final_prompt" },
+  },
+  final_prompt: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `Your meeting has been created!`,
+      }),
+    },
+    on: { SPEAK_COMPLETE: "idle" },
+  },
+  failure: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `I'm sorry, there was an issue creating the appointment. We can start over`,
+      }),
+    },
+    on: { SPEAK_COMPLETE: "menu" },
+  },
+},
 
 const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
