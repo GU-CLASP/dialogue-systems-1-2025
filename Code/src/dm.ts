@@ -369,7 +369,7 @@ const dmMachine = setup({
         SPEAK_COMPLETE: [
           {
             target: "Step5AskConfirmation", 
-            guard: ({ context }) => context.appointment.confirmation === "yes", // Only proceed if a valid day is assigned
+            guard: ({ context }) => context.appointment.confirmation === "yes",
           },
 
           {
@@ -377,7 +377,7 @@ const dmMachine = setup({
             guard: ({ context }) => context.appointment.confirmation === "no", 
           },
           {
-            target: "Step3AskWholeDay.NoInput2", // not in the grammar, goes to ask confirmation , which is wrong
+            target: "Step3AskWholeDay.NoInput2", 
           },
         ],
       },
