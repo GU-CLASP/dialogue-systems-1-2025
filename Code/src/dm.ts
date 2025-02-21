@@ -123,6 +123,8 @@ const dmMachine = setup({
     WaitToStart: {
       on: { CLICK: "Greeting" },
     },
+
+
     Greeting: {
       entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
       initial: "Createconversation",
@@ -168,20 +170,7 @@ const dmMachine = setup({
         },
       },
     },
-    // CheckGrammar: {
-    //   entry: {
-    //     type: "spst.speak",
-    //     params: ({ context }) => ({
-    //       utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-    //         isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-    //       } in your given list.`,
-    //     }),
-    //   },
-    //   on: { SPEAK_COMPLETE: "Step2AskDay" },
-    //   // check if name is in the list:
-    //   // in the list -> go Step2AskDay && assign the name to name property
-    //   // not in the list -> go back to AskPerson
-    // },
+    
     CheckGrammar: {
       entry: [
         // Assign extracted information from user's input to the context
@@ -262,23 +251,6 @@ const dmMachine = setup({
       },
     },
 
-    // CheckGrammar2: {
-    //   entry: {
-    //     type: "spst.speak",
-    //     params: ({ context }) => ({
-    //       utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-    //         isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-    //       } in your given list.`,
-    //     }),
-    //   },
-    //   on: { SPEAK_COMPLETE: "Step3AskWholeDay" },
-    //   // on: { SPEAK_COMPLETE: "AppointmentCreated" },
-
-    //   // check if day is in the list:
-    //   // in the list -> go Step3AskWholeDay && assign the day to day property
-    //   // not in the list -> go back to AskDay
-
-    // },
 
     CheckGrammar2: {
       entry: [
@@ -398,14 +370,12 @@ const dmMachine = setup({
             guard: ({ context }) => context.appointment.confirmation === "no", 
           },
           {
-            target: "Step3AskWholeDay", 
+            target: "Step3AskWholeDay", // not in the grammar, goes to ask confirmation , which is wrong
           },
         ],
       },
 
     },
-
-
   
 
     Step4AskTime:{
@@ -447,23 +417,6 @@ const dmMachine = setup({
       },
     },
 
-    // CheckGrammar4: {
-    //   entry: {
-    //     type: "spst.speak",
-    //     params: ({ context }) => ({
-    //       utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-    //         isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-    //       } in your given list.`,
-    //     }),
-    //   },
-    //   // on: { SPEAK_COMPLETE: "Step5ConfirmAppointment" },
-    //   on: { SPEAK_COMPLETE: "AppointmentCreated" },
-
-    //   // check if day is in the list:
-    //   // in the list -> go Step5ConfirmAppointment && assign the time to time property
-    //   // not in the list -> go back to AskTime
-
-    // },
 
     CheckGrammar4: {
       entry: [
@@ -507,7 +460,6 @@ const dmMachine = setup({
     },
 
     // try4, no button is shown on the screen.
-
 //     Step5AskConfirmation: {
 //       initial: "AskConfirmation",
 //       states: {
@@ -563,16 +515,25 @@ const dmMachine = setup({
 //   },
 // },
 
-    //try5 a copy of try3, which button appeared, but logic is not right, //  not in the grammar - > Greeting
+    //try5 a copy of try3, which button appeared, but logic is not right, //  error: not in the grammar - > Greeting
     Step5AskConfirmation:  {
       initial: "AskConfirmation",
+      on: {
+        LISTEN_COMPLETE: [
+          {
+            target: "CheckGrammarAskConfirmation5",
+            guard: ({ context }) => !!context.lastResult,
+          },
+          { target: ".NoInput" },
+        ],
+      },
       states: {
         AskConfirmation: {
           entry: [
             {
               type: "spst.speak",
               params: ({ context }) => ({
-                utterance: context.appointment.confirmation === "yes" 
+                utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
                   ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
                   : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
               }),
@@ -590,12 +551,14 @@ const dmMachine = setup({
         Ask5: {
           entry: { type: "spst.listen" },
           on: {
-            RECOGNISED: {
-              target: "CheckGrammarAskConfirmation5",
-              actions: assign(({ event }) => ({ lastResult: event.value })),
+            RECOGNISED: { 
+              actions: assign(({ event }) => {
+                
+                return { lastResult: event.value };
+              }),
             },
             ASR_NOINPUT: {
-              target: "NoInput",
+              actions: assign({ lastResult: null }),
             },
           },
         },
@@ -604,47 +567,45 @@ const dmMachine = setup({
 
     CheckGrammarAskConfirmation5: {
       entry: [
+        
+
+        ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
+    
+        // Speak out the recognized utterance and check if it's in the grammar list
         {
           type: "spst.speak",
-          params: ({ context }) => {
-            const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || "";  // ✅ Temporary variable
-    
-            return {
-              utterance: `You just said: ${utterance}. And it ${
-                isInGrammar(utterance) ? "is" : "is not"
-              } in your given list.`,
-            };
-          },
+          params: ({ context }) => ({
+            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+            } in your given list.`,
+          }),
         },
+
       ],
 
       on: {
         SPEAK_COMPLETE: [
           {
             target: "AppointmentCreated", 
-            guard: ({ context }) => {
-              const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || ""; // ✅ Temporary variable
-              return utterance === "yes";
-            },
+            // guard: ({ context }) => context.appointment.confirmation === "yes", 
+
+            guard: ({ context }) => getConfirmation(context.lastResult?.[0]?.utterance?.toLowerCase() || "") === "yes",
+            
           },
+
           {
             target: "Greeting", 
-            guard: ({ context }) => {
-              const utterance = context.lastResult?.[0]?.utterance?.toLowerCase() || ""; // ✅ Temporary variable
-              return utterance === "no";
-            },
+            guard: ({ context }) => getConfirmation(context.lastResult?.[0]?.utterance?.toLowerCase() || "") ===  "no", 
           },
           {
-            target: "Step5AskConfirmation.Ask5",  // ✅ Goes back to listening if unrecognized
+            target: "Step5AskConfirmation.NoInput",  //  not in the grammar - > 
           },
         ],
       },
+
     },
 
 
-
-
-  
 
     //try3, button appeared, but logic is not right, //  not in the grammar - > Greeting
 
@@ -775,7 +736,6 @@ const dmMachine = setup({
     //     ],
     //   },
     // },
-
 
 
     AppointmentCreated: {
