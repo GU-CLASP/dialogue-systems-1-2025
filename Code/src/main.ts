@@ -11,4 +11,5 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
+// Test change
 setupButton(document.querySelector<HTMLButtonElement>("#counter")!);
