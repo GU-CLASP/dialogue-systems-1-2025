@@ -142,9 +142,18 @@ const grammar: { [index: string]: GrammarEntry } = {
   "create a meeting": {
     intent: "None",
     entities: { menu: "meeting"},
-  }
-  
+
+  yes: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+  yeah: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+  yep: { whole: "Yes", decision: "Yes", meeting: "Yes" },
+  no: { whole: "No", decision: "No", meeting: "No" },
+  nope: { whole: "No", decision: "No", meeting: "No" },
+  "create a meeting": { menu: "meeting" },
+  "set up a meeting": { menu: "meeting" },
+  "book a meeting": { menu: "meeting" },
 };
+
+  
 
 
 
@@ -164,22 +173,60 @@ const dmMachine = setup({
   },
   actions: {
     /** define your actions here */
-    "spst.speak": ({ context }, params: { utterance: string }) =>
-      context.spstRef.send({
-        type: "SPEAK",
-        value: {
-          utterance: params.utterance,
-        },
+    actions: {
+      "spst.speak": ({ context }, params: { utterance: string }) =>
+        context.spstRef.send({
+          type: "SPEAK",
+          value: {
+            utterance: params.utterance,
+          },
+        }),
+      "spst.listen": ({ context }) =>
+        context.spstRef.send({
+          type: "LISTEN",
+        }),
+      "assignMeetingPartner": assign(({ event }) => {
+        const utterance = event.value[0].utterance;
+        return { meetingPartnerName: getEntity(utterance, 'person') || utterance };
       }),
-    "spst.listen": ({ context }) =>
-      context.spstRef.send({
-        type: "LISTEN",
+      "assignMeetingDay": assign(({ event }) => {
+        const utterance = event.value[0].utterance;
+        return { meetingDay: getEntity(utterance, 'day') || utterance };
       }),
-  },
+      "assignMeetingTime": assign(({ event }) => {
+        const utterance = event.value[0].utterance;
+        return { meetingTime: getEntity(utterance, 'time') || utterance };
+      }),
+      "assignWholeDay": assign(({ event }) => {
+        const utterance = event.value[0].utterance;
+        return { wholeDayAppointment: getEntity(utterance, 'whole') === 'Yes' };
+      }),
+      "assignDecision": assign(({ event }) => {
+        const utterance = event.value[0].utterance;
+        return { finalDecision: getEntity(utterance, 'decision') === 'Yes' };
+      }),
+
+      "clearContext": assign({
+        meetingPartnerName: null,
+        meetingDay: null,
+        meetingTime: null,
+        wholeDayAppointment: false,
+        finalDecision: false,
+        lastResult: null,
+      }),
+
+    },
+
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    meetingPartnerName:null
+    meetingDay:null
+    meetingTime:null
+    wholeDayAppoitment:false,
+    finalDecision:false
+
   }),
   id: "DM",
   initial: "Prepare",
@@ -196,15 +243,15 @@ const dmMachine = setup({
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
+            target: "AskMenu",
+            guard: ({ context }) => !!context.lastResult && isInGrammar(context.lastResult![0].utterance),
           },
           { target: ".NoInput" },
         ],
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter!` } },
+          entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter! Would you like to create a meeting` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -247,6 +294,52 @@ const dmMachine = setup({
     },
   },
 });
+
+on: {
+  SPEAK_COMPLETE: [
+    { target: "AskMenu", guard: ({ context }) => isInGrammar(context.lastResult![0].utterance) && getConfirmation(context.lastResult![0].utterance) !== "No" }, // Go to AskMenu if in grammar
+    { target: "Done" } 
+    ]
+  },
+ },
+
+  AskMenu: {
+    entry: {
+      type: "spst.speak",
+      params: { utterance: `What do you want to do? You can say "Create a meeting".` },
+   },
+   initial: "Prompt",
+   states: {
+     Prompt: {
+    on: { SPEAK_COMPLETE: "ListenForMenu" },
+  },
+  ListenForMenu: {
+    entry: { type: "spst.listen" },
+    on: {
+      RECOGNISED: {
+        target: "#DM.AskWho",
+        guard: ({ context, event }) => {
+          const utterance = event.value[0].utterance;
+          return isInGrammar(utterance) && (grammar[utterance.toLowerCase()] || {}).entities?.menu === "meeting";
+        },
+        actions: assign(({ event }) => {
+          return { lastResult: event.value };
+        }),
+      },
+      ASR_NOINPUT: { target: ".NoInputMenu" },
+    },
+  },
+  NoInputMenu: {
+    entry: {
+      type: "spst.speak",
+      params: { utterance: `Sorry, I didn't catch that. Please say "Create a meeting" to book an appointment.` },
+    },
+    on: { SPEAK_COMPLETE: "ListenForMenu" },
+    },
+  },
+},
+
+
 
  // add intro,on whichDay,wholeDay,whatTime,
   AskWho: { 
