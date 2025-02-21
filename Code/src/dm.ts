@@ -56,9 +56,10 @@ const grammar: { [index: string]: GrammarEntry } = {
 
   // Confirmation
   yes: { confirmation: "yes" },
-  no: { confirmation: "no" },
-  "whole day": { confirmation: "yes" },
   "of course": { confirmation: "yes" },
+
+  no: { confirmation: "no" },
+  "no way": { confirmation: "no" },
 };
 
 function isInGrammar(utterance: string) {
@@ -211,7 +212,6 @@ const dmMachine = setup({
     },
     
 
-
     Step2AskDay: {
       initial: "AskDay",
       on: {
@@ -349,7 +349,7 @@ const dmMachine = setup({
           return {
             appointment: {
               ...context.appointment, // Keep existing appointment details
-              confirmation: getConfirmation(utterance) || context.appointment.confirmation, // Extract day if available
+              confirmation: getConfirmation(utterance) || context.appointment.confirmation, // Extract confirmation if available
             },
           };
         }),
@@ -457,15 +457,14 @@ const dmMachine = setup({
             // target: "AppointmentCreated", 
             target: "Step5AskConfirmation", 
 
-            guard: ({ context }) => !!context.appointment.time, // Only proceed if a valid day is assigned
+            guard: ({ context }) => !!context.appointment.time, // Only proceed if a valid time is assigned
           },
           {
-            target: "Step4AskTime", // Go back to ask for the day again if not recognized
+            target: "Step4AskTime", // Go back to ask for the time again if not recognized
           },
         ],
       },
     },
-
 
     Step5AskConfirmation:  {
       initial: "AskConfirmation",
@@ -489,7 +488,7 @@ const dmMachine = setup({
                   : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
               }),
             },
-          ], // something wrong with this entry.
+          ], 
           on: { SPEAK_COMPLETE: "Ask5" },
         },
         NoInput: {
@@ -504,7 +503,7 @@ const dmMachine = setup({
             type: "spst.speak",
             params: { utterance: `It is not in the grammar. Please say yes or no` },
           },
-          on: { SPEAK_COMPLETE: "AskConfirmation" },
+          on: { SPEAK_COMPLETE: "AskConfirmation" }, //start from beginning to check appointment information.
         },
         Ask5: {
           entry: { type: "spst.listen" },
@@ -556,13 +555,12 @@ const dmMachine = setup({
             guard: ({ context }) => getConfirmation(context.lastResult?.[0]?.utterance?.toLowerCase() || "") ===  "no", 
           },
           {
-            target: "Step5AskConfirmation.NoInput2",  //  not in the grammar - > 
+            target: "Step5AskConfirmation.NoInput2",  
           },
         ],
       },
 
     },
-
 
     AppointmentCreated: {
       entry: { type: "spst.speak", params: { utterance: "Your appointment has been created." } },
