@@ -25,17 +25,36 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
+  response?:string;
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
+  cristina: {person: "Cristina"},
+  emilia: {person:"Emilia"},
+  diana:{person:"Diana"}
+
 };
+
+
+//Create an array to add days dinamically
+const daysWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+
+daysWeek.forEach((day) => {
+  grammar[day] = { day: day };
+});
+
+// Create an array to add times dinamically
+const hours = [...Array(24).keys()];
+const formattedHours = hours.map((hour) => hour.toString().padStart(2, "0"));
+formattedHours.forEach((hour) => {
+  grammar[hour] = { time: `${hour}:00` };
+});
+
+
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
