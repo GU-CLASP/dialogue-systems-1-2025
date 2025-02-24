@@ -54,6 +54,26 @@ formattedHours.forEach((hour) => {
   grammar[hour] = { time: `${hour}:00` };
 });
 
+//Create an array with possible positive answers 
+const positiveAnswers = [
+  "yes",
+  "sure",
+  "yeah",
+  "of course",
+  "absolutely",
+  "definitely",
+  "yep",
+  "aha",
+  "totally",
+  "for sure",
+  "I agree",
+  "sounds good",
+];
+
+// Map the positive answers to "yes" and add them to the grammar 
+positiveAnswers.forEach((response) => {
+  grammar[response] = { response: "yes" };
+});
 
 
 function isInGrammar(utterance: string) {
