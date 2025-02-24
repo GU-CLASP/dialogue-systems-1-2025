@@ -151,77 +151,37 @@ const dmMachine = setup({
       }),
   },
 }).createMachine({
-  context: ({ spawn }) => ({
-    spstRef: spawn(speechstate, { input: settings }),
+  context:({spawn}) => ({
+    spstRef: spawn(speechstate, {input: settings}),
     lastResult: null,
+    personName: null,  
+    meetingDate: null,
+    meetingTime: null,
   }),
   id: "DM",
-  initial: "Prepare",
-  states: {
-    Prepare: {
-      entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
-      on: { ASRTTS_READY: "WaitToStart" },
-    },
-    WaitToStart: {
-      on: { CLICK: "Greeting" },
-    },
-    Greeting: {
-      initial: "Prompt",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
-      states: {
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
-          },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        Ask: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
-            },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
-          },
-        },
-      },
-    },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
-      },
-      on: { SPEAK_COMPLETE: "Done" },
-    },
-    Done: {
-      on: {
-        CLICK: "Greeting",
-      },
-    },
+  initial:"Prepare",
+  states:{
+    Prepare:{
+      entry:({ context }) => context.spstRef.send({ type: "PREPARE" }),
+      on:{
+        "ASRTTS_READY":"WaitToStart",
+      },},
+    WaitToStart:{
+      on:{CLICK:"Greeting"},
   },
-});
+  Greeting:{
+    initial: "Prompt",
+    states:{
+      Prompt:{
+        entry: {type: "spst.speak", 
+          params:{utterance: "Hello, who would you like to schedule a meeting with?"}
+      },
+      on:{SPEAK_COMPLETE:"#DM.Person"},
+      },
+  },
+},
 
+      
 const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
 }).start();
