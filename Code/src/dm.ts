@@ -101,6 +101,12 @@ function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
 
+// Capture day of the week/Date
+function getDate(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).day;
+}
+
+
 // # End of helper functions
 
 // # Guard Functions
@@ -114,6 +120,14 @@ const isValidPerson = ({ context }: { context: DMContext }) => {
   return isValid;
 };
 
+//Check if Date is in the grammar
+
+const isValidDate = ({ context }: { context: DMContext }) => {
+  const date = context.meetingDate?.toLowerCase(); // Normalize to lowercase for comparison
+  const isValid = date ? !!grammar[date] : false; // Check if the date exists in the grammar
+  console.log("Checking if date is valid:", date, isValid); // Debugging log
+  return isValid;
+};
 
 
 const dmMachine = setup({
