@@ -75,6 +75,24 @@ positiveAnswers.forEach((response) => {
   grammar[response] = { response: "yes" };
 });
 
+// Create an array with possible negative answers
+const negativeAnswers = [
+  "no",
+  "no way",
+  "not at all",
+  "absolutely not",
+  "definitely not",
+  "nah",
+  "nope",
+  "not really",
+  "I am afraid not",
+  "negative",
+];
+
+// Map the negative answers to "no" and add them to the grammar
+negativeAnswers.forEach((response) => {
+  grammar[response] = { response: "no" };
+});
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
