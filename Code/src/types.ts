@@ -9,4 +9,12 @@ export interface DMContext {
   meetingTime: string | null;
 }
 
-export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
+// Assuming SpeechStateExternalEvent is defined or imported
+export type DMEvents =
+  | SpeechStateExternalEvent
+  | { type: "CLICK" }
+  | { type: "ASRTTS_READY" }
+  | { type: "SPEAK_COMPLETE" }
+  | { type: "RECOGNISED"; value: { utterance: string }[] }
+  | { type: "ASR_NOINPUT" }
+  | { type: "LISTEN_COMPLETE" };
