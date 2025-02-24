@@ -180,6 +180,50 @@ const dmMachine = setup({
       },
   },
 },
+Person:{
+  initial:"AskPerson",
+  on:{
+    LISTEN_COMPLETE:[{
+      target: "#DM.Date",
+      guard: isValidPerson,
+
+    },
+    {target:".AskPerson"
+
+    },
+  ],
+
+  },
+  states:{
+    AskPerson:{
+      entry:{
+        type:"spst.speak",
+        params:{utterance:"Who are you meeting with?"},
+        on:{SPEAK_COMPLETE:"GetPerson"},
+      },
+    },
+    GetPerson:{
+      entry:{type:"spst.listen"},
+      on:{
+        RECOGNISED:{
+          actions:assign(({ event }) => {
+            const person = getPerson(event.value[0]?.utterance);
+            
+            return { personName: person };
+          }),
+
+        },
+        ASR_NOINPUT:{
+          actions: assign({ personName: null }),
+
+        },
+      }
+    },
+  },
+}.
+
+
+}),
 
       
 const dmActor = createActor(dmMachine, {
