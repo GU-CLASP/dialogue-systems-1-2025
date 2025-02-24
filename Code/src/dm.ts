@@ -94,13 +94,27 @@ negativeAnswers.forEach((response) => {
   grammar[response] = { response: "no" };
 });
 
-function isInGrammar(utterance: string) {
-  return utterance.toLowerCase() in grammar;
-}
+// #Helper functions to capture pieces of information from the user's utterance
 
+// Capture person's name
 function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
+
+// # End of helper functions
+
+// # Guard Functions
+// Check if the Name is in the grammar
+const isValidPerson = ({ context }: { context: DMContext }) => {
+  const person = context.personName?.toLowerCase(); 
+  const isValid = person
+    ? Object.values(grammar).some(entry => entry.person?.toLowerCase() === person) 
+    : false;
+  
+  return isValid;
+};
+
+
 
 const dmMachine = setup({
   types: {
