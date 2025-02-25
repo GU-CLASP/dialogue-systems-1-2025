@@ -4,6 +4,10 @@ import { AnyActorRef } from "xstate";
 export interface DMContext {
   spstRef: AnyActorRef;
   lastResult: Hypothesis[] | null;
+  person: string;
+  day: string;
+  time: string;
+  question: string;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
