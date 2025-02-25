@@ -4,7 +4,6 @@ import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
 
-/**https://learn.microsoft.com/en-us/azure/bot-service/bot-builder-concept-state?view=azure-bot-service-4.0 */
 const inspector = createBrowserInspector();
 
 const azureCredentials = {
@@ -67,6 +66,7 @@ const grammar: { [index: string]: GrammarEntry } = {
   "yes": { answer: "yes"},
   "of course": { answer: "yes"},
   "yeah": { answer: "yes"},
+  "yes, please": { answer: "yes"},
   "sure": { answer: "yes"},
   "ok": { answer: "yes"},
   "okay": { answer: "yes"},
@@ -128,8 +128,8 @@ const dmMachine = setup({
       on: { ASRTTS_READY: "WaitToStart" },
     },
     WaitToStart: {
-      /*entry: { type: "spst.listen" },*/
-      on: { CLICK: "Begin" },
+      entry: { type: "spst.listen" },
+      on: { LISTEN_COMPLETE: "Begin" },
     },
     Begin: {
       initial: "Prompt",
@@ -209,12 +209,6 @@ const dmMachine = setup({
           on: { SPEAK_COMPLETE: "Ask" }
         },
       }
-    },
-    Test: {
-      entry: { type: "spst.speak", params: ({ context }) => ({
-        utterance: `${context.question} Do you want me to create an appointment with ${context.person} on ${context.day} at ${context.time}?`,
-      }) },
-      on: { SPEAK_COMPLETE: "Done" },
     },
     Done: {
       entry: { type: "spst.speak" , params: { utterance: `Your appointment has been created!` }},
