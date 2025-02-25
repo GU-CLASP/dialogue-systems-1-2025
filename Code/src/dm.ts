@@ -4,6 +4,7 @@ import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
 
+/**https://learn.microsoft.com/en-us/azure/bot-service/bot-builder-concept-state?view=azure-bot-service-4.0 */
 const inspector = createBrowserInspector();
 
 const azureCredentials = {
@@ -25,6 +26,7 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
+  answer?: string;
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
@@ -33,8 +35,46 @@ const grammar: { [index: string]: GrammarEntry } = {
   victoria: { person: "Victoria Daniilidou" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
+  wednesday: { day: "Wednesday" },
+  thursday: { day: "Thursday" },
+  friday: { day: "Friday" },
+  saturday: { day: "Saturday" },
+  sunday: { day: "Sunday" },
+  "0": { time: "0:00" },
+  "1": { time: "1:00" },
+  "2": { time: "2:00" },
+  "3": { time: "3:00" },
+  "4": { time: "4:00" },
+  "5": { time: "5:00" },
+  "6": { time: "6:00" },
+  "7": { time: "7:00" },
+  "8": { time: "8:00" },
+  "9": { time: "9:00" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  "12": { time: "12:00" },
+  "13": { time: "13:00" },
+  "14": { time: "14:00" },
+  "15": { time: "15:00" },
+  "16": { time: "16:00" },
+  "17": { time: "17:00" },
+  "18": { time: "18:00" },
+  "19": { time: "19:00" },
+  "20": { time: "20:00" },
+  "21": { time: "21:00" },
+  "22": { time: "22:00" },
+  "23": { time: "23:00" },
+  "yes": { answer: "yes"},
+  "of course": { answer: "yes"},
+  "yeah": { answer: "yes"},
+  "sure": { answer: "yes"},
+  "ok": { answer: "yes"},
+  "okay": { answer: "yes"},
+  "no": { answer: "no" },
+  "nah": { answer: "no" },
+  "no way": { answer: "no" },
+  "no thank you": { answer: "no" },
+  "no thanks": { answer: "no" },
 };
 
 function isInGrammar(utterance: string) {
@@ -45,14 +85,20 @@ function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
 
+function getDay(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).day;
+}
+
+function getTime(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).time;
+}
+
 const dmMachine = setup({
   types: {
-    /** you might need to extend these */
     context: {} as DMContext,
     events: {} as DMEvents,
   },
   actions: {
-    /** define your actions here */
     "spst.speak": ({ context }, params: { utterance: string }) =>
       context.spstRef.send({
         type: "SPEAK",
@@ -69,6 +115,10 @@ const dmMachine = setup({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    person: '',
+    day: '',
+    time: '',
+    question: "Who are you meeting with?",
   }),
   id: "DM",
   initial: "Prepare",
@@ -78,62 +128,98 @@ const dmMachine = setup({
       on: { ASRTTS_READY: "WaitToStart" },
     },
     WaitToStart: {
-      on: { CLICK: "Greeting" },
+      /*entry: { type: "spst.listen" },*/
+      on: { CLICK: "Begin" },
     },
-    Greeting: {
+    Begin: {
       initial: "Prompt",
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && context.question == "Who are you meeting with?" && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).person != undefined,
+            actions: assign(({ context }) => {
+              return { person: getPerson(context.lastResult![0].utterance), question: "On which day is your meeting?" };
+            }),
+          },
+          {
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && context.question == "On which day is your meeting?" && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).day != undefined,
+            actions: assign(({ context }) => {
+              return { day: getDay(context.lastResult![0].utterance), question: "Will it take the whole day?" };
+            }),
+          },
+          {
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && context.question == "Will it take the whole day?" && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).answer == "yes",
+            actions: assign(({ context }) => {
+              return { question: `Do you want me to create an appointment with ${context.person} on ${context.day} for the whole day?` };
+            }),
+          },
+          {
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && context.question == "Will it take the whole day?" && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).answer == "no",
+            actions: assign({ question: "What time is your meeting?" }),
+          },
+          {
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && context.question == "What time is your meeting?" && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).time != undefined,
+            actions: assign(({ context }) => {
+              return { time: getTime(context.lastResult![0].utterance), question: `Do you want me to create an appointment with ${context.person} on ${context.day} at ${(grammar[context.lastResult![0].utterance.toLowerCase()] || {}).time}?` };
+            }),
+          },
+          {
+            target: "Done",
+            guard: ({ context }) => !!context.lastResult && (context.question == `Do you want me to create an appointment with ${context.person} on ${context.day} for the whole day?` || context.question == `Do you want me to create an appointment with ${context.person} on ${context.day} at ${context.time}?`) && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).answer == "yes",
+            actions: assign({ question: "Who are you meeting with?", person: '', day: '' }),
+          },
+          {
+            target: ".Question",
+            guard: ({ context }) => !!context.lastResult && (context.question == `Do you want me to create an appointment with ${context.person} on ${context.day} for the whole day?` || context.question == `Do you want me to create an appointment with ${context.person} on ${context.day} at ${context.time}?`) && (grammar[context.lastResult![0].utterance.toLowerCase()] || {}).answer == "no",
+            actions: assign({ question: "Who are you meeting with?", person: '', day: '' }),
           },
           { target: ".NoInput" },
         ],
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
-          on: { SPEAK_COMPLETE: "Ask" },
+          entry: { type: "spst.speak", params: { utterance: `Let's create an appointment.` } },
+          on: { SPEAK_COMPLETE: "Question" },
         },
         NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
-          },
-          on: { SPEAK_COMPLETE: "Ask" },
+          entry: { type: "spst.speak", params: ({ context }) => ({ utterance: `${context.question}` }) },
+          on: { SPEAK_COMPLETE: "Ask" }
         },
         Ask: {
           entry: { type: "spst.listen" },
           on: {
             RECOGNISED: {
-              actions: assign(({ event }) => {
+              actions: assign(({ event, context }) => {
+                console.log(context.question)
                 return { lastResult: event.value };
               }),
             },
             ASR_NOINPUT: {
               actions: assign({ lastResult: null }),
             },
-          },
+          }
         },
-      },
+        Question: {
+          entry: { type: "spst.speak", params: ({ context }) => ({ utterance: `${context.question}` }) },
+          on: { SPEAK_COMPLETE: "Ask" }
+        },
+      }
     },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
-      },
+    Test: {
+      entry: { type: "spst.speak", params: ({ context }) => ({
+        utterance: `${context.question} Do you want me to create an appointment with ${context.person} on ${context.day} at ${context.time}?`,
+      }) },
       on: { SPEAK_COMPLETE: "Done" },
     },
     Done: {
-      on: {
-        CLICK: "Greeting",
-      },
-    },
+      entry: { type: "spst.speak" , params: { utterance: `Your appointment has been created!` }},
+      on: { CLICK: "Begin", }
+    }
   },
 });
 
