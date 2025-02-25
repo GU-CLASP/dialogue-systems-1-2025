@@ -7,7 +7,7 @@ export interface DMContext {
   person: string | null | undefined;
   day: string | null | undefined;
   time: string | null | undefined;
-  currentQuestion: string | null
+  currentQuestion: boolean | null
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" } ;

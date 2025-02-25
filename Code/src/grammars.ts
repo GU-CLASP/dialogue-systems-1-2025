@@ -1,38 +1,58 @@
-interface GrammarEntry {
-    person?: string;
-    day?: string;
-    time?: string;
+const personGrammar: { [index: string]: string } = {
+    vlad: "Vladislav Maraev",
+    aya: "Nayat Astaiza Soriano",
+    victoria: "Victoria Daniilidou",
+    caroline: "Caroline Grand-Clement",
+    matteo: "Matteo" ,
+    roxana: "Roxana" ,
+};
+
+const dayGrammar: {[index: string]: string} = {
+    monday: "Monday" ,
+    tuesday: "Tuesday" ,
+    wednesday: "Wednesday" ,
+    thursday: "Thursday" ,
+    friday: "Friday" ,
+    saturday: "Saturday" ,
+    sunday: "Sunday" ,
 }
 
-export const grammar: { [index: string]: GrammarEntry } = {
-    vlad: { person: "Vladislav Maraev" },
-    aya: { person: "Nayat Astaiza Soriano" },
-    victoria: { person: "Victoria Daniilidou" },
-    caroline: {person: "Caroline Grand-Clement"},
-    matteo: { person: "Matteo" },
-    roxana: { person: "Roxana" },
-    monday: { day: "Monday" },
-    tuesday: { day: "Tuesday" },
-    wednesday: { day: "Wednesday" },
-    thursday: { day: "Thursday" },
-    friday: { day: "Friday" },
-    saturday: { day: "Saturday" },
-    sunday: { day: "Sunday" },
-    "10": { time: "10:00" },
-    "11": { time: "11:00" },
-    "11:30": { time: "11:30" },
-    "13": { time: "13:00" },
-    "14": { time: "14:00" },
-    "15:30": { time: "15:30" },
-};
+const timeGrammar: {[index: string]: string} = {
+    "10": "10:00" ,
+    "11": "11:00" ,
+    "11:30": "11:30" ,
+    "13": "13:00" ,
+    "14": "14:00" ,
+    "15:30": "15:30" ,
+}
 
 const yesNoGrammar = {
     "yes": ["yes", "of course", "sure", "yeah", "yep", "ok", "okay", "alright", "fine", "good", "great"],
     "no": ["no", "hell no", "no way", "nah", "nope", "negative", "not really", "not at all", "not sure"]
 }
 
-export function isInGrammar(utterance: string) {
-    return utterance.toLowerCase() in grammar;
+export function isInPerson(utterance: string) {
+    return utterance.toLowerCase() in personGrammar;
+}
+
+export function getPerson(utterance: string) {
+  return (personGrammar[utterance.toLowerCase()] || undefined);
+}
+
+export function isInDay(utterance: string) {
+    return utterance.toLowerCase() in dayGrammar;
+}
+
+export function getDay(utterance: string) {
+  return (dayGrammar[utterance.toLowerCase()] || undefined);
+}
+
+export function isInTime(utterance: string) {
+    return utterance.toLowerCase() in timeGrammar;
+}
+
+export function getTime(utterance: string) {
+  return (timeGrammar[utterance.toLowerCase()] || undefined);
 }
 
 export function isYes(utterance: string){
