@@ -7,7 +7,7 @@ export interface DMContext {
   name: string | null;
   day: string | null;
   time: string | null;
-  isAllDay: boolean | null;
+  response: boolean | null;
 }
 
 export type DMEvents =
