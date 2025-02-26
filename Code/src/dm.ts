@@ -101,47 +101,46 @@ negativeAnswers.forEach((response) => {
   grammar[response] = { response: "no" };
 });
 
-// #Helper functions to capture pieces of information from the user's utterance
+// Helper functions to capture pieces of information from the user's utterance
+// Function that checks both single words and combinations of words to find a match in the grammar
+
 function parseUtteranceForCategory(
   utterance: string,
   grammar: { [index: string]: GrammarEntry },
   category: keyof GrammarEntry,
 ) {
-  const words = utterance.toLowerCase().split(/\s+/);
-
+  const words = utterance.toLowerCase().split(/\s+/); // Split the utteranc into tokens
+  
+  // For loop to create different word combinations and check if they are in the grammar in the needed category
   for (let i = 0; i < words.length; i++) {
     for (let j = i + 1; j <= words.length; j++) {
       const phrase = words.slice(i, j).join(" ");
       const entry = grammar[phrase];
       if (entry && entry[category]) {
-        return entry[category];
+        return entry[category]; // Return the value of the category
       }
     }
   }
 
-  return null;
+  return null; // Return null if no match is found
 }
 
 // # Guard Functions
-const isValidGrammar = (
-  key: keyof GrammarEntry,
-  contextProperty: keyof DMContext,
-) => {
-  return ({ context }: { context: DMContext }) => {
-    const value =
-      typeof context[contextProperty] === "string"
-        ? context[contextProperty].toLowerCase()
-        : null; // Get the value from context
-    const isValid = value
-      ? Object.values(grammar).some(
-          (entry) => entry[key]?.toLowerCase() === value,
-        ) // Check if the value exists in grammar for the given key
-      : false;
 
-    return isValid;
+// Function Similar to "parseUtteranceForCategory" but it returns a boolean value and makes use of the return value of it
+
+const isValidGrammar = (contextProperty: keyof DMContext) => {
+  return ({ context }: { context: DMContext }) => {
+    return Boolean(
+      typeof context[contextProperty] === "string" &&
+        context[contextProperty].trim()
+    );
   };
 };
 
+
+
+// Function that checks if the response is valid or not by taking a param "yes" or "no" and comparing it with the response
 const isValidResponse = (expectedResponse: string) => {
   return ({ context }: { context: DMContext }) => {
     const response = context.response?.toLowerCase();
@@ -171,7 +170,6 @@ const dmMachine = setup({
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
-    lastResult: null,
     personName: null,
     meetingDate: null,
     meetingTime: null,
@@ -207,7 +205,7 @@ const dmMachine = setup({
       initial: "AskPerson",
       on: {
         LISTEN_COMPLETE: [
-          { target: "#DM.Date", guard: isValidGrammar("person", "personName") },
+          { target: "#DM.Date", guard: isValidGrammar( "personName") },
           { target: ".AskPerson" },
         ],
       },
@@ -245,7 +243,7 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: "#DM.Duration",
-            guard: isValidGrammar("day", "meetingDate"),
+            guard: isValidGrammar( "meetingDate"),
           },
           { target: ".AskDate" },
         ],
@@ -263,12 +261,12 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
+                const utterance = event.value[0]?.utterance; 
                 const day = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "day",
-                ); // Get the day from the grammar
+                );
                 return { meetingDate: day };
               }),
             },
@@ -300,12 +298,12 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
+                const utterance = event.value[0]?.utterance; 
                 const response = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "response",
-                ); // Get the response from the grammar
+                ); 
                 return { response: response };
               }),
             },
@@ -321,7 +319,7 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: "#DM.Confirmation",
-            guard: isValidGrammar("time", "meetingTime"),
+            guard: isValidGrammar( "meetingTime"),
           },
           { target: ".AskTime" },
         ],
@@ -339,12 +337,12 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
+                const utterance = event.value[0]?.utterance; 
                 const time = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "time",
-                ); // Get the time from the grammar
+                ); 
                 return { meetingTime: time };
               }),
             },
@@ -387,12 +385,12 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
+                const utterance = event.value[0]?.utterance; 
                 const response = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "response",
-                ); // Get the response from the grammar
+                ); 
                 return { response: response };
               }),
             },
