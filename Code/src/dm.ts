@@ -88,8 +88,18 @@ const semGrammar: { [index: string]: GrammarEntry } = {
   "yep": { confirmation: true },
 };
 
-function isInEntityGrammar(utterance: string) {
-  return utterance.toLowerCase() in entityGrammar || utterance.toLowerCase() in semGrammar;
+function entityRestrictedCheck(utterance: string, grammar: any,  demandedEntity: string) {
+  let arr = Object.keys(grammar).map((key) => [key, grammar[key]]);
+  arr = arr.filter((o) => o[1].hasOwnProperty(demandedEntity));
+  // console.log(arr);
+  let arr2 = arr.map((o) => o[0]);
+  // console.log(arr2)
+  return arr2.includes(utterance.toLowerCase());
+}
+
+function isInEntityOrSemGrammar(utterance: string, demandedEntity: string = "person") {
+  let demandedEnt = demandedEntity.split("_").length > 1 ? demandedEntity.split("_")[1]: demandedEntity;
+  return entityRestrictedCheck(utterance, entityGrammar, demandedEntity) || entityRestrictedCheck(utterance, semGrammar, demandedEnt);
 }
 
 function getPerson(utterance: string) {
@@ -201,7 +211,6 @@ const dmMachine = setup({
     },
     Initialize: {
       entry: [
-        // assign({ slots: ["AskPerson", "AskDay", "AskDuration", "AskConfirmation"].reverse()}),
         assign(({ context }) => {
           if(!context.hasOwnProperty("appointments")) {
             return { appointments: [] }
@@ -377,14 +386,16 @@ const dmMachine = setup({
       entry: [{
         type: "spst.speak",
         params: ({ context }) => ({
-          utterance: `The demanded entity is of type ${ context.demandedEntity }. You just said: ${context.lastResult![0].utterance}. And it ${
-            isInEntityGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
+          utterance: 
+          `The demanded entity is of type ${ context.demandedEntity }. 
+          You just said: ${context.lastResult![0].utterance}. 
+          And it ${ isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity) ? "is" : "is not"
+          } in the grammar under the given entity.`,
         }),
       }],
       on: { SPEAK_COMPLETE: [{
         target: "MeetingCreation.Router" , /**  */
-        guard: ({ context }) => isInEntityGrammar(context.lastResult![0].utterance),
+        guard: ({ context }) => isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity),
         actions: [
           "removeSlot",
           "fetchAndStoreEntity",
