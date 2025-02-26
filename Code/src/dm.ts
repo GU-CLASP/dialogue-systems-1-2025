@@ -3,6 +3,7 @@ import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
+import { isInPerson, getPerson, isInDay, getDay, isInTime, getTime, isYes, isNo } from "./grammars.ts";
 
 const inspector = createBrowserInspector();
 
@@ -21,49 +22,13 @@ const settings: Settings = {
   ttsDefaultVoice: "en-US-DavisNeural",
 };
 
-interface GrammarEntry {
-  person?: string;
-  day?: string;
-  time?: string;
+function getAffirmativeSaying(value: string, valueType: string){
+  return `You just said: ${value} and it is in the grammar for ${valueType}. ${valueType} saved.`
 }
 
-const grammar: { [index: string]: GrammarEntry } = {
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
-  matteo: { person: "Matteo Ripamonti " },
-  roxana: { person: "Roxana Dimofte" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  wednesday: { day: "Wednesday" },
-  thursday: { day: "Thursday" },
-  friday: { day: "Friday" },
-  saturday: { day: "Saturday" },
-  sunday: { day: "Sunday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
-  "11 30": { time: "11:30" },
-  "13": { time: "13:00" },
-  "14": { time: "14:00" },
-  "15 30": { time: "15:30" },
-};
-
-function isInGrammar(utterance: string) {
-  return utterance.toLowerCase() in grammar;
+function getNegativeSaying(value: string, valueType: string){
+  return `You just said: ${value} and it is not in the grammar for ${valueType}.` 
 }
-
-function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
-}
-
-function getDay(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).day;
-}
-
-function getTime(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).time;
-}
-
 
 const dmMachine = setup({
   types: {
@@ -84,11 +49,27 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
+    "save_person": function ({ context }){
+      context.person = getPerson(context.lastResult![0].utterance.split(" ")[0]);
+      context.lastResult = null;
+    },
+    "save_day": function ({ context }){
+      context.day = getDay(context.lastResult![0].utterance.split(" ")[0]);
+      context.lastResult = null;
+    },
+    "save_time": function ({ context }){
+      context.time = getTime(context.lastResult![0].utterance.split(" ")[0]);
+      context.lastResult = null;
+    }
   },
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    person: null,
+    day: null,
+    time: null,
+    currentQuestion: null
   }),
   id: "DM",
   initial: "Prepare",
@@ -101,33 +82,32 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
+      id: "Greeting",
       entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
       on: { SPEAK_COMPLETE: "Questions"}
     },
-    Questions: {
-      initial: "PersonPrompt",
+    Listening: {
+      initial: "Ask",
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
+            target: "#Questions.Question_Again",
             guard: ({ context }) => !!context.lastResult,
           },
-          { target: ".NoInput" },
+          { target: "#NoInput" },
         ],
       },
       states: {
-        PersonPrompt: {
-          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
         NoInput: {
+          id: "NoInput",
           entry: {
             type: "spst.speak",
             params: { utterance: `I can't hear you!` },
           },
-          on: { SPEAK_COMPLETE: "Ask" },
+          on: { SPEAK_COMPLETE: "#Questions.Question_Again" },
         },
         Ask: {
+          id: "Ask",
           entry: { type: "spst.listen" },
           on: {
             RECOGNISED: {
@@ -142,20 +122,217 @@ const dmMachine = setup({
         },
       },
     },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
+    Questions: {
+      id: "Questions",
+      initial: "PersonQuestion",
+      states: {
+        Question_Again: {
+          type: "history",
+          history: "shallow",
+          target: "PersonQuestion"
+        },
+        PersonQuestion: {
+          id: "PersonQuestion",
+          initial: "Start",
+          states: {
+            Start: {
+              always: [
+                {
+                  target: "PersonPrompt",
+                  guard: ({ context }) => context.lastResult == null,
+                  },
+                { target: "CheckPerson" },
+              ],
+            },
+            PersonPrompt: {
+              entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+              on: { SPEAK_COMPLETE: "#Ask" },
+            },
+            CheckPerson: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ({
+                  utterance: isInPerson(context.lastResult![0].utterance.split(" ")[0]) ? 
+                              getAffirmativeSaying(context.lastResult![0].utterance, "Person") 
+                              : getNegativeSaying(context.lastResult![0].utterance, "Person"), 
+                }),
+              },
+              on: { SPEAK_COMPLETE: [
+                {
+                  actions: "save_person",
+                  target: "#DayQuestion",
+                  guard: ({ context }) => isInPerson(context.lastResult![0].utterance.split(" ")[0])
+                },
+                { target: "PersonPrompt" }]
+              },
+            },
+          },
+        },
+        DayQuestion: {
+          id: "DayQuestion",
+          initial: "Start",
+          states: {
+            Start: {
+              always: [
+                {
+                  target: "DayPrompt",
+                  guard: ({ context }) => context.lastResult == null,
+                  },
+                { target: "CheckDay" },
+              ],
+            },
+            DayPrompt: {
+              entry: { type: "spst.speak", params: { utterance: "On which day is your meeting?" } },
+              on: { SPEAK_COMPLETE: "#Ask" },
+            },
+            CheckDay: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ({
+                  utterance: isInDay(context.lastResult![0].utterance.split(" ")[0]) ? 
+                              getAffirmativeSaying(context.lastResult![0].utterance, "Day") 
+                              : getNegativeSaying(context.lastResult![0].utterance, "Day"), 
+                }),
+              },
+              on: { SPEAK_COMPLETE: [
+                  {
+                    actions: "save_day",
+                    target: "#WholeDayQuestion",
+                    guard: ({ context }) => isInDay(context.lastResult![0].utterance.split(" ")[0]),
+                  },
+                  { target: "DayPrompt" }]
+                },
+            },
+          },
+        },
+        WholeDayQuestion: {
+          id: "WholeDayQuestion",
+          initial: "Start",
+          states: {
+            Start: {
+              always: [
+                {
+                  target: "WholePrompt",
+                  guard: ({ context }) => context.lastResult == null,
+                  },
+                { target: "CheckWholeDay" },
+              ],
+            },
+            WholePrompt: {
+              entry: { type: "spst.speak", params: { utterance: "Will it take the whole day?" } },
+              on: { SPEAK_COMPLETE: "#Ask" },
+            },   
+            CheckWholeDay: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ({
+                  utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+                    isYes(context.lastResult![0].utterance.split(" ")[0]) || isNo(context.lastResult![0].utterance.split(" ")[0]) ? "is" : "is not"
+                  } in the grammar.`,
+                }),
+              },
+              on: { SPEAK_COMPLETE: [
+                { actions: assign({ lastResult: null }),
+                  target: "#TimeQuestion",
+                  guard: ({ context }) => isNo(context.lastResult![0].utterance.split(" ")[0]),
+                },
+                { actions: assign({ lastResult: null }),
+                  target: "#Confirm",
+                  guard: ({ context }) => isYes(context.lastResult![0].utterance.split(" ")[0]),
+                },
+                { target: "WholePrompt" }]
+              },
+            }, 
+          },
+        },
+        TimeQuestion: {
+          id: "TimeQuestion",
+          initial: "Start",
+          states: {
+            Start: {
+              always: [
+                {
+                  target: "TimePrompt",
+                  guard: ({ context }) => context.lastResult == null,
+                  },
+                { target: "CheckTime" },
+              ],
+            },
+            TimePrompt: {
+              entry: { type: "spst.speak", params: { utterance: "Which time is your meeting?" } },
+              on: { SPEAK_COMPLETE: "#Ask" },
+            },
+            CheckTime: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ({
+                  utterance: isInTime(context.lastResult![0].utterance.split(" ")[0]) ? 
+                              getAffirmativeSaying(context.lastResult![0].utterance, "Time") 
+                              : getNegativeSaying(context.lastResult![0].utterance, "Time"), 
+                }),
+              },
+              on: { SPEAK_COMPLETE: [
+                  {
+                    actions: "save_time",
+                    target: "#Confirm",
+                    guard: ({ context }) => isInTime(context.lastResult![0].utterance.split(" ")[0]),
+                  },
+                  { target: "TimePrompt" }]
+                },
+            },
+          },
+        },
+        Confirm:{ 
+          id: "Confirm",
+          initial: "Start",
+          states: {
+            Start: {
+              always: [
+                {
+                  target: "ConfirmPrompt",
+                  guard: ({ context }) => context.lastResult == null,
+                  },
+                { target: "CheckConfirm" },
+              ],
+            },
+            ConfirmPrompt: {
+              entry: { type: "spst.speak", 
+                params: ({ context }) => ({
+                  utterance: `Do you want to create an appointment with ${context.person} on ${context.day} ${context.time == null ? "for the whole day" : "at" + context.time}?`,
+                }),
+              },
+              on: { SPEAK_COMPLETE: "#Ask" },
+            },
+            CheckConfirm: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ({
+                  utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+                    isYes(context.lastResult![0].utterance.split(" ")[0]) || isNo(context.lastResult![0].utterance.split(" ")[0]) ? "is" : "is not"
+                  } in the grammar.`,
+                }),
+              },
+              on: { SPEAK_COMPLETE: [
+                {
+                  actions: assign({ lastResult: null, person: null, day: null, time: null }),
+                  target: "#Greeting",
+                  guard: ({ context }) => isNo(context.lastResult![0].utterance.split(" ")[0]),
+                },
+                {
+                  target: "#Done",
+                  guard: ({ context }) => isYes(context.lastResult![0].utterance.split(" ")[0]),
+                },
+                { target: "ConfirmPrompt" }]
+              },
+            }, 
+          },
+        },
       },
-      on: { SPEAK_COMPLETE: "Done" },
     },
-    Done: {
-      on: {
-        CLICK: "Greeting",
+    Done: { 
+      id: "Done",
+      entry: {
+        type: "spst.speak", params : {utterance: "Your appointment has been created. Thank you for using our service."}
       },
     },
   },
