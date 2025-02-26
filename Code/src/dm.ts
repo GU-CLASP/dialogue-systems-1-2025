@@ -25,6 +25,7 @@ interface GrammarEntry {
   person?: string;
   day?: string;
   time?: string;
+  response?: string;
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
@@ -35,6 +36,10 @@ const grammar: { [index: string]: GrammarEntry } = {
   tuesday: { day: "Tuesday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  yes: { response: "Yes" },
+  no: { response: "No" },
+  "of course": { response: "Of course" },
+  "no way": { response: "No way" },
 };
 
 function isInGrammar(utterance: string) {
@@ -69,6 +74,10 @@ const dmMachine = setup({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    name: null,
+    day: null,
+    time: null,
+    isAllDay: null,
   }),
   id: "DM",
   initial: "Prepare",
@@ -82,56 +91,114 @@ const dmMachine = setup({
     },
     Greeting: {
       initial: "Prompt",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
-          on: { SPEAK_COMPLETE: "Ask" },
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `Hi! Let's create an appointment.` },
+          },
+          on: { SPEAK_COMPLETE: "AskName" },
         },
         NoInput: {
           entry: {
             type: "spst.speak",
             params: { utterance: `I can't hear you!` },
           },
-          on: { SPEAK_COMPLETE: "Ask" },
+          on: { SPEAK_COMPLETE: "AskName" },
         },
-        Ask: {
-          entry: { type: "spst.listen" },
+        AskName: {
           on: {
             RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
+              actions: assign(({ event, context }) => {
+                const name = getPerson(event.value);
+                return { name: name || null };
               }),
+              target: "AskWhen",
             },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
+            ASR_NOINPUT: { target: "AskName" },
+          },
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `Who are you meeting with?` },
           },
         },
-      },
-    },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
-      },
-      on: { SPEAK_COMPLETE: "Done" },
-    },
-    Done: {
-      on: {
-        CLICK: "Greeting",
+        AskWhen: {
+          on: {
+            RECOGNISED: {
+              actions: assign(({ event, context }) => {
+                const day = grammar[event.value.toLowerCase()]?.day;
+                return { day: day || null };
+              }),
+              target: "AskDuration",
+            },
+            ASR_NOINPUT: { target: "AskWhen" },
+          },
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `On which day is your meeting?` },
+          },
+        },
+        AskDuration: {
+          on: {
+            RECOGNISED: {
+              actions: assign(({ event, context }) => {
+                const response = grammar[event.value.toLowerCase()]?.response;
+                if (response === "Yes" || response === "Of course") {
+                  return { isAllDay: true };
+                } else if (response === "No" || response === "No way") {
+                  return { isAllDay: false };
+                }
+                return {};
+              }),
+              target: "ConfirmAppointment",
+            },
+            ASR_NOINPUT: { target: "AskDuration" },
+          },
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `Will it take a whole day?` },
+          },
+        },
+        ConfirmAppointment: {
+          on: {
+            RECOGNISED: {
+              actions: assign(({ event, context }) => {
+                const response = grammar[event.value.toLowerCase()]?.response;
+                if (response === "Yes" || response === "Of course") {
+                  return {
+                    lastResult: null,
+                    name: context.name,
+                    day: context.day,
+                    isAllDay: context.isAllDay,
+                    time: context.time,
+                  };
+                } else {
+                  return { name: null, day: null, time: null, isAllDay: null };
+                }
+              }),
+              target: "AppointmentCreated",
+            },
+            ASR_NOINPUT: { target: "ConfirmAppointment" },
+          },
+          entry: ({ context }) => {
+            const { name, day, isAllDay } = context;
+            const timeMessage = isAllDay
+              ? `for the whole day`
+              : `at ${context.time}`;
+            context.spstRef.send({
+              type: "SPEAK",
+              value: {
+                utterance: `Do you want me to create an appointment with ${name} on ${day} ${timeMessage}?`,
+              },
+            });
+          },
+        },
+        AppointmentCreated: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `Your appointment has been created.` },
+          },
+        },
       },
     },
   },
@@ -154,7 +221,7 @@ export function setupButton(element: HTMLButtonElement) {
   });
   dmActor.subscribe((snapshot) => {
     const meta: { view?: string } = Object.values(
-      snapshot.context.spstRef.getSnapshot().getMeta(),
+      snapshot.context.spstRef.getSnapshot().getMeta()
     )[0] || {
       view: undefined,
     };
