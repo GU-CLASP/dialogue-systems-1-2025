@@ -3,15 +3,13 @@ import { AnyActorRef } from "xstate";
 
 export interface DMContext {
   spstRef: AnyActorRef;
-  lastResult: Hypothesis[] | null;
-  personName: string | null;
+  personName: String | null;
   meetingDate: string | null;
   meetingTime: string | null;
   response: string | null;
   confirmationMessage: string | null;
 }
 
-// Assuming SpeechStateExternalEvent is defined or imported
 export type DMEvents =
   | SpeechStateExternalEvent
   | { type: "CLICK" }
