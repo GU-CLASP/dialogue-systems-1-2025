@@ -1,0 +1,23 @@
+How do people do repair in text based chat?
+Using examples from the transcripts of the balloon task moral dilemma Download balloon task moral dilemma, discuss how the way people do visible repair (self-repair and clarification requests) is different in text-based chats compared to in face-to-face dialogue. Consider:
+Do they use particular words/phrases or symbols to indicate they are doing a self-repair or clarification?
+What types of repairables are there and do they all get repaired?
+How are they placed in terms of turns?
+
+1) Repair in text-based chat
+
+An example of use of symbols to signify repair in text-based chats is the use of the asterisk, such as in Group 1, lines 17-18. P2 writes "What do you think?" and then immediately afterwards "*about his wife". This is a specification that could happen after a short pause in face-to-face dialogue, possibly accompanied by some body language. This is similar to the situation in Group 3, lines 7-8, when P1 says "we can do them in order; pros for the doctor?" followed directly by "of throwing him out", to specify the common ground they are operating on, as there could be ambiguity as whether the pros are of saving or killing the doctor.
+Another example of repair needed is on possible typos; in Group 2, lines 16-20, P2 realizes that the child is a girl and not a boy; they try to correct themself after this realization because of P1's turn on line 17, but writes a typo, and so writes a couple more messages to correct the typo; this kind of situation might be more common in text-based chat rather than face-to-face, as typos seem more common than mispronunciations. 
+There is another example of common ground repair Group 3, lines 13-16; P2 starts by saying the doctor has cancer in line 13, and in line 14 P1 corrects them, then goes on with agreeing with another point on line 15, before P2 corrects themself and apologizes for "misunderstanding the context" on line 16. In text-based chat, the turns are not negotiated like in face-to-face, where P1 might've not continued with another point before P2's repair. 
+
+
+
+Dialogue capabilities of current LLMs and SDSs
+A short discussion of which features of dialogue the tested systems are good/bad at, with examples. Consider:
+What are the differences in different dialogue domains/contexts?
+What prompts make the response more or less like human-human dialogue?
+Which features that are currently not well accounted for would or would not be desirable in a dialogue system? Why?
+
+
+Using Copilot, the turn-taking is very fixed - one can't send a new message until the system has responded. This makes repair or specifications difficult. Its responses are often long, and ending on multiple questions to further the conversation, like (after talking about how the day is going) "Do you have any plans for the rest of the day, or are you taking it easy? Perhaps there's a hobby or interest you're into that we could chat about?", which would be odd for human-human conversations, as it would make the conversation feel one-sided. We can also see that when talking about light topics (football, embroidering) its responses include emojis, while there are none in its responses to more serious topics (like the shooting in Örebro), which can reflect human use of emojis in text-based chats as well. However, trying to get it to have more natural short responses is hard, as even when prompted to "talk like 15 year olds gossiping", its responses are still long and grammatical, though the vocabulary changes. 
+For a dialogue system used in a game for example, it would be important for the system to be able to adopt different ways of talking not just through vocabulary, but also through changing the type of responses, or speed of turns. Not being able to interrupt is in my opinion a big issue, as it creates obstacles to self-repair. 
