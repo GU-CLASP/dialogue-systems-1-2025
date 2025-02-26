@@ -3,6 +3,7 @@ import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
+import Fuse from 'fuse.js';
 
 const inspector = createBrowserInspector();
 
@@ -88,18 +89,34 @@ const semGrammar: { [index: string]: GrammarEntry } = {
   "yep": { confirmation: true },
 };
 
-function entityRestrictedCheck(utterance: string, grammar: any,  demandedEntity: string) {
+function entityRestrictedCheck(utterance: string, grammar: any,  demandedEntity: string, context: DMContext) {
   let arr = Object.keys(grammar).map((key) => [key, grammar[key]]);
   arr = arr.filter((o) => o[1].hasOwnProperty(demandedEntity));
   // console.log(arr);
   let arr2 = arr.map((o) => o[0]);
   // console.log(arr2)
+  // Put fuzzy matching here
+  arr2 = matchFuzzy(utterance, arr2);
+  console.log(`Retrieved fuzzy items: ${ arr2 }`);
+  // set to utterance to first matched fuzzy item
+  if (arr2.length > 0) {
+    utterance = arr2[0];
+    context.lastResult![0].utterance = utterance;
+  }
   return arr2.includes(utterance.toLowerCase());
 }
 
-function isInEntityOrSemGrammar(utterance: string, demandedEntity: string = "person") {
+function matchFuzzy(utterance:string, items: string[]) {
+  const fuse = new Fuse(items, {
+    threshold: 0.3,
+  }); 
+  const results = fuse.search(utterance).map((result) => result.item);
+  return results;
+}
+
+function isInEntityOrSemGrammar(utterance: string, demandedEntity: string = "person", context: DMContext) {
   let demandedEnt = demandedEntity.split("_").length > 1 ? demandedEntity.split("_")[1]: demandedEntity;
-  return entityRestrictedCheck(utterance, entityGrammar, demandedEntity) || entityRestrictedCheck(utterance, semGrammar, demandedEnt);
+  return entityRestrictedCheck(utterance, entityGrammar, demandedEntity, context) || entityRestrictedCheck(utterance, semGrammar, demandedEnt, context);
 }
 
 function getPerson(utterance: string) {
@@ -389,13 +406,13 @@ const dmMachine = setup({
           utterance: 
           `The demanded entity is of type ${ context.demandedEntity }. 
           You just said: ${context.lastResult![0].utterance}. 
-          And it ${ isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity) ? "is" : "is not"
+          And it ${ isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity, context) ? "is" : "is not"
           } in the grammar under the given entity.`,
         }),
       }],
       on: { SPEAK_COMPLETE: [{
         target: "MeetingCreation.Router" , /**  */
-        guard: ({ context }) => isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity),
+        guard: ({ context }) => isInEntityOrSemGrammar(context.lastResult![0].utterance, context.demandedEntity, context),
         actions: [
           "removeSlot",
           "fetchAndStoreEntity",
