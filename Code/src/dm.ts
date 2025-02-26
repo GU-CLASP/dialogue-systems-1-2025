@@ -98,15 +98,6 @@ negativeAnswers.forEach((response) => {
 
 // #Helper functions to capture pieces of information from the user's utterance
 
-// Capture person's name
-function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
-}
-
-// Capture day of the week/Date
-function getDate(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).day;
-}
 
 
 // # End of helper functions
