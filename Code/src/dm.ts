@@ -101,23 +101,26 @@ negativeAnswers.forEach((response) => {
   grammar[response] = { response: "no" };
 });
 
-// Helper function to parse the utterance and return the right piece of grammar
-function parseUtteranceForCategory(utterance: string, grammar: { [index: string]: GrammarEntry }, category: keyof GrammarEntry) {
+// #Helper functions to capture pieces of information from the user's utterance
+function parseUtteranceForCategory(
+  utterance: string,
+  grammar: { [index: string]: GrammarEntry },
+  category: keyof GrammarEntry,
+) {
   const words = utterance.toLowerCase().split(/\s+/);
-  
+
   for (let i = 0; i < words.length; i++) {
     for (let j = i + 1; j <= words.length; j++) {
-      const phrase = words.slice(i, j).join(' ');
+      const phrase = words.slice(i, j).join(" ");
       const entry = grammar[phrase];
       if (entry && entry[category]) {
         return entry[category];
       }
     }
   }
-  
+
   return null;
 }
-
 
 // # Guard Functions
 const isValidGrammar = (
@@ -175,7 +178,6 @@ const dmMachine = setup({
     response: null,
     confirmationMessage: null,
   }),
-
   id: "DM",
   initial: "Prepare",
   states: {
@@ -183,9 +185,11 @@ const dmMachine = setup({
       entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
       on: { ASRTTS_READY: "WaitToStart" },
     },
+
     WaitToStart: {
       on: { CLICK: "Greeting" },
     },
+
     Greeting: {
       initial: "Prompt",
       states: {
@@ -198,6 +202,7 @@ const dmMachine = setup({
         },
       },
     },
+
     Person: {
       initial: "AskPerson",
       on: {
@@ -219,7 +224,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance;
+                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
                 const person = parseUtteranceForCategory(
                   utterance,
                   grammar,
@@ -228,13 +233,12 @@ const dmMachine = setup({
                 return { personName: person };
               }),
             },
-            ASR_NOINPUT: {
-              actions: assign({ personName: null }),
-            },
+            ASR_NOINPUT: { actions: assign({ personName: null }) },
           },
         },
       },
     },
+
     Date: {
       initial: "AskDate",
       on: {
@@ -259,22 +263,21 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance;
-                const date = parseUtteranceForCategory(
+                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
+                const day = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "day",
-                );
-                return { meetingDate: date };
+                ); // Get the day from the grammar
+                return { meetingDate: day };
               }),
             },
-            ASR_NOINPUT: {
-              actions: assign({ meetingDate: null }),
-            },
+            ASR_NOINPUT: { actions: assign({ meetingDate: null }) },
           },
         },
       },
     },
+
     Duration: {
       initial: "AskDuration",
       on: {
@@ -297,22 +300,21 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance;
+                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
                 const response = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "response",
-                );
-                return { meetingTime: response };
+                ); // Get the response from the grammar
+                return { response: response };
               }),
             },
-            ASR_NOINPUT: {
-              actions: assign({ meetingTime: null }),
-            },
+            ASR_NOINPUT: { actions: assign({ response: null }) },
           },
         },
       },
     },
+
     Time: {
       initial: "AskTime",
       on: {
@@ -337,22 +339,21 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance;
+                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
                 const time = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "time",
-                );
+                ); // Get the time from the grammar
                 return { meetingTime: time };
               }),
             },
-            ASR_NOINPUT: {
-              actions: assign({ meetingTime: null }),
-            },
+            ASR_NOINPUT: { actions: assign({ meetingTime: null }) },
           },
         },
       },
     },
+
     Confirmation: {
       initial: "AskConfirmation",
       entry: assign({ response: null }),
@@ -386,19 +387,21 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                const utterance = event.value[0]?.utterance;
+                const utterance = event.value[0]?.utterance; // Extract the recognized utterance
                 const response = parseUtteranceForCategory(
                   utterance,
                   grammar,
                   "response",
-                );
+                ); // Get the response from the grammar
                 return { response: response };
               }),
             },
+            ASR_NOINPUT: { actions: assign({ response: null }) },
           },
         },
       },
     },
+
     ConfirmationDone: {
       entry: {
         type: "spst.speak",
@@ -406,6 +409,7 @@ const dmMachine = setup({
       },
       on: { SPEAK_COMPLETE: "Done" },
     },
+
     Done: {
       on: { CLICK: "#DM.Greeting" },
     },
