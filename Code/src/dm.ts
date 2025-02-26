@@ -114,6 +114,12 @@ const isValidGrammar = (key: keyof GrammarEntry, contextProperty: keyof DMContex
   };
 };
 
+const isValidResponse = (expectedResponse: string) => {
+  return ({ context }: { context: DMContext }) => {
+    const response = context.response?.toLowerCase();
+    return response === expectedResponse;
+  };
+};
 
 
 
