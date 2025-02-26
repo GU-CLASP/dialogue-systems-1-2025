@@ -101,6 +101,22 @@ negativeAnswers.forEach((response) => {
   grammar[response] = { response: "no" };
 });
 
+// Helper function to parse the utterance and return the right piece of grammar
+function parseUtteranceForCategory(utterance: string, grammar: { [index: string]: GrammarEntry }, category: keyof GrammarEntry) {
+  const words = utterance.toLowerCase().split(/\s+/);
+  
+  for (let i = 0; i < words.length; i++) {
+    for (let j = i + 1; j <= words.length; j++) {
+      const phrase = words.slice(i, j).join(' ');
+      const entry = grammar[phrase];
+      if (entry && entry[category]) {
+        return entry[category];
+      }
+    }
+  }
+  
+  return null;
+}
 
 
 // # Guard Functions
