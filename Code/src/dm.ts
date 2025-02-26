@@ -103,24 +103,7 @@ negativeAnswers.forEach((response) => {
 // # End of helper functions
 
 // # Guard Functions
-// Check if the Name is in the grammar
-const isValidPerson = ({ context }: { context: DMContext }) => {
-  const person = context.personName?.toLowerCase(); 
-  const isValid = person
-    ? Object.values(grammar).some(entry => entry.person?.toLowerCase() === person) 
-    : false;
-  
-  return isValid;
-};
 
-//Check if Date is in the grammar
-
-const isValidDate = ({ context }: { context: DMContext }) => {
-  const date = context.meetingDate?.toLowerCase(); // Normalize to lowercase for comparison
-  const isValid = date ? !!grammar[date] : false; // Check if the date exists in the grammar
-  console.log("Checking if date is valid:", date, isValid); // Debugging log
-  return isValid;
-};
 
 
 const dmMachine = setup({
