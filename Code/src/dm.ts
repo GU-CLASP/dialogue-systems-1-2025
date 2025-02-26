@@ -93,7 +93,7 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `Hello, let's make an appointment!` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -103,10 +103,14 @@ const dmMachine = setup({
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
+
+        
+        
+
         Ask: {
           entry: { type: "spst.listen" },
           on: {
-            RECOGNISED: {
+            "RECOGNISED": {
               actions: assign(({ event }) => {
                 return { lastResult: event.value };
               }),
@@ -116,12 +120,56 @@ const dmMachine = setup({
             },
           },
         },
+        
+        AskName: {
+          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+          on: {
+            "RECOGNISED": {
+              actions: assign(({ event }) => {
+                return { lastResult: event.value };
+              }),
+            },
+          },
+        },
+
+
+        AskDay: {
+          entry: { type: "spst.speak", params: { utterance: `What day are you meeting?` } },
+          on: {
+            "RECOGNISED": {
+              actions: assign(({ event }) => { 
+                return { lastResult: event.value };
+              }),
+            },
+          },  
+        },
+        AskAllDay: {
+          entry: { type: "spst.speak", params: { utterance: `What day are you meeting?` } },
+          on: {
+            "RECOGNISED": {
+              actions: assign(({ event }) => { 
+                return { lastResult: event.value };
+              }),
+            },
+          },  
+        },
+        AskTime: {
+          entry: { type: "spst.speak", params: { utterance: `What time are you meeting?` } },
+          on: {
+            "RECOGNISED": {
+              actions: assign(({ event }) => { 
+                return { lastResult: event.value };
+              }),
+            },
+          },  
+        },
       },
     },
+
     CheckGrammar: {
       entry: {
         type: "spst.speak",
-        params: ({ context }) => ({
+        params: ({ context }: { context: DMContext }) => ({
           utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
             isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
           } in the grammar.`,
