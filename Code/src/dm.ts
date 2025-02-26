@@ -34,7 +34,9 @@ const grammar: { [index: string]: GrammarEntry } = {
   victoria: { person: "Victoria Daniilidou" },
   cristina: {person: "Cristina"},
   emilia: {person:"Emilia"},
-  diana:{person:"Diana"}
+  diana:{person:"Diana"},
+  today: { day: "today" },
+  tomorrow: { day: "tomorrow" },
 
 };
 
