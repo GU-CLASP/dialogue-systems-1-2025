@@ -7,6 +7,8 @@ export interface DMContext {
   personName: string | null;
   meetingDate: string | null;
   meetingTime: string | null;
+  response: string | null;
+  confirmationMessage: string | null;
 }
 
 // Assuming SpeechStateExternalEvent is defined or imported
@@ -15,6 +17,6 @@ export type DMEvents =
   | { type: "CLICK" }
   | { type: "ASRTTS_READY" }
   | { type: "SPEAK_COMPLETE" }
-  | { type: "RECOGNISED"; value: { utterance: string }[] }
+  | { type: "RECOGNISED"; value: Hypothesis[] }
   | { type: "ASR_NOINPUT" }
   | { type: "LISTEN_COMPLETE" };
