@@ -103,6 +103,18 @@ negativeAnswers.forEach((response) => {
 // # End of helper functions
 
 // # Guard Functions
+const isValidGrammar = (key: keyof GrammarEntry, contextProperty: keyof DMContext) => {
+  return ({ context }: { context: DMContext }) => {
+    const value = typeof context[contextProperty] === 'string' ? context[contextProperty].toLowerCase() : null;  // Get the value from context
+    const isValid = value
+      ? Object.values(grammar).some(entry => entry[key]?.toLowerCase() === value)  // Check if the value exists in grammar for the given key
+      : false;
+    console.log(`Checking if ${key} is valid for ${contextProperty}:`, value, isValid);  // Debugging log
+    return isValid;
+  };
+};
+
+
 
 
 
