@@ -27,611 +27,665 @@ interface GrammarEntry {
   time?: string;
   whole?: string;
   decision?: string;
-  menu?: string;
-  intent: string;
-  entities: {
-    [index: string]: string;
-  };
-};
-
+}
 
 const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
+  mela: { person: "Mihaela Goga" },
+  andrei: { person: "Andrei Pely" },
+  klaus: { person: "Klaus Iohannis" },
+  luca: { person: "Luca Toni" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
+  wednesday: { day: "Wednesday" },
+  thursday: { day: "Thursday" },
+  friday: { day: "Friday" },
+  saturday: { day: "Saturday" },
+  sunday: { day: "Sunday" },
+  "8 am": { time: "08:00 AM" },
+  "9 am": { time: "09:00 AM" },
+  "10 am": { time: "10:00 AM" },
+  "11 am": { time: "11:00 AM" },
+  "12 pm": { time: "12:00 PM" },
+  "1 pm": { time: "1:00 PM" },
+  "2 pm": { time: "2:00 PM" },
+  "3 pm": { time: "3:00 PM" },
+  "4 pm": { time: "4:00 PM" },
+  "5 pm": { time: "5:00 PM" },
+  "6 pm": { time: "6:00 PM" },
+  "7 pm": { time: "7:00 PM" },
+  "8 pm": { time: "8:00 PM" },
+  "9 pm": { time: "9:00 PM" },
+  "10 pm": { time: "10:00 PM"},
+  "11 pm": { time: "11:00 PM"},
+  noon: { time: "12:00 PM" },
+  midday: { time: "12:00 PM" },
+  midnight: { time: "12:00 AM" },
+  "whole day": { whole: "yes" },
+  "all day": { whole: "yes" },
+  "full day": { whole: "yes" },
+  yes: { decision: "yes" }, 
+  yeah: { decision: "yes" },
+  "of course": { decision: "yes" },
+  "sure": { decision: "yes" },
+  "definitely": { decision: "yes" },
+  "absolutely": { decision: "yes" },
+  no: { decision: "no" },
+  neh: { decision: "no" },
+  "no way": { decision: "no" },
+  "nope": { decision: "no" },
+  "not really": { decision: "no" },
+};
 
-  "karoake night": {
-    intent: "None",
-    entities: { title: "Karaoke night" },
-  },
-  lunch: {
-    intent: "None",
-    entities: { title: "Lunch at Mercado" },
-  },
-  "on friday": {
-    intent: "None",
-    entities: { day: "Friday" },
-  },
-  "at 8:00 am": {
-    intent: "None",
-    entities: { time: "8:00 AM" },
-  },
-  "at 9:00 am": {
-    intent: "None",
-    entities: { time: "9:00 AM" },
-  },
-  "at 10:00 am": {
-    intent: "None",
-    entities: { time: "10:00 AM" },
-  },
-  "at 11:00 am": {
-    intent: "None",
-    entities: { time: "11:00 AM" },
-  },
-  "at noon": {
-    intent: "None",
-    entities: { time: "12:00 PM" },
-  },
-  "at 12:00 am": {
-    intent: "None",
-    entities: { time: "12:00 PM" },
-  },
-  "at 1:00 pm": {
-    intent: "None",
-    entities: { time: "1:00 PM" },
-  },
-  "at 2:00 pm": {
-    intent: "None",
-    entities: { time: "2:00 PM" },
-  },
-  "at 3:00 pm": {
-    intent: "None",
-    entities: { time: "3:00 PM" },
-  },
-  "at 4:00 pm": {
-    intent: "None",
-    entities: { time: "4:00 PM" },
-  },
-  "at 5:00 pm": {
-    intent: "None",
-    entities: { time: "5:00 PM" },
-  },
-  "at 6:00 pm": {
-    intent: "None",
-    entities: { time: "6:00 PM" },
-  },
-  "at 7:00 pm": {
-    intent: "None",
-    entities: { time: "7:00 PM" },
-  },
-  "on monday": {
-    intent: "None",
-    entities: { day: "Monday" },
-  },
-  "on tuesday": {
-    intent: "None",
-    entities: { day: "Tuesday" },
-  },
-  "on wednesday": {
-    intent: "None",
-    entities: { day: "Wednesday" },
-  },
-  "on thursday": {
-    intent: "None",
-    entities: { day: "Thursday" },
-  },
-  "on saturday": {
-    intent: "None",
-    entities: { day: "Saturday" },
-  },
-  "on sunday": {
-    intent: "None",
-    entities: { day: "Sunday" },
-  },
-  "yes": {
-    intent: "None",
-    entities: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-  },
-  "no": {
-    intent: "None",
-    entities: { whole: "No", decision: "No", meeting: "No" },
-  },
-  "create a meeting": {
-    intent: "None",
-    entities: { menu: "meeting" },
-
-    yes: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-    yeah: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-    yep: { whole: "Yes", decision: "Yes", meeting: "Yes" },
-    no: { whole: "No", decision: "No", meeting: "No" },
-    nope: { whole: "No", decision: "No", meeting: "No" },
-    "create a meeting": { menu: "meeting" },
-    "set up a meeting": { menu: "meeting" },
-    "book a meeting": { menu: "meeting" },
-  };
+function isInGrammar(utterance: string) {
+  return utterance.toLowerCase() in grammar;
+}
 
 
+function isNo(utterance: string): boolean {
+  return getDecision(utterance) === "no";
+}
+
+function isYes(utterance: string): boolean {
+  return getDecision(utterance) === "yes";
+}
+
+function getPerson(utterance: string) {
+  return grammar[utterance.toLowerCase()]?.person || null;
+}
+
+function getDay(utterance: string) {
+  return grammar[utterance.toLowerCase()]?.day || null;
+}
+
+function getTime(utterance: string) {
+  return grammar[utterance.toLowerCase()]?.time || null;
+}
+
+function getDecision(utterance: string) {
+  return grammar[utterance.toLowerCase()]?.decision || null;
+}
 
 
+function personIsInGrammar(utterance: string): boolean {
+  return getPerson(utterance) !== null;
+}
 
+function dayIsInGrammar(utterance: string): boolean {
+  return getDay(utterance) !== null;
+}
 
-  function isInGrammar(utterance: string) {
-    return utterance.toLowerCase() in grammar;
-  }
-
-
-  // function for getEntity
-  function getEntity(utterance: string, entityType: keyof GrammarEntry) { // <--- Function Definition
-    return (grammar[utterance.toLowerCase()] || {})[entityType];
-  }
-  
-
- function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
- }
-
+function timeIsInGrammar(utterance: string): boolean {
+  return getTime(utterance) !== null;
+}
 const dmMachine = setup({
   types: {
-    /** you might need to extend these */
     context: {} as DMContext,
     events: {} as DMEvents,
   },
   actions: {
     /** define your actions here */
-    actions: {
-      "spst.speak": ({ context }, params: { utterance: string }) =>
-        context.spstRef.send({
-          type: "SPEAK",
-          value: {
-            utterance: params.utterance,
-          },
-        }),
-      },
-
-      "spst.listen": ({ context }) =>
-        context.spstRef.send({
-          type: "LISTEN",
-        }),
-
-      "assignMeetingPartner": assign(({ event }) => {
-        const utterance = event.value[0].utterance;
-        return { meetingPartnerName: getEntity(utterance, 'person') || utterance };
-      }),
-      "assignMeetingDay": assign(({ event }) => {
-        const utterance = event.value[0].utterance;
-        return { meetingDay: getEntity(utterance, 'day') || utterance };
-      }),
-      "assignMeetingTime": assign(({ event }) => {
-        const utterance = event.value[0].utterance;
-        return { meetingTime: getEntity(utterance, 'time') || utterance };
-      }),
-      "assignWholeDay": assign(({ event }) => {
-        const utterance = event.value[0].utterance;
-        return { wholeDayAppointment: getEntity(utterance, 'whole') === 'Yes' };
-      }),
-      "assignDecision": assign(({ event }) => {
-        const utterance = event.value[0].utterance;
-        return { finalDecision: getEntity(utterance, 'decision') === 'Yes' };
-      }),
-
-      "clearContext": assign({
-        meetingPartnerName: null,
-        meetingDay: null,
-        meetingTime: null,
-        wholeDayAppointment: false,
-        finalDecision: false,
-        lastResult: null,
-      }),
-
+    "spst.speak": ({ context }, params: { utterance: string }) => {
+      console.log("spst.speak action CALLED:", params.utterance);
+      context.spstRef.send({
+        type: "SPEAK",
+        value: {
+          utterance: params.utterance,
+        },
+      });
     },
+    "spst.listen": ({ context }) =>
+      context.spstRef.send({
+        type: "LISTEN",
+      }),
 
-  }).createMachine({
-    context: ({ spawn }): DMContext => ({
-      spstRef: spawn(speechstate, { input: settings }),
-      lastResult: null,
+    "clearLastResult": assign({ lastResult: null }),
+    "clearMeetingDetails": assign({
       meetingPartnerName: null,
       meetingDay: null,
       meetingTime: null,
-      wholeDayAppointment: false,
-      finalDecision: false
-
+      isWholeDay: false,
+      confirmationDecision: null,
     }),
-    id: "DM",
-    initial: "Prepare",
-    states: {
-      Prepare: {
-        entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
-        on: { ASRTTS_READY: "WaitToStart" },
-      },
-      WaitToStart: {
-        on: { CLICK: "Greeting" },
-      },
-      Greeting: {
-        initial: "Prompt",
-        on: {
-          LISTEN_COMPLETE: [
-            {
-              target: "AskMenu",
-              guard: ({ context }) => !!context.lastResult && isInGrammar(context.lastResult![0].utterance),
-            },
-            { target: ".NoInput" },
-          ],
-        },
-        states: {
-          Prompt: {
-            entry: { type: "spst.speak", params: { utterance: `Welcome to the Appoitment setter! Would you like to create a meeting` } },
-            on: { SPEAK_COMPLETE: "Ask" },
-          },
-          NoInput: {
-            entry: {
-              type: "spst.speak",
-              params: { utterance: `I can't hear you!` },
-            },
-            on: { SPEAK_COMPLETE: "Ask" },
-          },
-          Ask: {
-            entry: { type: "spst.listen" },
-            on: {
-              RECOGNISED: {
-                actions: assign(({ event }) => {
-                  return { lastResult: event.value };
-                }),
-              },
-              ASR_NOINPUT: {
-                actions: assign({ lastResult: null }),
-              },
-            },
-          },
-        },
-      },
 
-      CheckGrammar: {
-        entry: {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-              } in the grammar.`,
-          }),
-        },
-        on: { SPEAK_COMPLETE: "Done" },
-      },
-      Done: {
-        on: {
-          CLICK: "Greeting",
-        },
-      },
-    },
-  });
+    "assignLastResult": assign(({ event }) => {
+      if ('value' in event) {
+        return { lastResult: event.value };
+      }
+      return {};
+    }),
 
-AskMenu: { 
-    entry: {
-      type: "spst.speak",
-      params: { utterance: `What do you want to do? You can say "Create a meeting".` },
-    },
-    initial: "Prompt",
-    states: {
-      Prompt: {
-        on: { SPEAK_COMPLETE: "ListenForMenu" },
-      },
-      ListenForMenu: {
-        entry: { type: "spst.listen" },
-        on: {
-          RECOGNISED: [
-            {
-              target: "#DM.info_meeting",
-              cond: ({ event }) => getEntity(event.value[0].utterance, "menu") === "meeting",
-            },
-            {
-              target: ".NoInputMenu",
-            },
-          ],
-          ASR_NOINPUT: { target: ".NoInputMenu" },
-        },
-      },
-      NoInputMenu: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: `Sorry, I didn't catch that. You can say "Create a meeting" to book an appointment.` },
-        },
-        on: { SPEAK_COMPLETE: "ListenForMenu" },
-      },
-    },
+    "assignMeetingPartnerName": assign(({ context }) => {
+      const utterance = context.lastResult?.[0]?.utterance;
+      return utterance ? { meetingPartnerName: getPerson(utterance) || utterance } : {};
+    }),
+    "assignMeetingDay": assign(({ context }) => {
+      const utterance = context.lastResult?.[0]?.utterance;
+      return utterance ? { meetingDay: getDay(utterance) || utterance } : {};
+    }),
+    "assignMeetingTime": assign(({ context }) => {
+      const utterance = context.lastResult?.[0]?.utterance;
+      return utterance ? { meetingTime: getTime(utterance) || utterance } : {};
+    }),
+    "assignIsWholeDay": assign(({ context }) => {
+      if (context.lastResult && context.lastResult.length > 0) {
+        const utterance = context.lastResult[0].utterance;
+        return { isWholeDay: isYes(utterance) };
+      }
+      return {};
+    }),
+    "assignConfirmationDecision": assign(({ context }) => {
+      if (context.lastResult && context.lastResult.length > 0) {
+        const utterance = context.lastResult[0].utterance;
+        return { confirmationDecision: getDecision(utterance) };
+      }
+      return {};
+    }),
   },
-
-  info_meeting: {
-    entry: {
-      type: "spst.speak",
-      params: { utterance: "OK, let's create a meeting. Who are you meeting with?" },
-    },
-    on: { SPEAK_COMPLETE: "getName" },
-  },
-  getName: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: { type: "spst.speak", params: { utterance: "Who are you meeting with?" } },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, I didn't catch the name. Could you repeat it?" },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-    },
-    on: {
-      RECOGNISED: [
-        {
-          target: "info_name",
-          actions: "assignMeetingPartner",
-          cond: ({ event }) => !!getEntity(event.value[0].utterance, "person") || !!event.value[0].utterance,
-        },
-        {
-          target: ".nomatch",
-        },
-      ],
-      TIMEOUT: ".prompt",
-    },
-  },
-
-  info_name: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `OK, meeting with ${context.meetingPartnerName}. On which day is your meeting?`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "day" },
-  },
-  day: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: { type: "spst.speak", params: { utterance: "On which day is it?" } },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, I don't understand which day you are referring to." },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-    },
+  guards: {
+    hasLastResult: ({ context }) => 
+      context.lastResult !== null && context.lastResult.length > 0,
     
-    on: {
-      RECOGNISED: [
-        {
-          target: "info_day",
-          actions: "assignMeetingDay",
-          cond: ({ event }) => !!getEntity(event.value[0].utterance, "day") || !!event.value[0].utterance,
+    isInGrammar: ({ context }) => 
+      context.lastResult !== null && 
+      context.lastResult.length > 0 && 
+      isInGrammar(context.lastResult[0].utterance),
+    
+    
+    personIsInGrammar: ({ context }) => 
+      context.lastResult !== null && 
+      context.lastResult.length > 0 && 
+      getPerson(context.lastResult[0].utterance) !== null,
+    
+    dayIsInGrammar: ({ context }) => 
+      context.lastResult !== null && 
+      context.lastResult.length > 0 && 
+      getDay(context.lastResult[0].utterance) !== null,
+    
+    timeIsInGrammar: ({ context }) => 
+      context.lastResult !== null && 
+      context.lastResult.length > 0 && 
+      getTime(context.lastResult[0].utterance) !== null,
+    
+    decisionIsInGrammar: ({ context }) => 
+      context.lastResult !== null && 
+      context.lastResult.length > 0 && 
+      getDecision(context.lastResult[0].utterance) !== null,
+      
+    confirmationIsYes: ({ context }) => 
+      context.confirmationDecision === "yes",
+      
+    confirmationIsNo: ({ context }) => 
+      context.confirmationDecision === "no",
+  
+  }
+  
+  
+}).createMachine({
+  context: ({ spawn }) : DMContext => ({
+    spstRef: spawn(speechstate, { input: settings }),
+    lastResult: null,
+    meetingPartnerName: null,
+    meetingDay: null,
+    meetingTime: null,
+    isWholeDay: null,       
+    confirmationDecision: null
+  }),
+
+  id: "DM",
+  initial: "Prepare",
+  states: {
+    Prepare: {
+      entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
+      on: { ASRTTS_READY: "WaitToStart" },
+    },
+    WaitToStart: {
+      on: { CLICK: "Greeting" },
+    },
+    Greeting: {
+      initial: "Prompt",
+      on: {
+        LISTEN_COMPLETE: [
+          {
+            target: "AskWho",
+            guard: "hasLastResult",
+          },
+          { target: ".NoInput" },
+        ],
+      },
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: `Welcome to the Appointment setter! May I have your name?` } },
+          on: { SPEAK_COMPLETE: "Ask" },
         },
-        {
-          target: ".nomatch",
+        NoInput: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `I can't hear you!` },
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: {
+              actions: "assignLastResult",
+            },
+            ASR_NOINPUT: {
+              actions: "clearLastResult",
+            },
+          },
+        },
+      },
+    },
+  
+    AskWho: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: "Nice to meet you.Who are you meeting with?" } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignMeetingPartnerName"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: { utterance: "I didn't hear anything. Who are you meeting with?" } 
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({ 
+              utterance: `I don't recognize ${context.lastResult![0].utterance} in my database. Please choose someone else.` 
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Confirmation: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({
+              utterance: `I've noted down ${context.meetingPartnerName}.`
+            })
+          },
+          on: { SPEAK_COMPLETE: "#DM.AskDay" },
+        },
+      },
+       on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              !personIsInGrammar(context.lastResult[0].utterance)
+          },
+          {
+            target: ".Confirmation",
+            guard: "personIsInGrammar"
+          },
+          {
+            target: ".NoInput"
+          }
+        ],
+        CHILD_DONE: "AskDay"
+      },
+    },
+    AskDay: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: "On which day is your meeting?" } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignMeetingDay"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: { utterance: "I didn't hear anything. On which day is your meeting?" } 
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({ 
+              utterance: `I don't recognize ${context.lastResult![0].utterance} as a valid day. Please choose a day of the week.` 
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Confirmation: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({
+              utterance: `You are meeting with ${context.meetingPartnerName} on ${context.meetingDay}.`
+            })
+          },
+          on: { SPEAK_COMPLETE: "#DM.AskWholeDay" },
+        },
+    
+      },
+      on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              !dayIsInGrammar(context.lastResult[0].utterance)
+          },
+          {
+            target: ".Confirmation",
+            guard: "dayIsInGrammar"
+          },
+          {
+            target: ".NoInput"
+          }
+        ],
+        CHILD_DONE: "AskWholeDay"
+      },
+    },
+    AskWholeDay: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: "Will it take the whole day?" } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignIsWholeDay", "assignConfirmationDecision"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: { utterance: "I didn't hear it. Will it take the whole day?" } 
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: "I didn't understand. Please answer yes or no." }
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        }
+      },
+      on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              getDecision(context.lastResult[0].utterance) === null
+          },
+          {
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              isYes(context.lastResult[0].utterance),
+            target: "ConfirmAppointmentWholeDay"
+          },
+          {
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              isNo(context.lastResult[0].utterance),
+            target: "AskTime"
+          },
+          {
+            target: ".NoInput"
+          }
+        ]
+      },
+    },
+    AskTime: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: "What time is your meeting?" } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignMeetingTime"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: { utterance: "I didn't hear anything. What time is your meeting?" } 
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({ 
+              utterance: `I don't recognize ${context.lastResult![0].utterance} as a valid time. Please choose a time like 3 pm or 11 am.` 
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Confirmation: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({
+              utterance: `You said ${context.meetingTime}.`
+            })
+          },
+          on: { SPEAK_COMPLETE: "#DM.ConfirmAppointment" },
+        }
+      },
+      on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              !timeIsInGrammar(context.lastResult[0].utterance)
+          },
+          {
+            target: ".Confirmation",
+            guard: "timeIsInGrammar"
+          },
+          {
+            target: ".NoInput"
+          }
+        ],
+        CHILD_DONE: "ConfirmAppointment"
+      },
+    },
+    ConfirmAppointment: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { 
+            type: "spst.speak", 
+            params: ({ context }) => ({
+              utterance: `Do you want me to create an appointment with ${context.meetingPartnerName} on ${context.meetingDay} at ${context.meetingTime}?`
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignConfirmationDecision"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: ({ context }) => ({ 
+              utterance: `I didn't hear anything. Do you want me to create an appointment with ${context.meetingPartnerName} on ${context.meetingDay} at ${context.meetingTime}?` 
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: "I didn't understand. Please answer yes or no." }
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        }
+      },
+      on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              getDecision(context.lastResult[0].utterance) === null
+          },
+          {
+            guard: "confirmationIsYes",
+            target: "AppointmentCreated"
+          },
+          {
+            guard: "confirmationIsNo",
+            target: "AppointmentCanceled"
+          },
+          {
+            target: ".NoInput"
+          }
+        ]
+      },
+    },
+    ConfirmAppointmentWholeDay: {
+      initial: "Prompt",
+      states: {
+        Prompt: {
+          entry: { 
+            type: "spst.speak", 
+            params: ({ context }) => ({
+              utterance: `Do you want me to create an appointment with ${context.meetingPartnerName} on ${context.meetingDay} for the whole day?`
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: { actions: ["assignLastResult", "assignConfirmationDecision"] },
+            ASR_NOINPUT: {
+              target: "NoInput",
+              actions: "clearLastResult"
+            },
+          },
+        },
+        NoInput: {
+          entry: { 
+            type: "spst.speak", 
+            params: ({ context }) => ({ 
+              utterance: `I didn't hear anything. Do you want me to create an appointment with ${context.meetingPartnerName} on ${context.meetingDay} for the whole day?` 
+            })
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NotInGrammar: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: "I didn't understand. Please answer yes or no." }
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        }
+      },
+      on: { 
+        LISTEN_COMPLETE: [
+          {
+            target: ".NotInGrammar",
+            guard: ({ context }) => 
+              context.lastResult !== null && 
+              context.lastResult.length > 0 && 
+              getDecision(context.lastResult[0].utterance) === null
+          },
+          {
+            guard: "confirmationIsYes",
+            target: "AppointmentCreated"
+          },
+          {
+            guard: "confirmationIsNo",
+            target: "AppointmentCanceled"
+          },
+          {
+            target: ".NoInput"
+          }
+        ]
+      },
+    },
+    AppointmentCreated: {
+      entry: [
+        { 
+          type: "spst.speak", 
+          params: ({ context }) => {
+            const timeInfo = context.isWholeDay 
+              ? "for the whole day" 
+              : `at ${context.meetingTime}`;
+            
+            return { utterance: `Your appointment with ${context.meetingPartnerName} on ${context.meetingDay} ${timeInfo} has been created! Goodbye and have a wonderful day` };
+          }
         },
       ],
-      TIMEOUT: ".prompt",
+      on: { SPEAK_COMPLETE: "Done" },
     },
-  },
-  info_day: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `OK, ${context.meetingDay}. Will it take the whole day?`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "whole" },
-  },
-  whole: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: { type: "spst.speak", params: { utterance: "Will it take the whole day?" } },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, I don't understand your answer. Please answer yes or no." },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-    },
-    on: {
-      RECOGNISED: [
-        {
-          target: "info_whole",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "whole") === "Yes",
-          actions: "assignWholeDay",
-        },
-        {
-          target: "info_whole_no",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "whole") === "No",
-          actions: "assignWholeDay",
-        },
-        {
-          target: ".nomatch",
-        },
+    AppointmentCanceled: {
+      entry: [
+        { type: "spst.speak", params: { utterance: "I can not create the appointment. Let's start again." } },
+        "clearMeetingDetails"
       ],
-      TIMEOUT: ".prompt",
+      on: { SPEAK_COMPLETE: "Greeting" },
     },
-  },
-  info_whole_no: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `OK, not the whole day. What time is your meeting?`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "time" },
-  },
-  time: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: { type: "spst.speak", params: { utterance: "What time is your meeting?" } },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, I don't understand what time you are referring to." },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
+    Done: {
+      on: {
+        CLICK: "Greeting",
       },
     },
-    on: {
-      RECOGNISED: [
-        {
-          target: "final_time_ask",
-          actions: "assignMeetingTime",
-          cond: ({ event }) => !!getEntity(event.value[0].utterance, "time") || !!event.value[0].utterance,
-        },
-        {
-          target: ".nomatch",
-        },
-      ],
-      TIMEOUT: ".prompt",
-    },
   },
-  final_time_ask: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `Do you want me to create a meeting with ${context.meetingPartnerName} on ${context.meetingDay} at ${context.meetingTime}?`,
-          }),
-        },
-        on: { ENDSPEECH: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, please confirm again if you want to create the meeting." },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-    },
-    on: {
-      RECOGNISED: [
-        {
-          target: "info_final_ask",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "Yes",
-          actions: "assignDecision",
-        },
-        {
-          target: "idle",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "No",
-          actions: "assignDecision",
-        },
-        {
-          target: ".nomatch",
-        },
-      ],
-      TIMEOUT: ".prompt",
-    },
-  },
-  info_whole: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `OK, i understdoo ! Whole day meeting.`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "final_ask" },
-  },
-  final_ask: {
-    initial: "prompt",
-    states: {
-      prompt: {
-        entry: {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `Do you want me to create a meeting with ${context.meetingPartnerName} on ${context.meetingDay} for the whole day?`,
-          }),
-        },
-        on: { ENDSPEECH: "ask" },
-      },
-      ask: {
-        entry: { type: "spst.listen" },
-      },
-      nomatch: {
-        entry: {
-          type: "spst.speak",
-          params: { utterance: "Sorry, please confirm again if you want to create the meeting (yes or no)." },
-        },
-        on: { SPEAK_COMPLETE: "ask" },
-      },
-    },
-    on: {
-      RECOGNISED: [
-        {
-          target: "info_final_ask",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "Yes",
-          actions: "assignDecision",
-        },
-        {
-          target: "idle",
-          cond: ({ event }) => getEntity(event.value[0].utterance, "decision") === "No",
-          actions: "assignDecision",
-        },
-        {
-          target: ".nomatch",
-        },
-      ],
-      TIMEOUT: ".prompt",
-    },
-  },
-  info_final_ask: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `OK, I'll take that as ${context.finalDecision ? 'yes' : 'no'}.`,
-      }),
-    },
-    on: { ENDSPEECH: "final_prompt" },
-  },
-  final_prompt: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `Your meeting has been created!`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "idle" },
-  },
-  failure: {
-    entry: {
-      type: "spst.speak",
-      params: ({ context }) => ({
-        utterance: `I'm sorry, there was an issue creating the appointment. We can start over`,
-      }),
-    },
-    on: { SPEAK_COMPLETE: "menu" },
-  },
-},
+});
+
 
 const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
@@ -650,7 +704,7 @@ export function setupButton(element: HTMLButtonElement) {
   });
   dmActor.subscribe((snapshot) => {
     const meta: { view?: string } = Object.values(
-      snapshot.context.spstRef.getSnapshot().getMeta(),
+      snapshot.context.spstRef.getSnapshot().getMeta()
     )[0] || {
       view: undefined,
     };
