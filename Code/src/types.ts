@@ -20,4 +20,5 @@ export type DMEvents =
   | {type: "SPEAK_COMPLETE"}
   | {type: "RECOGNISED"; value: Hypothesis[]}
   | {type: "ASR_NOINPUT"}
-  | {type: "LISTEN_COMPLETE"};
+  | {type: "LISTEN_COMPLETE"}
+  | {type: "DONE"};
