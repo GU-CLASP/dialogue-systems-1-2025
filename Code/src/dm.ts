@@ -28,6 +28,7 @@ interface GrammarEntry {
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
+<<<<<<< HEAD
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
@@ -36,6 +37,47 @@ const grammar: { [index: string]: GrammarEntry } = {
   "10": { time: "10:00" },
   "11": { time: "11:00" },
 };
+=======
+    vlad: { person: "Vladislav Maraev" },
+    aya: { person: "Nayat Astaiza Soriano" },
+    vanessa: { person: "Vanessa Vanzan" },
+    tal: { person: "Talha Bedir" },
+    anna: { person: "Ana Paula Carvalho" },
+    fernanda: { person: "Fernanda Torres" },
+    bob : { person: "Bob Smith" },
+  
+    monday: { day: "Monday" },
+    tuesday: { day: "Tuesday" },
+    wednesday: { day: "Wednesday" },
+    thursday: { day: "Thursday" },
+    friday: { day: "Friday" },
+  
+    9: { time: "9 am" },
+    10: { time: "10 am" },
+    11: { time: "11 am" },
+    13: { time: "13 pm" },
+    14: { time: "14 pm" },
+    15: { time: "15 pm" },
+    16: { time: "16 pm" },
+    17: { time: "17 pm" },
+    18: { time: "18 pm" },
+    19: { time: "19 pm" },
+    20: { time: "20 pm" },
+    21: { time: "21 pm" },
+  
+    yes: { confirm: "yes" },
+    sure: { confirm: "yes" },
+    okay: { confirm: "yes" },
+    ok: { confirm: "yes" },
+    ofcourse: { confirm: "yes" },
+    absolutely: { confirm: "yes" },
+  
+    no: { confirm: "no" },
+    nope: { confirm: "no" },
+    noway: { confirm: "no" },
+    never: { confirm: "no" },
+  };
+>>>>>>> aa51ff5 (Atualizando dm.ts - Correção para Lab 2)
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
