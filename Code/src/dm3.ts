@@ -19,6 +19,7 @@ const settings: Settings = {
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
   ttsDefaultVoice: "en-US-DavisNeural",
+  speechRecognitionEndpointId: "9fb1d792-feb6-47ef-aac9-ec2e46998109",
 };
 
 interface GrammarEntry {
