@@ -406,7 +406,7 @@ const dmMachine = setup({
  
     Done: {
       on: {
-        CLICK: "MeetingPerson",
+        CLICK: "WaitToStart",
       },
     },
   },
