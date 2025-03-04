@@ -1,0 +1,18 @@
+<!--
+Link to reference: https://www.youtube.com/watch?v=Sum6A2enC6s&ab_channel=TheJoelCook
+-->
+
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
+    <voice name="en-US-OnyxTurboMultilingualNeural">
+        <mstts:express-as role="OlderAdultMale" style="serious">
+            <prosody rate="-15.00%">
+                My name is Ozymandias, King of Kings;
+                Look on my Works, ye Mighty, and despair!
+                Nothing beside remains.
+                Round the decay of that colossal Wreck,
+                boundless and bare
+                The lone and level sands stretch far away.
+            </prosody>
+        </mstts:express-as>
+    </voice>
+</speak>
