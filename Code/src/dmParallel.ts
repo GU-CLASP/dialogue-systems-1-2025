@@ -18,7 +18,7 @@ const settings: Settings = {
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
-  ttsDefaultVoice: "sv-SE-MattiasNeural",
+  ttsDefaultVoice: "en-US-DavisNeural",
 };
 
 interface GrammarEntry {
@@ -65,11 +65,14 @@ const dmMachine = setup({
         type: "LISTEN",
       }),
   },
+  delays: {
+    READ_THE_INSTRUCTION: 5000,
+  },
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
-    nextUtterance: "",
+    nextUtterance: "Hello and welcome!",
   }),
   id: "DM",
   initial: "Prepare",
@@ -78,64 +81,63 @@ const dmMachine = setup({
       entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
       on: { ASRTTS_READY: "WaitToStart" },
     },
+
+    /** Timers example*/
+    ReadTheInstruction: {
+      after: {
+        READ_THE_INSTRUCTION: { target: "WaitToStart" },
+      },
+    },
     WaitToStart: {
-      on: { CLICK: "Greeting" },
+      on: { CLICK: "Main" },
     },
-    Greeting: {
-      initial: "Prompt",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
+
+    Main: {
+      type: "parallel",
       states: {
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `I'm ready to listen!` } },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
-          },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        Ask: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
+        Control: {
+          initial: "Prompt",
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => {
+                  const utt = context.nextUtterance;
+                  return {
+                    utterance: utt,
+                  };
+                },
+              },
+              on: { SPEAK_COMPLETE: "Ask" },
             },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
+            Ask: {
+              entry: { type: "spst.listen" },
+              on: { LISTEN_COMPLETE: "Prompt" },
             },
           },
         },
-      },
-    },
-    CheckGrammar: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => {
-          const utterance = context.lastResult && context.lastResult.length > 0  ? context.lastResult[0].utterance  : "";
-          alert(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
-          console.log(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
-          return {
-            utterance: `Preparing...`,
-          };
+        Logic: {
+          initial: "Greeting",
+          states: {
+            Greeting: {
+              on: { RECOGNISED: "Colour", SPEAK_COMPLETE: "#DM.WaitToStart" },
+            },
+            Colour: {
+              entry: assign({ nextUtterance: "Tell me the colour." }),
+              on: { RECOGNISED: "Shape" },
+            },
+            Shape: {
+              entry: assign({ nextUtterance: "Tell me the shape." }),
+              on: { RECOGNISED: "ThankYou" },
+            },
+            ThankYou: {
+              entry: [
+                assign({ nextUtterance: "Thank You!" }),
+                raise({ type: "DONE" }),
+              ],
+            },
+          },
         },
-      },
-      on: { SPEAK_COMPLETE: "Greeting" },
-    },
-    Done: {
-      on: {
-        CLICK: "Greeting",
       },
     },
   },

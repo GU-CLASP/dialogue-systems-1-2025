@@ -18,7 +18,7 @@ const settings: Settings = {
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
-  ttsDefaultVoice: "sv-SE-MattiasNeural",
+  ttsDefaultVoice: "en-US-DavisNeural",
 };
 
 interface GrammarEntry {
@@ -65,11 +65,13 @@ const dmMachine = setup({
         type: "LISTEN",
       }),
   },
+  delays: {
+    READ_THE_INSTRUCTION: 5000,
+  },
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
-    nextUtterance: "",
   }),
   id: "DM",
   initial: "Prepare",
@@ -78,65 +80,104 @@ const dmMachine = setup({
       entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
       on: { ASRTTS_READY: "WaitToStart" },
     },
-    WaitToStart: {
-      on: { CLICK: "Greeting" },
+
+    /** Timers example*/
+    ReadTheInstruction: {
+      after: {
+        READ_THE_INSTRUCTION: { target: "WaitToStart" },
+      },
     },
-    Greeting: {
-      initial: "Prompt",
+    WaitToStart: {
+      on: { CLICK: "Main" },
+    },
+
+    NoInput: {
+      entry: {
+        type: "spst.speak",
+        params: { utterance: `I can't hear you!` },
+      },
+      on: { SPEAK_COMPLETE: "Main.hist" },
+    },
+
+    Main: {
+      initial: "Colour",
       on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
+        RECOGNISED: {
+          actions: assign(({ event }) => {
+            return { lastResult: event.value };
+          }),
+        },
+        ASR_NOINPUT: {
+          actions: assign({ lastResult: null }),
+        },
+        LISTEN_COMPLETE: {
+          target: "NoInput",
+          guard: ({ context }) => !context.lastResult,
+        },
       },
       states: {
-        Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `I'm ready to listen!` } },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
-          },
-          on: { SPEAK_COMPLETE: "Ask" },
-        },
-        Ask: {
-          entry: { type: "spst.listen" },
+        hist: { type: "history", history: "deep" },
+        Colour: {
+          initial: "Prompt",
           on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
+            LISTEN_COMPLETE: {
+              target: "Shape",
+              guard: ({ context }) => !!context.lastResult,
             },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
+          },
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `Tell me the colour.` },
+              },
+              on: { SPEAK_COMPLETE: "Ask" },
             },
+            Ask: {
+              entry: { type: "spst.listen" },
+            },
+          },
+        },
+        Shape: {
+          initial: "Prompt",
+          on: {
+            LISTEN_COMPLETE: {
+              target: "Done",
+              guard: ({ context }) => !!context.lastResult,
+            },
+          },
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `Tell me the shape.` },
+              },
+              on: { SPEAK_COMPLETE: "Ask" },
+            },
+            Ask: {
+              entry: { type: "spst.listen" },
+            },
+          },
+        },
+
+        Done: {
+          on: {
+            CLICK: "Colour",
           },
         },
       },
     },
+
     CheckGrammar: {
       entry: {
         type: "spst.speak",
-        params: ({ context }) => {
-          const utterance = context.lastResult && context.lastResult.length > 0  ? context.lastResult[0].utterance  : "";
-          alert(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
-          console.log(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
-          return {
-            utterance: `Preparing...`,
-          };
-        },
+        params: ({ context }) => ({
+          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
+            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
+          } in the grammar.`,
+        }),
       },
-      on: { SPEAK_COMPLETE: "Greeting" },
-    },
-    Done: {
-      on: {
-        CLICK: "Greeting",
-      },
+      // on: { SPEAK_COMPLETE: "Done" },
     },
   },
 });

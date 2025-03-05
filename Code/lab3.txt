@@ -1,0 +1,33 @@
+The original performance: https://www.youtube.com/watch?v=4AWJBMawRZk
+01:35 is the verse that I have simulated via Azure TTS in this project
+01:15 in this video is the chorus 
+
+For B-VG, I have employed another language other than English, customized voices with SSML intonation(prosody), pitch, break and rate has been handled via Audacity to sync with the background audio and simulated the original duet by using two different voices. I have worked with a total of four artificial Azure audio:
+
+verse:
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"3e7c9283-5b48-4bf8-acec-ec7e4a51828c","Name":"Microsoft Server Speech Text to Speech Voice (tr-TR, AhmetNeural)","ShortName":"tr-TR-AhmetNeural","Locale":"tr-TR","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"tr-TR":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="tr-TR"><voice name="tr-TR-AhmetNeural"><prosody contour="(20%, -100%) (40%, -100%) (60%, +99%) (80%, -100%) (100%, +98%)">akarsular</prosody><prosody contour="(0%, -100%) (99%, +91%)"> bu bahçelerde</prosody><prosody contour="(21%, -100%) (41%, -100%) (59%, +98%) (80%, -100%) (100%, +93%)"> kurtulur</prosody><prosody contour="(1%, -100%) (99%, +83%)"> zebanilerden</prosody><prosody contour="(21%, -96%) (40%, -100%) (62%, +99%) (80%, -100%) (100%, +95%)"> akmayan</prosody><prosody contour="(0%, -94%) (100%, +93%)"> suyu bile çölde</prosody><prosody contour="(20%, -100%) (40%, -98%) (60%, +98%) (80%, -100%) (99%, +98%)"> çeşmeler</prosody><prosody contour="(1%, +98%) (100%, -100%)"> var her bi yerde</prosody><prosody contour="(0%, -54%) (49%, +98%) (100%, -97%)"> bul</prosody><break time="1ms" /> <prosody contour="(1%, +98%) (99%, -98%)">olmaya çalış bi</prosody><prosody contour="(0%, -48%) (51%, +99%) (100%, -96%)"> kul</prosody><break time="1ms" /> <prosody contour="(0%, +99%) (99%, -97%)">istediğimiz yekti</prosody><prosody contour="(0%, -50%) (52%, +99%) (100%, -86%)"> sulh</prosody><break time="1ms" /> <prosody contour="(1%, +98%) (100%, -98%)">olmasın altında</prosody><prosody contour="(9%, -52%) (49%, +99%) (100%, -96%)"> çul</prosody><break time="1ms" /> <prosody contour="(1%, +99%) (99%, -100%)">olmasın paran ve</prosody><prosody contour="(1%, -51%) (49%, +98%) (100%, -94%)"> pul</prosody> gene de <prosody volume="x-loud" pitch="high" contour="(0%, +95%) (100%, -100%)">gül</prosody> bikez be bi kere <prosody volume="x-loud" pitch="high" contour="(0%, +99%) (99%, -98%)">gül</prosody> ve senede bir de olsa <prosody volume="x-loud" pitch="high" contour="(0%, +99%) (100%, -97%)">gül</prosody> bu çölde yeşerir elbet, savaş biterve biz de sınırın ortasında kaybolur gider de sözlerimizi ve, repimizi, <prosody contour="(16%, +99%) (34%, -59%) (55%, -77%) (84%, +94%) (98%, +95%)">miras bırakırız yeter!</prosody></voice></speak>
+
+verse_back_vocals:
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"5b30688a-af74-410e-9b92-a65882a76ab6","Name":"Microsoft Server Speech Text to Speech Voice (tr-TR, EmelNeural)","ShortName":"tr-TR-EmelNeural","Locale":"tr-TR","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"tr-TR":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="tr-TR"><voice name="tr-TR-EmelNeural"><prosody contour="(72%, +99%) (99%, -98%)">Bul</prosody>, <prosody contour="(77%, +96%) (99%, -93%)">Kul</prosody>, <prosody contour="(75%, +96%) (99%, -97%)">Sulh</prosody>, <prosody contour="(81%, +98%) (100%, -96%)">Çul</prosody>, <prosody contour="(73%, +96%) (100%, -96%)">Pul</prosody>, <prosody contour="(78%, +99%) (100%, -93%)">Gül</prosody></voice></speak>
+
+chorus:
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"5b30688a-af74-410e-9b92-a65882a76ab6","Name":"Microsoft Server Speech Text to Speech Voice (tr-TR, EmelNeural)","ShortName":"tr-TR-EmelNeural","Locale":"tr-TR","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"tr-TR":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="tr-TR"><voice name="tr-TR-EmelNeural"><prosody contour="(1%, -96%) (28%, -97%) (51%, +99%) (98%, +95%)">fincan kahvem</prosody><break time="2ms" /><prosody contour="(1%, -94%) (55%, -98%) (90%, +52%)">hatrına</prosody><prosody contour="(0%, +74%) (28%, +69%) (59%, -30%) (99%, -44%)"> saydım,</prosody><prosody contour="(1%, +32%) (48%, +33%) (61%, -29%) (80%, +70%) (100%, -88%)"> bir yudumluk, aşkım deli sarhoş</prosody>, <prosody contour="(32%, -51%) (49%, +96%) (67%, +48%) (80%, +7%) (100%, +49%)">komplo orduların gardiyanları</prosody>, <prosody contour="(1%, +94%) (36%, +99%) (66%, +44%) (84%, +87%) (99%, -42%)">neyim var ki</prosody><prosody contour="(20%, -92%) (63%, +93%) (98%, +90%)"> repten</prosody><prosody contour="(1%, -51%) (62%, -9%) (84%, +89%) (98%, +82%)"> gaaa riiii</prosody></voice></speak>
+
+chorus_back_vocals:
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"3e7c9283-5b48-4bf8-acec-ec7e4a51828c","Name":"Microsoft Server Speech Text to Speech Voice (tr-TR, AhmetNeural)","ShortName":"tr-TR-AhmetNeural","Locale":"tr-TR","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"tr-TR":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="tr-TR"><voice name="tr-TR-AhmetNeural"><prosody contour="(2%, -67%) (27%, -59%) (49%, -56%) (71%, +15%) (98%, -56%)">aşkım deli sarhoşş</prosody></voice></speak>
