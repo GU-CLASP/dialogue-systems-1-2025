@@ -18,7 +18,7 @@ const settings: Settings = {
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
-  ttsDefaultVoice: "en-US-DavisNeural",
+  ttsDefaultVoice: "sv-SE-MattiasNeural",
 };
 
 interface GrammarEntry {
@@ -69,6 +69,7 @@ const dmMachine = setup({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
+    nextUtterance: "",
   }),
   id: "DM",
   initial: "Prepare",
@@ -93,7 +94,7 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `I'm ready to listen!` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -121,13 +122,16 @@ const dmMachine = setup({
     CheckGrammar: {
       entry: {
         type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
+        params: ({ context }) => {
+          const utterance = context.lastResult && context.lastResult.length > 0  ? context.lastResult[0].utterance  : "";
+          alert(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
+          console.log(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
+          return {
+            utterance: `Preparing...`,
+          };
+        },
       },
-      on: { SPEAK_COMPLETE: "Done" },
+      on: { SPEAK_COMPLETE: "Greeting" },
     },
     Done: {
       on: {
