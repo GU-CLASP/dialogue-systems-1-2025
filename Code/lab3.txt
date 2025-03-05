@@ -1,0 +1,21 @@
+<!--delete this comment if code dose not work, I did the b-vg part here, reference is here: https://www.youtube.com/watch?v=jIfK809B0Qs&t=64s-->
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"8b8dfa1b-b07b-4fa8-b47f-c90666bc2488","Name":"Microsoft Server Speech Text to Speech Voice (en-US, AndrewMultilingualNeural)","ShortName":"en-US-AndrewMultilingualNeural","Locale":"en-US","VoiceType":"StandardVoice"},{"Id":"39947851-46d7-4561-8199-2fd8bdc49ba6","Name":"Microsoft Server Speech Text to Speech Voice (zh-CN, YunjianNeural)","ShortName":"zh-CN-YunjianNeural","Locale":"zh-CN","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"en-US":{"AutoApplyCustomLexiconFiles":[{}]},"zh-CN":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US"><voice name="en-US-AndrewMultilingualNeural"><mstts:express-as style="empathetic"><lang xml:lang="en-US">
+<p>
+        <emphasis level="strong">Do not go gentle</emphasis> into that good night... 
+        <break time="800ms" />  
+        Old age should burn <prosody pitch="+1st">and rave</prosody> at close of day... 
+        <break time="800ms" />  
+        <emphasis level="moderate">Rage, rage</emphasis> against the dying of the light.
+      </p>
+      <p>
+        Though <prosody pitch="+1st">wise men</prosody> at their end <emphasis>know</emphasis> dark is right...  
+        <break time="700ms" />
+        Because their words had forked no lightning... they  
+        <break time="800ms" />  
+        Do not go gentle into that good night.
+      </p>
+</lang></mstts:express-as></voice>
+<voice name="zh-CN-YunjianNeural">不要温和地走进那个良夜</voice></speak>
