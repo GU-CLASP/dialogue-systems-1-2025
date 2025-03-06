@@ -1,0 +1,40 @@
+I tried two Harry Potter related entries and one entry which is a Turkish city.
+The first thing I have tried was Patronus charm in Harry Potter movies and books which is called by chanting Expecto Patronum.
+Honestly, I did not expect it would understand it so well, considering the fact that it is not real besides a fantasy lore community, 
+but considering the fact that Harry Potter is a well-established franchise now, it is understandable how it could predict them so well.
+
+"Expecto Patronum"
+{utterance: Expect Patronum, confidence: 0.2960726}
+{utterance: Expect Patronum, confidence: 0.21106607}
+{utterance: Expect Patronum, confidence: 0.43031952}
+
+Honestly, the confidence scores were no that high but it predicted the result correctly each time. 
+This might be due to the fact that the word 'Expecto Patronum' sounds really distinctive.
+
+Secondly, I have Draco Malfoy, an antagonist from the Harry Potter series.
+
+"Draco Malfoy"
+{utterance: Draco Malfoy, confidence: 0.53959596}
+{utterance: Draco Malfoy, confidence: 0.56635284}
+{utterance: Draco Malfoy, confidence: 0.45600995}
+
+On interesting thing was, however, when I said "Harry Potter and Draco Malfoy" the confidence score turned out be 0.7691264.
+This is interesting because providing more context to the Draco Malfoy (which is an uncommon name) by uttering it with "Harry Potter" made the confidence higher.
+
+Lastly, I tried a city from Turkey: Erzurum. The results were a disaster:
+
+"Erzurum"
+{utterance: Arizona Room, confidence: 0.064343825}
+{utterance: Add this room, confidence: 0.56635284}
+{utterance: Add the room, confidence: 0.1613791}
+
+Then I tried it with other better-known cities the it recognized "Erzurum" each time with nice confidence.
+
+"Istanbul, Ankara, Erzurum"
+{utterance: Istanbul, Ankara, Erzurum, confidence: 0.53043926}
+{utterance: Istanbul, Ankara, Erzurum, confidence: 0.61920446}
+
+This was very impressive to witness, how much context helps the machine to correct itself even though my pronunciation was clear each time. 
+Of course, a lesser known Turkish city like Erzurum is less likely to be its first guess.
+But next to cities like Istanbul and Ankara, it is really likely.
+
