@@ -328,9 +328,12 @@ const dmMachine = setup({
           entry: { type: "spst.listen" },
           on: {
             RECOGNISED: {
-              actions: assign(({ event }) => {
+              actions: [
+                assign(({ event }) => {
                 return { lastResult: event.value };
               }),
+                ({event}) => console.log(`EVENT DETAILS: ${ JSON.stringify(event) }`),
+            ],
             },
             ASR_NOINPUT: {
               actions: assign({ lastResult: null }),
