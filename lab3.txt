@@ -1,0 +1,21 @@
+Original Performance: https://www.youtube.com/watch?v=fIveoR_9-lA
+
+
+
+
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"38db11b6-fa64-4989-8d75-4a48695ee5cd","Name":"Microsoft Server Speech Text to Speech Voice (en-US, SaraNeural)","ShortName":"en-US-SaraNeural","Locale":"en-US","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"en-US":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US"><voice name="en-US-SaraNeural"><s /><mstts:express-as style="sad" styledegree="1.5"><prosody rate="-5.00%" pitch="-2.00%" contour="(86%, -11%)">I thought</prosody><break time="20ms" /><prosody rate="-5.00%" pitch="-2.00%">that when I saw my brother</prosody></mstts:express-as>
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody rate="-5.00%" pitch="-2.00%">walking through the gates of the prison</prosody><prosody rate="-5.00%">,</prosody></mstts:express-as><s />
+<mstts:express-as style="sad" styledegree="1.5"><s /><prosody rate="-5.00%" pitch="-2.00%">he would look</prosody><prosody rate="-5.00%" pitch="-2.00%" contour="(31%, -4%) (70%, -30%) (77%, -29%)"> like a man </prosody><prosody rate="-5.00%" pitch="-2.00%">entering </prosody><prosody rate="-5.00%" pitch="-2.00%" contour="(15%, -11%) (62%, -9%) (89%, -27%)">his life.</prosody>
+<prosody rate="-1.00%" pitch="-2.00%" contour="(36%, +7%) (53%, -18%) (71%, +2%) (93%, -6%)">And he did. </prosody>
+<prosody rate="-1.00%" pitch="-2.00%" contour="(34%, -23%) (51%, -47%) (68%, -56%) (94%, -48%)">He carried </prosody><prosody rate="-10.00%" pitch="-2.00%"> a small bag</prosody><prosody pitch="-2.00%">, holding it</prosody><prosody pitch="-2.00%" contour="(10%, -4%) (30%, -6%)"> away from his body</prosody></mstts:express-as>
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody pitch="-2.00%" contour="(55%, -1%) (99%, +50%)">as if </prosody><prosody pitch="-2.00%"> he would not touch it, </prosody>
+<prosody pitch="-2.00%" contour="(77%, +6%) (92%, -14%)">or that it weighed almost nothing</prosody><prosody rate="-20.00%" pitch="-2.00%">.</prosody></mstts:express-as>
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody rate="+5.00%" pitch="-2.00%">The clothes he wore</prosody><prosody pitch="-2.00%"> seemed to belong to someone else,</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody pitch="-2.00%"> like hand-me-downs given a child who will one day </prosody><prosody rate="-20.00%" pitch="-2.00%">grow into them</prosody><prosody pitch="-2.00%">.</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody pitch="-2.00%"> </prosody><prosody rate="-1.00%" pitch="-2.00%">Behind him, </prosody><prosody rate="-1.00%" pitch="-2.00%" contour="(65%, +0%) (90%, -27%)">at the fence</prosody><prosody rate="-1.00%" pitch="-2.00%">,</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad" styledegree="1.5"><prosody rate="-1.00%" pitch="-2.00%" contour="(76%, +6%) (87%, -18%)">the inmates were waving</prosody><prosody rate="-1.00%" pitch="-2.00%">, someone saying </prosody></mstts:express-as>
+<s /><mstts:express-as style="sad" styledegree="1.9"><prosody rate="-1.00%" pitch="-2.00%" duration="1.8s" contour="(16%, +4%) (34%, +4%) (55%, +23%) (75%, -17%) (95%, -5%)">All right now.</prosody></mstts:express-as><s /></voice></speak>
