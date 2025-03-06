@@ -28,9 +28,10 @@ interface GrammarEntry {
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
+  fernanda: { person: "Fernanda Torres" },
+  tal: { person: "Talha Bedir" },
+  bora: { person: "Bora Kara" },
+  ana: { person: "Ana Paula" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
   "10": { time: "10:00" },
@@ -93,13 +94,13 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `Hey there! I am ready! Speak to me now` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
           entry: {
             type: "spst.speak",
-            params: { utterance: `I can't hear you!` },
+            params: { utterance: `I can't hear you! I am just a bot for testing` },
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
@@ -121,11 +122,14 @@ const dmMachine = setup({
     CheckGrammar: {
       entry: {
         type: "spst.speak",
-        params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
-        }),
+        params: ({ context }) => {
+          const utterance = context.lastResult && context.lastResult.length > 0  ? context.lastResult[0].utterance  : "";
+          alert(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
+          console.log(`Utterance: ${utterance}, Confidence: ${context.lastResult ? context.lastResult[0].confidence : ""}`);
+          return {
+            utterance: `Preparing...`,
+          };
+        },
       },
       on: { SPEAK_COMPLETE: "Done" },
     },
