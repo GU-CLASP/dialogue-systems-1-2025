@@ -1,0 +1,22 @@
+//Daffodils - William Wordsworth (RedFrost Motivation - https://youtu.be/1Uv80xQejrg?si=ZjMmfRyuwxcR8LIz)
+
+
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
+    <voice name="en-GB-OllieMultilingualNeural">
+        <prosody pitch="low">
+        <p>
+<break time="14000ms"/>
+                I wandered <break time="700ms"/> lonely <break time = "200"/>as a cloud, <break time="1500ms"/>
+                That floats on high <break time="700ms"/> o'er vales and hills, <break time="1500ms"/>
+                When all at once <break time="250ms"/> I saw a crowd, <break time="1000ms"/>
+                A host, <break time="300ms"/> of golden daffodils; <break time="3000ms"/>
+                Beside the lake, <break time="500ms"/> beneath the trees, <break time="700ms"/>
+                Fluttering and dancing in the breeze. <break time="500ms"/>
+            </p>
+Continuous <break time="300ms"/> as the stars that shine
+And twinkle on the milky way, <break time="800ms"/>
+They stretched <break time = "500"/> in never-ending line <break time="800ms"/>
+Along <break time = "500"/> the margin of a bay:
+        </prosody>
+    </voice>
+</speak>
