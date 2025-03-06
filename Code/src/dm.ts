@@ -44,6 +44,8 @@ const grammar: { [index: string]: GrammarEntry } = {
   friday: { day: "Friday" },
   saturday: { day: "Saturday" },
   sunday: { day: "Sunday" },
+  today: { day: "Today" },
+  tomorrow: { day: "Tomorrow" },
 
   "9am": { time: "09:00" },
   "10": { time: "10:00" },
@@ -77,12 +79,29 @@ function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
 }
 
-function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
+function getName(utterance: string) {
+  const normalizedUtterance = utterance.toLowerCase();
+
+  for (const key in grammar) {
+    //to find if the key is in the utterance
+    if (normalizedUtterance.includes(key)) {
+      return grammar[key].person;
+    }
+  }
+
+  return undefined;
 }
 
-function getDate(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).day;
+function getDay(utterance: string) {
+  const normalizedUtterance = utterance.toLowerCase();
+
+  for (const key in grammar) {
+    if (normalizedUtterance.includes(key)) {
+      return grammar[key].day;
+    }
+  }
+
+  return undefined;
 }
 
 function getConfirm(utterance: string) {
@@ -90,7 +109,15 @@ function getConfirm(utterance: string) {
 }
 
 function getTime(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).time;
+  const normalizedUtterance = utterance.toLowerCase();
+
+  for (const key in grammar) {
+    if (normalizedUtterance.includes(key)) {
+      return grammar[key].time;
+    }
+  }
+
+  return undefined;
 }
 
 const dmMachine = setup({
@@ -137,173 +164,205 @@ const dmMachine = setup({
         type: "spst.speak",
         params: { utterance: `Hi! Let's create an appointment.` },
       },
-      on: { SPEAK_COMPLETE: "AskName" },
+      on: { SPEAK_COMPLETE: "Booking" },
     },
-
-    AskName: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: `Who are you meeting with?` },
-      },
-      on: {
-        SPEAK_COMPLETE: "GetName",
-      },
-    },
-
-    GetName: {
-      entry: {
-        type: "spst.listen",
-      },
+    Booking: {
+      initial: "askName",
       on: {
         RECOGNISED: {
-          actions: assign(({ event }) => {
-            const person = getPerson(event.value[0].utterance);
-            return person
-              ? { person, lastResult: event.value }
-              : { lastResult: event.value };
-          }),
-          target: "AskWhen",
+          actions: assign(({ event }) => ({
+            lastResult: event.value,
+          })),
         },
         ASR_NOINPUT: {
-          target: "AskName",
+          actions: assign({ lastResult: null }),
         },
+        CLICK: "Done",
       },
-    },
-    AskWhen: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: `On which day is your meeting?` },
-      },
-      on: {
-        SPEAK_COMPLETE: "GetDay",
-      },
-    },
-    GetDay: {
-      entry: {
-        type: "spst.listen",
-      },
-      on: {
-        RECOGNISED: {
-          actions: assign(({ event }) => {
-            const day = getDate(event.value[0].utterance);
-            return day
-              ? { day, lastResult: event.value }
-              : { lastResult: event.value };
-          }),
-          target: "AskDuration",
+      states: {
+        askName: {
+          initial: "Prompt",
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `Who are you meeting with?` },
+              },
+              on: { SPEAK_COMPLETE: "getName" },
+            },
+            getName: {
+              entry: { type: "spst.listen" },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "#DM.Booking.askDate",
+                    guard: ({ context }) => {
+                      const person = getName(context.lastResult![0].utterance);
+                      if (person) {
+                        context.person = person;
+                        return true;
+                      }
+                      return false;
+                    },
+                  },
+                  { target: "Prompt" },
+                ],
+              },
+            },
+          },
         },
-        ASR_NOINPUT: {
-          target: "AskWhen",
+        askDate: {
+          initial: "Prompt",
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `On which day is your meeting?` },
+              },
+              on: { SPEAK_COMPLETE: "getDate" },
+            },
+            getDate: {
+              entry: { type: "spst.listen" },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "#DM.Booking.askDuration",
+                    guard: ({ context }) => {
+                      const day = getDay(context.lastResult![0].utterance);
+                      if (day) {
+                        context.day = day;
+                        return true;
+                      }
+                      return false;
+                    },
+                  },
+                  { target: "Prompt" },
+                ],
+              },
+            },
+          },
         },
-      },
-    },
+        askDuration: {
+          initial: "Prompt",
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `Will it take a whole day?` },
+              },
+              on: { SPEAK_COMPLETE: "getDuration" },
+            },
+            getDuration: {
+              entry: { type: "spst.listen" },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "wholedayConfirm",
+                    guard: ({ context }) =>
+                      getConfirm(context.lastResult![0].utterance) === true,
+                  },
+                  {
+                    target: "#DM.Booking.askTime",
+                    guard: ({ context }) =>
+                      getConfirm(context.lastResult![0].utterance) === false,
+                  },
+                  { target: "Prompt" },
+                ],
+              },
+            },
+            wholedayConfirm: {
+              entry: ({ context }) => {
+                const person = context.person;
+                const day = context.day;
+                const utterance = `Do you want me to create an appointment with ${person} on ${day} for the whole day?`;
+                return { type: "spst.speak", params: { utterance } };
+              },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "#DM.Booking.finalConfirm",
+                    guard: ({ context }) =>
+                      getConfirm(context.lastResult![0].utterance) === true,
+                  },
+                  { target: "#DM.Booking.askName" },
+                ],
+              },
+            },
+          },
+        },
+        askTime: {
+          initial: "Prompt",
+          states: {
+            Prompt: {
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `What time is your meeting?` },
+              },
+              on: { SPEAK_COMPLETE: "getTime" },
+            },
+            getTime: {
+              entry: { type: "spst.listen" },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "#DM.Booking.askTime.timeConfirm",
+                    guard: ({ context }) => {
+                      const time = getTime(context.lastResult![0].utterance);
+                      if (time) {
+                        context.time = time;
+                        return true;
+                      }
+                      return false;
+                    },
+                  },
+                  { target: "Prompt" },
+                ],
+              },
+            },
+            timeConfirm: {
+              entry: ({ context }) => {
+                const person = context.person;
+                const day = context.day;
+                const time = context.time;
+                const utterance = `Do you want me to create an appointment with ${person} on ${day} at ${time}?`;
 
-    AskDuration: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: `Will it take a whole day?` },
-      },
-      on: {
-        SPEAK_COMPLETE: "GetDuration",
-      },
-    },
-    GetDuration: {
-      entry: {
-        type: "spst.listen",
-      },
-      on: {
-        RECOGNISED: {
-          actions: assign(({ event }) => {
-            const response = getConfirm(event.value[0].utterance);
-            return response
-              ? { lastResult: event.value, target: "WholeDayConfirm" }
-              : { lastResult: event.value, target: "AskTime" };
-          }),
+                return { type: "spst.speak", params: { utterance } };
+              },
+              on: {
+                LISTEN_COMPLETE: [
+                  {
+                    target: "#DM.Booking.finalConfirm",
+                    guard: ({ context }) =>
+                      getConfirm(context.lastResult![0].utterance) === true,
+                  },
+                  { target: "#DM.Booking.askName" },
+                ],
+              },
+            },
+          },
         },
-        ASR_NOINPUT: {
-          target: "AskDuration",
-        },
-      },
-    },
-    ConfirmAppointment: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => {
-          let UttConfirm = `Do you want me to create an appointment with ${context.person} `;
-          UttConfirm += `on ${context.day} for the whole day?`;
+        finalConfirm: {
+          entry: {
+            type: "spst.speak",
+            params: {
+              utterance: "Your appointment has been created!",
+            },
+          },
           on: {
-            SPEAK_COMPLETE: "FinalConfirm";
-          }
+            SPEAK_COMPLETE: "#DM.Done",
+          },
         },
-      },
+      }, //booking states
     },
-    FinalConfirm: {
-      entry: { type: "spst.listen" },
+    Done: {
       on: {
-        RECOGNISED: {
-          actions: assign(({ event }) => {
-            const response = getConfirm(event.value[0].utterance);
-            if (response) {
-              return {
-                target: "AppointmentCreated",
-              };
-            }
-            return {
-              lastResult: null,
-              target: "AskName",
-            };
-          }),
+        CLICK: {
+          target: "Greeting",
+          actions: assign({ time: null, person: null, day: null }),
         },
       },
     },
-    AppointmentCreated: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: "Your appointment has been created!" },
-      },
-    },
-    AskTime: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: `What time is your meeting` },
-      },
-      on: {
-        SPEAK_COMPLETE: "GetTime",
-      },
-    },
-    GetTime: {
-      entry: {
-        type: "spst.listen",
-      },
-      on: {
-        RECOGNISED: {
-          actions: assign(({ event }) => {
-            const time = getTime(event.value[0].utterance);
-            return time
-              ? { time, lastResult: event.value }
-              : { lastResult: event.value };
-          }),
-          target: "AskTimeConfirm",
-        },
-        ASR_NOINPUT: {
-          target: "AskTime",
-        },
-      },
-    },
-    AskTimeConfirm: {
-      entry: {
-        type: "spst.speak",
-        params: ({ context }) => {
-          let UttConfirm = `Do you want me to create an appointment with ${context.name} `;
-          UttConfirm += `on ${context.day} `;
-          UttConfirm += "at ${context.time}";
-          on: {
-            SPEAK_COMPLETE: "FinalConfirm";
-          }
-        },
-      },
-    },
-  },
+  }, //DM states
 });
 
 const dmActor = createActor(dmMachine, {

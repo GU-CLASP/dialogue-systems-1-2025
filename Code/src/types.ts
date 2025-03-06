@@ -4,7 +4,7 @@ import { AnyActorRef } from "xstate";
 export interface DMContext {
   spstRef: AnyActorRef;
   lastResult: Hypothesis[] | null;
-  name: string | null;
+  person: string | null;
   day: string | null;
   time: string | null;
   response: boolean | null;
