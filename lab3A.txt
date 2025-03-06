@@ -9,5 +9,5 @@ Selenology：{ confidence: 0.2002354 }；{ confidence: 0.50291616 }；{ confiden
 Rosaceae：{ confidence: 0.046581086 }； { confidence: 0.046085063 }； Only for 2 out of 7 attempts it returned right answer, but the score were extremely low. Most of the time it was confused with 'rosacea'.
 Saoirse Ronan: celebrity name but originally from Ireland. So when the setting is English(United States), it was unrecognisable for the ASR tool. (I also tried with language setting as English(Ireland), and it still didn't work).
 
-Overall, the confidence scores were pretty low. Only for the case 'Selenology', the ASR tool constantly produced rignt answers.
+Overall, the confidence scores were low. Only for the case 'Selenology', the ASR tool constantly produced rignt answers.
 I think the tool should be fine-tuned for the subject or add a lexicon with all possible words in order to archieve right transciptions, especially when the audio has fictional entity names. In my exemples, recognition failed when the names were not common English names, and it even had trouble to identify if they were entity name or a sentence. Besides, for terms like 'passacaglia' and 'rosaceae', it would help if the ASR tool is fine-tuned with music terms or plant names.
