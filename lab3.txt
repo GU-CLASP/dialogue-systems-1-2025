@@ -1,0 +1,13 @@
+ORIGINAL POEM- Roxana Dimofte
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"6c640df5-9977-4a98-b785-6b2195db0e3c","Name":"Microsoft Server Speech Text to Speech Voice (de-DE, SeraphinaMultilingualNeural)","ShortName":"de-DE-SeraphinaMultilingualNeural","Locale":"de-DE","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"de-DE":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="de-DE"><voice name="de-DE-SeraphinaMultilingualNeural"><lang xml:lang="en-GB"><prosody contour="(37%, +52%) (67%, +91%)">Going against the innocent</prosody></lang></voice>
+<voice name="de-DE-SeraphinaMultilingualNeural" tailingsilence-exact="1200ms"><lang xml:lang="en-GB"><prosody contour="(35%, +68%) (71%, +56%)">To see which one is the best</prosody></lang></voice>
+<voice name="de-DE-SeraphinaMultilingualNeural"><lang xml:lang="en-GB"><prosody contour="(48%, +86%) (67%, +75%)">How ironic is to see!</prosody>
+<prosody contour="(46%, +86%) (73%, +65%)">That the one who hurts the most</prosody></lang></voice>
+<voice name="de-DE-SeraphinaMultilingualNeural" tailingsilence-exact="900ms"><lang xml:lang="en-GB"><prosody contour="(34%, +70%) (66%, +46%)">Is the winner, but at what cost?</prosody></lang></voice>
+<voice name="de-DE-SeraphinaMultilingualNeural"><lang xml:lang="en-GB"><prosody contour="(33%, +58%) (50%, +68%) (66%, +57%)">Because one thing is certain:</prosody>
+<prosody contour="(72%, +99%)">The ones who start the fight</prosody>
+<prosody contour="(20%, +79%) (57%, +18%) (81%, +10%)">Are not the ones who pay the price</prosody>.</lang></voice></speak>

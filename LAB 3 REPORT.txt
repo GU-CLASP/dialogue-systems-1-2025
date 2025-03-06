@@ -1,0 +1,21 @@
+LAB 3 REPORT
+
+For this experiment, I used mainly non-fictional words, focusing on the different ways that they can be pronounced, especially those words that come from foreign languages – for instance, Dutch -. 
+It can be seen that the confidence is higher when foreign words are pronounced in the English way – with an English accent -, than when it is pronounced in the original language. Furthermore, the confidence increases as well when a word is pronounced in English but with different accents, as it is higher when we use a standard American accent rather than when we use a standard British one. 
+When it comes to fictional words, like place names, the machine has difficulty in correctly identifying them, providing a very low confidence, as it happens for instance with the fictional place “Genovia”. Nevertheless, that is not the case with popular fictional names, such as “Harry Potter”, which presents a confidence close to 1. 
+
+* Conclusions: the machine that works with English LLMs presents a higher confidence when what is being said by the user is with an English pronunciation, and it increases if the accent that is used is standard American. A way to solve this limitation is by training the model in order to identify without any trouble utterances that may be influenced by accents, especially the foreign ones. 
+
+Examples:
+- “Vincent van Gogh” - Painter
+First attempt: { confidence: 0.26989248, utterance: “Vincente von Hoch” } - Dutch pronunciation
+Fourth attempt: { confidence: 0.721847, utterance: “Vincent van Gogh”} - English accent 
+Last attempt: { confidence: 0.09213427, utterance: “Vincent van Gogh”} - Dutch pronunciation from the internet 
+- “Genovia” - Fictional place
+First attempt: { confidence: 0. 22124627, utterance: “Genovia” } - Correct pronunciation that the machine pronounced as “Ginovaia”
+Third attempt: { confidence: 0. 053320147, utterance: “Junova”} - Pronounced as the machine did the first time.
+Last attempt: { confidence: 0. 11853288, utterance: “Gina via”} - Same pronunciation as the third attempt
+- "Australopithecus" - Scientific name 
+First attempt: { confidence: 0.09547785, utterance: "Austra lopitae kus" } - Spanish accent
+Fourth attempt: { confidence: 0.78089905, utterance: "Australopithecus" } - British accent
+Last attempt: { confidence: 0.8623009, utterance: "Australopithecus" } - American accent
