@@ -1,3 +1,4 @@
+
 import { Hypothesis, SpeechStateExternalEvent } from "speechstate";
 import { AnyActorRef } from "xstate";
 
@@ -10,4 +11,5 @@ export interface DMContext {
   wholeday?: boolean | null
 }
 
-export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
+export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" } | {type: "DONE"};
+
