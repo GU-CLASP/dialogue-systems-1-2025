@@ -1,0 +1,25 @@
+The poem's YouTube link: https://www.youtube.com/watch?v=rCbNOUeDQJM
+
+And for Part B VG, I added a French translation after it, using the translation I found here: https://lyricstranslate.com/en/fire-and-ice-le-feu-et-la-glace.html
+
+French part begins after the English part.
+
+
+
+<!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"b5f86142-ce84-4483-8142-45db0d778add","Name":"Microsoft Server Speech Text to Speech Voice (en-US, DavisNeural)","ShortName":"en-US-DavisNeural","Locale":"en-US","VoiceType":"StandardVoice"},{"Id":"db1112a4-e410-496e-b6dd-5493515bc9fa","Name":"Microsoft Server Speech Text to Speech Voice (fr-FR, HenriNeural)","ShortName":"fr-FR-HenriNeural","Locale":"fr-FR","VoiceType":"StandardVoice"}]}-->
+<!--ID=FCB40C2B-1F9F-4C26-B1A1-CF8E67BE07D1;Version=1|{"Files":{}}-->
+<!--ID=5B95B1CC-2C7B-494F-B746-CF22A0E779B7;Version=1|{"Locales":{"en-US":{"AutoApplyCustomLexiconFiles":[{}]},"de-DE":{"AutoApplyCustomLexiconFiles":[{}]},"fr-FR":{"AutoApplyCustomLexiconFiles":[{}]}}}-->
+<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US"><voice name="en-US-DavisNeural"><s /><mstts:express-as style="sad"><prosody pitch="+4.00%">Some say</prosody><break strength="weak" /><prosody pitch="+4.00%"> the world will </prosody><prosody volume="+25.00%" pitch="+4.00%">end </prosody><prosody rate="-25.00%" volume="+25.00%" pitch="+4.00%" contour="(27%, -46%) (46%, +17%) (88%, +10%)">in FIRE</prosody><prosody volume="+25.00%" pitch="+4.00%">, </prosody></mstts:express-as>
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">Some say in ice. </prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">From what I've tasted of desire I</prosody></mstts:express-as><s />
+<mstts:express-as style="sad"><prosody pitch="+4.00%">hold with those who </prosody><prosody rate="-20.00%" pitch="+4.00%" contour="(34%, -45%) (67%, +25%)">favor fire. </prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody rate="+25.00%" pitch="+4.00%">But if it had to perish</prosody><prosody rate="-10.00%" pitch="+4.00%"> twice</prosody><prosody rate="+25.00%" pitch="+4.00%">, I think I know enough of hate </prosody><prosody rate="+20.00%" pitch="+4.00%">To say that for destruction</prosody><prosody pitch="+4.00%"> ice</prosody><prosody rate="+14.00%" pitch="+4.00%"> Is also</prosody><prosody pitch="+4.00%"> great </prosody></mstts:express-as>
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">And would suffice.</prosody></mstts:express-as>
+<s /><mstts:express-as style="friendly"><prosody pitch="+4.00%">This poem by Robert Frost is translated into French like this:</prosody></mstts:express-as><s /><mstts:express-as style="sad"><prosody pitch="+4.00%"> </prosody></mstts:express-as><s /></voice>
+<voice name="fr-FR-HenriNeural"><s /><mstts:express-as style="sad"><prosody pitch="+4.00%">Certains disent</prosody><break strength="weak" /><prosody pitch="+4.00%"> que le monde périra par le feu,</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">D'autres que c'est par la glace.</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">De ce que j'ai goûté du désir</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody pitch="+4.00%">Je suis du parti de ceux qui sont en faveur du feu.</prosody></mstts:express-as><s />
+<s /><mstts:express-as style="sad"><prosody rate="+15.00%" pitch="+4.00%">Mais si je devais mourir deux fois, J'en sais assez sur la haine Pour dire que pour la destruction la glace Est aussi puissante</prosody>
+<prosody pitch="+4.00%">Et devrait suffire.
+</prosody></mstts:express-as></voice></speak>
