@@ -1,14 +1,20 @@
 import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import viteLogo from "/vite.svg";
-import { setupButton } from "./dm.ts";
+import { setupButton } from "./dm3.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <div class="card">
-      <button id="counter" type="button"></button>
+      <button id="startButton" type="button">Start</button>
     </div>
   </div>
 `;
 
-setupButton(document.querySelector<HTMLButtonElement>("#counter")!);
+const button = document.querySelector<HTMLButtonElement>("#startButton");
+if (button) {
+  console.log("✅ Start button found and setting up!");
+  setupButton(button);
+} else {
+  console.error("❌ ERROR: Start button not found in the DOM.");
+}

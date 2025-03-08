@@ -16,6 +16,16 @@
   "dependencies": {
     "@statelyai/inspect": "^0.4.0",
     "speechstate": "2.8.0",
+    "vite": "^4.0.4",
     "xstate": "^5.19.2"
+  },
+  "tsconfig": {
+    "compilerOptions": {
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "types": [
+        "xstate"
+      ]
+    }
   }
 }
