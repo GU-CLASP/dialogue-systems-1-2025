@@ -84,6 +84,9 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
+    "logConfidence": ({context}) => {
+      console.log(getUtterance(context))
+    }
   },
 }).createMachine({
   context: ({ spawn }) => ({
@@ -101,11 +104,7 @@ const dmMachine = setup({
       on: { CLICK: "Greeting" },
     },
     Greeting: {
-      entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
-      on: { SPEAK_COMPLETE: "Questions"}
-    },
-    Questions: {
-      initial: "PersonPrompt",
+      initial: "Prompt",
       on: {
         LISTEN_COMPLETE: [
           {
@@ -116,8 +115,8 @@ const dmMachine = setup({
         ],
       },
       states: {
-        PersonPrompt: {
-          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: `Please say something.` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -146,12 +145,13 @@ const dmMachine = setup({
       entry: {
         type: "spst.speak",
         params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
+          utterance: getUtterance(context),
         }),
       },
-      on: { SPEAK_COMPLETE: "Done" },
+      on: { SPEAK_COMPLETE: [
+        {target: "Done",
+          actions: "logConfidence"
+        }] },
     },
     Done: {
       on: {
@@ -185,3 +185,13 @@ export function setupButton(element: HTMLButtonElement) {
     element.innerHTML = `${meta.view}`;
   });
 }
+function getUtterance(context: DMContext): string {
+  var utterance = "";
+  if (context.lastResult != null){
+    for (var hypo of context.lastResult){
+      utterance += "You might have said " + hypo.utterance + ". Confidence: " + String(hypo.confidence) + "."
+    }
+  }
+  return utterance;
+}
+
