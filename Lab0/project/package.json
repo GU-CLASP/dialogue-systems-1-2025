@@ -1,5 +1,5 @@
 {
-  "name": "code",
+  "name": "vite-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,11 +12,9 @@
     "typescript": "~5.6.2",
     "vite": "^6.0.5"
   },
-  "packageManager": "yarn@3.6.4+sha256.7f7d51b38db0d94adf25c512e3f3d3b47d23c97922eecc540f7440f116bdb99a",
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "dependencies": {
-    "@statelyai/inspect": "^0.4.0",
-    "code": "file:",
-    "speechstate": "2.8.0",
+    "vite-project": "file:",
     "xstate": "^5.19.2"
   }
 }

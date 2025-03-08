@@ -31,10 +31,21 @@ const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
+  matteo: { person: "Matteo Ripamonti " },
+  roxana: { person: "Roxana Dimofte" },
   monday: { day: "Monday" },
   tuesday: { day: "Tuesday" },
+  wednesday: { day: "Wednesday" },
+  thursday: { day: "Thursday" },
+  friday: { day: "Friday" },
+  saturday: { day: "Saturday" },
+  sunday: { day: "Sunday" },
   "10": { time: "10:00" },
   "11": { time: "11:00" },
+  "11 30": { time: "11:30" },
+  "13": { time: "13:00" },
+  "14": { time: "14:00" },
+  "15 30": { time: "15:30" },
 };
 
 function isInGrammar(utterance: string) {
@@ -44,6 +55,15 @@ function isInGrammar(utterance: string) {
 function getPerson(utterance: string) {
   return (grammar[utterance.toLowerCase()] || {}).person;
 }
+
+function getDay(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).day;
+}
+
+function getTime(utterance: string) {
+  return (grammar[utterance.toLowerCase()] || {}).time;
+}
+
 
 const dmMachine = setup({
   types: {
@@ -64,6 +84,9 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
+    "logConfidence": ({context}) => {
+      console.log(getUtterance(context))
+    }
   },
 }).createMachine({
   context: ({ spawn }) => ({
@@ -93,7 +116,7 @@ const dmMachine = setup({
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Hello world!` } },
+          entry: { type: "spst.speak", params: { utterance: `Please say something.` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -122,12 +145,13 @@ const dmMachine = setup({
       entry: {
         type: "spst.speak",
         params: ({ context }) => ({
-          utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-            isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-          } in the grammar.`,
+          utterance: getUtterance(context),
         }),
       },
-      on: { SPEAK_COMPLETE: "Done" },
+      on: { SPEAK_COMPLETE: [
+        {target: "Done",
+          actions: "logConfidence"
+        }] },
     },
     Done: {
       on: {
@@ -161,3 +185,13 @@ export function setupButton(element: HTMLButtonElement) {
     element.innerHTML = `${meta.view}`;
   });
 }
+function getUtterance(context: DMContext): string {
+  var utterance = "";
+  if (context.lastResult != null){
+    for (var hypo of context.lastResult){
+      utterance += "You might have said " + hypo.utterance + ". Confidence: " + String(hypo.confidence) + "."
+    }
+  }
+  return utterance;
+}
+
