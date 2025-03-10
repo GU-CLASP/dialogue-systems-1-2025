@@ -1,8 +1,3 @@
-// Extended VG improvements
-// - function that checks the type of utterance 
-// - 
-
-
 import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
@@ -180,6 +175,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ context, event }) => ({
+
                 lastResult: event.value,  
                 // Additionaly to last result variable, I'm keeping all important answers in dictionary. They will be used later for sum up of the meeting
                 data_dict: {
