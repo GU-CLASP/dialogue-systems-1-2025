@@ -37,15 +37,15 @@ const grammar: {[index: string]: string} = {
   "violet sorrengail" : "violet sorrengail is the main character of the book series Fourth Wing",
   "rebecca yarros" : "rebecca yarros is the author of the book series Fourth Wing",
   "winnie the pooh" : "winnie the pooh is the main character of the beloved homonymous book series and movies",
-  "spiderman" : "spiderman is one of the most loved Marvel Comics characters",
+  "spiderman" : "spiderman is one of the most loved Marvel Comics' characters",
   "benedict cumberbatch" : "benedict cumberbatch is a well known actor who plays Doctor Strange in the Marvel movies",
   "harry potter" : "harry potter is the main character of the world-wide known homonymous book series",
   "emma watson" : "emma watson is a very well known actress who plays Hermione in the Harry Potter movies",
-  "chris hemsworth" : "chris hemsworth is a well known actor who plays Thor is the Marvel movies",
+  "chris hemsworth" : "chris hemsworth is a well known actor who plays Thor in the Marvel movies",
 }
 
 function isInGrammar(entities:  nluResponse["entities"]) {
-  if (entities.length != 0) { //necessary for when the name of the person isn't provided
+  if (entities.length != 0) { //necessary for when the name of the person isn't provided, so there is no entity
     if (entities[0]["text"].toLowerCase() in grammar) {
       return grammar[entities[0]["text"].toLowerCase()]
     }
@@ -67,6 +67,15 @@ function getAnswer(entities: nluResponse["entities"]) {
     }
   }
   return answer;
+}
+
+function getEntity(response: nluResponse, entity: string) {
+  for (let i = 0; i < response["entities"].length; i++) {
+    if (response["entities"][i]["category"] == entity) {
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -162,15 +171,15 @@ const dmMachine = setup({
       on: { 
         SPEAK_COMPLETE: [
           {
+            guard: ({ context }) => context.meetingWith == "0",
+            target: "MeetingWith"
+          },
+          {
             guard: ({ context }) => context.meetingTime == "0",
             target: "FullDay"
           },
           {
-            guard: ({ context }) => context.meetingTime != "0" && context.meetingWith == "0",
-            target: "MeetingWith"
-          },
-          {
-            guard: ({ context }) => context.meetingTime != "0" && context.meetingDay == "0",
+            guard: ({ context }) => context.meetingDay == "0",
             target: "MeetingDay"
           },
           {
@@ -198,7 +207,7 @@ const dmMachine = setup({
           {
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "yes",
             target: "Meeting",
-            actions: assign({ meetingTime: null }) //so the guard in Meeting won't be triggered
+            actions: assign({ meetingTime: null }) //so the guard for the time in Meeting won't be triggered
           },
           {
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "no",
@@ -238,7 +247,7 @@ const dmMachine = setup({
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "exit",
           },
           {
-            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "create a meeting",
+            guard: ({ context }) => !!context.lastResult && getEntity(context.lastResult, "meeting with"),
             actions: assign(({ context }) => ({
               meetingWith: getAnswer(context.lastResult!["entities"])[0], //only retrieve the part of the array that contains the relevant info
             })),
@@ -278,7 +287,7 @@ const dmMachine = setup({
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "exit",
           },
           {
-            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "create a meeting",
+            guard: ({ context }) => !!context.lastResult && getEntity(context.lastResult, "meeting day"),
             actions: assign(({ context }) => ({
               meetingDay: getAnswer(context.lastResult!["entities"])[1], //only retrieve the part of the array that contains the relevant info
             })),
@@ -318,7 +327,7 @@ const dmMachine = setup({
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "exit",
           },
           {
-            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "create a meeting",
+            guard: ({ context }) => !!context.lastResult && getEntity(context.lastResult, "meeting time"),
             actions: assign(({ context }) => ({
               meetingTime: getAnswer(context.lastResult!["entities"])[2], //only retrieve the part of the array that contains the relevant info
             })),
@@ -364,7 +373,7 @@ const dmMachine = setup({
           {
             guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == "no",
             actions: assign({ meetingWith: "0",  meetingDay: "0", meetingTime: "0" }),
-            target: "Meeting", //if the appointment if wrong, delete all info and ask again
+            target: "Meeting", //if the appointment is wrong, delete all info and ask again
           },
           { target: ".NoInput" },
         ],
@@ -412,7 +421,7 @@ const dmMachine = setup({
           {
             target: "Greeting",
             actions: assign({ meetingWith: null,  meetingDay: null, meetingTime: null, famousPerson: null }),
-          } //reassign everything to null to avoid having old infromation when trying to beek a new meeting
+          } //reassign everything to null to avoid having old information when trying to book a new meeting
       ]},
     },
   },
