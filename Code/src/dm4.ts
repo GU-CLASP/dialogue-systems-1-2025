@@ -3,6 +3,7 @@ import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY, NLU_KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
+//import { DMContext, DMEvents, nluResponse } from "./types";
 
 const inspector = createBrowserInspector();
 
@@ -44,6 +45,7 @@ const grammar: { [index: string]: GrammarEntry } = {
   vlad: { person: "Vladislav Maraev" },
   aya: { person: "Nayat Astaiza Soriano" },
   victoria: { person: "Victoria Daniilidou" },
+  taylor: { person: "Taylor Swift"},
 
   // Days
   monday: { day: "Monday" },
@@ -71,6 +73,25 @@ const grammar: { [index: string]: GrammarEntry } = {
   no: { confirmation: "no" },
   "no way": { confirmation: "no" },
 };
+
+// const grammar: {[index: string]: string} = {
+//   // Technology
+//   "bill gates": "bill gates is the co-founder of Microsoft and revolutionized personal computing with the Windows operating system.",
+//   "steve jobs": "steve jobs is the co-founder of Apple Inc. and pioneered iconic products like the iPhone, iPad, and Macintosh computers.",
+//   "elon musk": "elon musk is the CEO of Tesla and SpaceX, and has made significant contributions to IT through companies like PayPal and his vision for AI.",
+
+//   // Music
+//   "taylor swift": "taylor swift is a globally renowned singer-songwriter known for her storytelling in pop and country music.",
+//   "beyoncé": "beyoncé is a legendary singer, songwriter, and performer, often referred to as Queen Bey.",
+//   "ed sheeran": "ed sheeran is a British singer-songwriter known for hits like 'Shape of You' and 'Thinking Out Loud.'",
+
+//   // Literature
+//   "j.k. rowling": "j.k. rowling is the author of the world-famous Harry Potter book series.",
+//   "stephen hawking": "stephen hawking was a theoretical physicist known for his work on black holes and the book 'A Brief History of Time.'",
+
+//   // Film and TV
+//   "scarlett johansson": "scarlett johansson is a highly acclaimed actress known for her roles in the Marvel Cinematic Universe as Black Widow and in films like Lost in Translation and Marriage Story.",
+// };
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
@@ -138,7 +159,12 @@ const dmMachine = setup({
 
 
     Greeting: {
-      entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
+      // entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
+      entry: ({ context, event }) => {
+        console.log("Test...");  
+        console.log("Context:", context);  
+        console.log("Event:", event);
+      },
       initial: "Createconversation",
       on: {
         LISTEN_COMPLETE: [
@@ -167,13 +193,19 @@ const dmMachine = setup({
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
+
         Ask: {
           entry: { type: "spst.listen" },
           on: {
             RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
+              actions: [
+                ({ event }) => {
+                  console.log("NLU Value:", event.nluValue); // Log event.nluValue
+                },
+                assign(({ event }) => {
+                  return { lastResult: event.value };
+                }),
+              ],
             },
             ASR_NOINPUT: {
               actions: assign({ lastResult: null }),
@@ -212,7 +244,8 @@ const dmMachine = setup({
       on: {
         SPEAK_COMPLETE: [
           {
-            target: "Step2AskDay", // Move to the next step (asking for the day)
+            // target: "Step2AskDay", 
+            target: "AppointmentCreated", 
             guard: ({ context }) => !!context.appointment.person, // Only proceed if a valid person is assigned
           },
           {
@@ -223,358 +256,15 @@ const dmMachine = setup({
     },
     
 
-    Step2AskDay: {
-      initial: "AskDay",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar2",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
-      states: {
-        AskDay: {
-          entry: { type: "spst.speak", params: { utterance: `On which day is your meeting?` } },
-          on: { SPEAK_COMPLETE: "Ask2" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you! On which day is your meeting?` },
-          },
-          on: { SPEAK_COMPLETE: "Ask2" },
-        },
-        Ask2: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
-            },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
-          },
-        },
-      },
-    },
-
-
-    CheckGrammar2: {
-      entry: [
-        // Assign extracted day information from user's input to the context
-        assign(({ context }) => {
-          // Get the latest recognized speech (convert it to lowercase for consistency)
-          const utterance = context.lastResult?.[0]?.utterance.toLowerCase() || "";
-    
-          return {
-            appointment: {
-              ...context.appointment, // Keep existing appointment details
-              day: getDay(utterance) || context.appointment.day, // Extract day if available
-            },
-          };
-        }),
-    
-        // Speak out the recognized utterance and check if it's in the grammar list
-        {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-            } in your given list.`,
-          }),
-        },
-      ],
-    
-      on: {
-        SPEAK_COMPLETE: [
-          {
-            target: "Step3AskWholeDay", // Move to the next step (asking if it's a full-day appointment)
-            guard: ({ context }) => !!context.appointment.day, // Only proceed if a valid day is assigned
-          },
-          {
-            target: "Step2AskDay", // Go back to ask for the day again if not recognized
-          },
-        ],
-      },
-    },
-    
-
-    Step3AskWholeDay:  {
-      initial: "AskWholeDay",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammarWholeDay3",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
-      states: {
-        AskWholeDay: {
-          entry: { type: "spst.speak", params: { utterance: `Will it take the whole day?` } },
-          on: { SPEAK_COMPLETE: "Ask3" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you! Will it take the whole day??` },
-          },
-          on: { SPEAK_COMPLETE: "Ask3" },
-        },
-        NoInput2: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `It is not in the grammar! Will it take the whole day??` },
-          },
-          on: { SPEAK_COMPLETE: "Ask3" },
-        },
-        Ask3: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: { 
-              actions: assign(({ event }) => {
-                
-                return { lastResult: event.value };
-              }),
-            },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
-          },
-        },
-      },
-    },
-
-    CheckGrammarWholeDay3: {
-      entry: [
-        // Assign extracted day information from user's input to the context
-        assign(({ context }) => {
-          // Get the latest recognized speech (convert it to lowercase for consistency)
-          const utterance = context.lastResult?.[0]?.utterance.toLowerCase() || "";
-    
-          return {
-            appointment: {
-              ...context.appointment, // Keep existing appointment details
-              confirmation: getConfirmation(utterance) || context.appointment.confirmation, // Extract confirmation if available
-            },
-          };
-        }),
-    
-        // Speak out the recognized utterance and check if it's in the grammar list
-        {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-            } in your given list.`,
-          }),
-        },
-      ],
-
-      on: {
-        SPEAK_COMPLETE: [
-          {
-            target: "Step5AskConfirmation", 
-            guard: ({ context }) => context.appointment.confirmation === "yes",
-          },
-
-          {
-            target: "Step4AskTime", 
-            guard: ({ context }) => context.appointment.confirmation === "no", 
-          },
-          {
-            target: "Step3AskWholeDay.NoInput2", 
-          },
-        ],
-      },
-
-    },
-  
-
-    Step4AskTime:{
-      initial: "AskTime",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammar4",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
-      states: {
-        AskTime: {
-          entry: { type: "spst.speak", params: { utterance: `What time is your meeting?` } },
-          on: { SPEAK_COMPLETE: "Ask4" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you! What time is your meeting?` },
-          },
-          on: { SPEAK_COMPLETE: "Ask4" },
-        },
-        Ask4: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: {
-              actions: assign(({ event }) => {
-                return { lastResult: event.value };
-              }),
-            },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
-          },
-        },
-      },
-    },
-
-
-    CheckGrammar4: {
-      entry: [
-        // Assign extracted time information from user's input to the context
-        assign(({ context }) => {
-          // Get the latest recognized speech (convert it to lowercase for consistency)
-          const utterance = context.lastResult?.[0]?.utterance.toLowerCase() || "";
-    
-          return {
-            appointment: {
-              ...context.appointment, // Keep existing appointment details
-              time: getTime(utterance) || context.appointment.time, // Extract time if available
-            },
-          };
-        }),
-    
-        // Speak out the recognized utterance and check if it's in the grammar list
-        {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-            } in your given list.`,
-          }),
-        },
-      ],
-    
-      on: {
-        SPEAK_COMPLETE: [
-          {
-            // target: "AppointmentCreated", 
-            target: "Step5AskConfirmation", 
-
-            guard: ({ context }) => !!context.appointment.time, // Only proceed if a valid time is assigned
-          },
-          {
-            target: "Step4AskTime", // Go back to ask for the time again if not recognized
-          },
-        ],
-      },
-    },
-
-    Step5AskConfirmation:  {
-      initial: "AskConfirmation",
-      on: {
-        LISTEN_COMPLETE: [
-          {
-            target: "CheckGrammarAskConfirmation5",
-            guard: ({ context }) => !!context.lastResult,
-          },
-          { target: ".NoInput" },
-        ],
-      },
-      states: {
-        AskConfirmation: {
-          entry: [
-            {
-              type: "spst.speak",
-              params: ({ context }) => ({
-                utterance: context.appointment.confirmation === "yes" || context.appointment.confirmation === "whole day"
-                  ? `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} for the whole day?`
-                  : `Do you want me to create an appointment with ${context.appointment.person} on ${context.appointment.day} at ${context.appointment.time}?`,
-              }),
-            },
-          ], 
-          on: { SPEAK_COMPLETE: "Ask5" },
-        },
-        NoInput: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `I can't hear you! Please say yes or no` },
-          },
-          on: { SPEAK_COMPLETE: "Ask5" },
-        },
-        NoInput2: {
-          entry: {
-            type: "spst.speak",
-            params: { utterance: `It is not in the grammar. Please say yes or no` },
-          },
-          on: { SPEAK_COMPLETE: "AskConfirmation" }, //start from beginning to check appointment information.
-        },
-        Ask5: {
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: { 
-              actions: assign(({ event }) => {
-                
-                return { lastResult: event.value };
-              }),
-            },
-            ASR_NOINPUT: {
-              actions: assign({ lastResult: null }),
-            },
-          },
-        },
-      },
-    },
-
-    CheckGrammarAskConfirmation5: {
-      entry: [
-        
-
-        ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
-    
-        // Speak out the recognized utterance and check if it's in the grammar list
-        {
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-            } in your given list.`,
-          }),
-        },
-
-      ],
-
-      on: {
-        SPEAK_COMPLETE: [
-          {
-            target: "AppointmentCreated", 
-            // guard: ({ context }) => context.appointment.confirmation === "yes", 
-
-            guard: ({ context }) => getConfirmation(context.lastResult?.[0]?.utterance?.toLowerCase() || "") === "yes",
-            
-          },
-
-          {
-            target: "Greeting", 
-            guard: ({ context }) => getConfirmation(context.lastResult?.[0]?.utterance?.toLowerCase() || "") ===  "no", 
-          },
-          {
-            target: "Step5AskConfirmation.NoInput2",  
-          },
-        ],
-      },
-
-    },
 
     AppointmentCreated: {
-      entry: { type: "spst.speak", params: { utterance: "Your appointment has been created." } },
+      entry: [
+        ({ context, event }) => console.log("Test...", context, event), // Debug log
+        { 
+          type: "spst.speak", 
+          params: { utterance: "Your appointment has been created." } 
+        }
+      ],
       on: { CLICK: "Done" },
     },
 

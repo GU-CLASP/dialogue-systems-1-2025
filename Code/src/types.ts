@@ -10,9 +10,15 @@ export interface DMContext {
     day: string | null;
     time: string | null;
     confirmation: string | null;
-    // confirmation2: string | null; // Whether the information for meeting is right
   };
 
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
+
+// export interface nluResponse {
+//   topIntent: string;
+//   projectKind: string;
+//   intents: {category: string, confidenceScore: number}[];
+//   entities: {category: string, text: string, offset: number, confidenceScore: number}[];
+// }
