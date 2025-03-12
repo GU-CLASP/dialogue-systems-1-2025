@@ -1,7 +1,7 @@
 import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import viteLogo from "/vite.svg";
-import { setupButton } from "./lab3a.ts";
+import { setupButton } from "./dm4.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>

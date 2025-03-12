@@ -1,8 +1,8 @@
 import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
-import { KEY } from "./azure";
-import { DMContext, DMEvents } from "./types";
+import { KEY, NLU_KEY } from "./azure";
+import { DMContext, DMEvents, entities, intents, nluResponse } from "./types";
 
 const inspector = createBrowserInspector();
 
@@ -12,67 +12,58 @@ const azureCredentials = {
   key: KEY,
 };
 
+const azureLanguageCredentials = {
+  endpoint: "https://dialoguesystems.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview" /** your Azure CLU prediction URL */,
+  key: NLU_KEY /** reference to your Azure CLU key */,
+  deploymentName: "appointment" /** your Azure CLU deployment */,
+  projectName: "Lab4" /** your Azure CLU project name */,
+};
+
 const settings: Settings = {
+  azureLanguageCredentials: azureLanguageCredentials,
   azureCredentials: azureCredentials,
   azureRegion: "northeurope",
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
-  locale: "en-AU",
-  ttsDefaultVoice: "en-AU-NatashaNeural",
+  locale: "en-US",
+  ttsDefaultVoice: "en-US-DavisNeural",
 };
 
-interface GrammarEntry {
-  person?: string;
-  day?: string;
-  time?: string;
-}
-
-const grammar: { [index: string]: GrammarEntry } = {
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
-  stratos: { person: "Stratos Kamateros"},
-  lucia: { person: "Lucia Casiglio" },
-  paula: { person: "Paula Grey" },
-  anton: { person: "Anton Rapprich" },
-  karianne: { person: "Karianne Scheie" },
-  adele: { person: "Adel Muhametsina" },
-  rhodri: { person: "Rhodri Meredith" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  wednesday: { day: "Wednesday" },
-  thursday: { day: "Thursday" },
-  friday: { day: "Friday" },
-  saturday: {day: "Saturday" },
-  sunday: {day: "Sunday" },
-  "8": { time: "08:00" },
-  "9": { time: "09:00" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
-  "12": { time: "12:00" },
-  "1": { time: "13:00" },
-  "2": { time: "14:00" },
-  "3": { time: "15:00" },
-  "4": { time: "16:00" },
-  "5": { time: "17:00" },
-  "6": { time: "18:00" },
-  "7": { time: "19:00" },
+function getEntities(array: entities[], context: DMContext) {
+  let found = false
+  for ( let i = 0; i < array.length; i++) {
+    if (array[i]["category"]) {
+      if (array[i]["category"] == "meetingPerson") {
+        context.person = array[i]["text"]
+        context.personSaved = true
+        found = true
+      }
+      else if (array[i]["category"] == "meetingDay") {
+        context.day = array[i]["text"]
+        context.daySaved = true
+        found = true
+      }
+      else if (array[i]["category"] == "meetingTime") {
+        context.time = array[i]["text"]
+        context.timeSaved = true
+        found = true
+      }
+      else if (array[i]["category"] == "whoPerson") {
+        context.whoPerson = array[i]["text"]
+        found = true
+      }
+    };
+  };
+  return found
 };
 
-function isInGrammar(utterance: string) {
-  return utterance.toLowerCase() in grammar;
-}
-
-function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
-}
-
-function getDay(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).day;
-}
-
-function getTime(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).time;
+const FamousPeople = {
+  "Jennifer Lawrence" : "a famous American actress known for her role in the Hunger Games trilogy",
+  "Lucia": "an up and coming programmer from Italy",
+  "Boris" : "just a guy",
+  "Tyler Joseph" : "the lead vocalist and songwriter of the musical duo Twenty One Pilots",
+  "Phoebe Bridgers" : "is a singer/song-writer known for her melancholic sound",
+  "Anton": "unfortunately not in our database due to GDPR regulations"
 }
 
 const dmMachine = setup({
@@ -91,6 +82,7 @@ const dmMachine = setup({
     "spst.listen": ({ context }) =>
       context.spstRef.send({
         type: "LISTEN",
+        value: { nlu: true }
       }),
   },
 }).createMachine({
@@ -108,20 +100,23 @@ const dmMachine = setup({
     WaitToStart: {
       on: { CLICK: "Greeting" },
     },
-    MeetingPerson: {
+    Greeting: {
       initial: "Prompt",
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
+            target: "CheckIntent",
             guard: ({ context }) => !!context.lastResult,
+            actions: assign(({}) => {
+              return { personSaved: false, timeSaved: false, daySaved: false, wholeDay: false, whoPerson: undefined}
+            })
           },
           { target: ".NoInput" },
         ],
       },
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Let's create an appointment! Who are you meeting with?` } },
+          entry: { type: "spst.speak", params: { utterance: `Bonjour, how can I help you?` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -136,7 +131,46 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                return { lastResult: event.value };
+                console.log(event)
+                return { lastResult: event.nluValue };
+              }),
+            },
+            ASR_NOINPUT: {
+              actions: assign({ lastResult: null }),
+            },
+          },
+        },
+      },
+    },
+    MeetingPerson: {
+      initial: "Prompt",
+      on: {
+        LISTEN_COMPLETE: [
+          {
+            target: "CheckEntities",
+            guard: ({ context }) => !!context.lastResult,
+          },
+          { target: ".NoInput" },
+        ],
+      },
+      states: {
+        Prompt: {
+          entry: { type: "spst.speak", params: { utterance: `Who would you like to meet?` } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NoInput: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `I can't hear you!` },
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: {
+              actions: assign(({ event }) => {
+                return { lastResult: event.nluValue };
               }),
             },
             ASR_NOINPUT: {
@@ -151,7 +185,7 @@ const dmMachine = setup({
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
+            target: "CheckEntities",
             guard: ({ context }) => !!context.lastResult,
           },
           { target: ".NoInput" },
@@ -174,7 +208,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                return { lastResult: event.value };
+                return { lastResult: event.nluValue };
               }),
             },
             ASR_NOINPUT: {
@@ -190,7 +224,7 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: "MeetingConfirm",
-            guard: ({ context }) => !!context.lastResult && context.lastResult![0]?.utterance.toLowerCase() === 'yes',
+            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == 'Yes',
             actions: assign({
               timeSaved: true,
               wholeDay: true,
@@ -198,7 +232,7 @@ const dmMachine = setup({
           },
           {
             target: "MeetingTime",
-            guard: ({ context }) => !!context.lastResult && context.lastResult![0]?.utterance.toLowerCase() === 'no'
+            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] == 'No'
           },
           { target: ".NoInput" },
         ],
@@ -220,7 +254,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                return { lastResult: event.value };
+                return { lastResult: event.nluValue };
               }),
             },
             ASR_NOINPUT: {
@@ -235,7 +269,7 @@ const dmMachine = setup({
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
+            target: "CheckEntities",
             guard: ({ context }) => !!context.lastResult,
           },
           { target: ".NoInput" },
@@ -258,7 +292,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                return { lastResult: event.value };
+                return { lastResult: event.nluValue };
               }),
             },
             ASR_NOINPUT: {
@@ -274,11 +308,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: "MeetingConfirmed",
-            guard: ({ context }) => !!context.lastResult && context.lastResult![0]?.utterance.toLowerCase() === 'yes'
+            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] === 'Yes'
           },
           {
             target: "MeetingCancelled",
-            guard: ({ context }) => !!context.lastResult && context.lastResult![0]?.utterance.toLowerCase() === 'no'
+            guard: ({ context }) => !!context.lastResult && context.lastResult!["topIntent"] === 'No'
           },
           { target: ".NoInput" },
         ],
@@ -303,14 +337,15 @@ const dmMachine = setup({
             },
             ConfirmWholeDay: {
               entry: { type: "spst.speak", params: ({ context }) => ({ 
-                utterance: `So, would you like to have a meeting with ${context.person} 
-                on ${context.day} which will take the whole day?` })},
+                utterance: `So, you'd like to have a meeting with ${context.person} 
+                on ${context.day} for the whole day?` })},
             },
 
             Confirm: {
               entry: { type: "spst.speak", params: ({ context }) => ({ 
-                utterance: `So, would you like to have a meeting with ${context.person} 
-                on ${context.day} at ${context.time}?` })},
+                utterance: `So, you'd like to have a meeting with ${context.person} 
+                on ${context.day} at ${context.time}?` 
+              })},
             },
           },
         },
@@ -326,7 +361,7 @@ const dmMachine = setup({
           on: {
             RECOGNISED: {
               actions: assign(({ event }) => {
-                return { lastResult: event.value };
+                return { lastResult: event.nluValue };
               }),
             },
             ASR_NOINPUT: {
@@ -336,63 +371,97 @@ const dmMachine = setup({
         },
       },
     },
-    CheckGrammar: {
+    WhoIs: {
+      initial: "b",
+      on: { SPEAK_COMPLETE: "GiveInfo" },
+      states: {
+        b: {
+          entry: {
+          type: "spst.speak",
+          params: { utterance: "" }
+        }
+      },
+    },
+  },
+    GiveInfo: {
+      always: [{ 
+        guard: ({ context }) => !!context.whoPerson && !!FamousPeople[context.whoPerson],
+        target: "Answer",
+      },
+      {
+        guard: ({ context }) => !context.whoPerson || !FamousPeople[context.whoPerson],
+        target: "NotFound",
+      }
+    ]    
+    },
+    Answer: {
+      entry: { 
+        type: "spst.speak", 
+        params: ({ context }) => ({ 
+          utterance: `${context.whoPerson} is ${FamousPeople[context.whoPerson]}` 
+        })
+      },
+      on: {SPEAK_COMPLETE: "Done"}
+    },
+    NotFound: {
+    entry: {
+      type: "spst.speak",
+      params: ({ context }) => ({
+        utterance: `I'm sorry, I don't know who ${context.whoPerson} is.`
+      }),
+    },
+    on: {SPEAK_COMPLETE: "Done"}
+  },
+    CheckIntent: {
       initial: "Prompt",
       on: {
         SPEAK_COMPLETE: [
-          // Person
           {
-            target: "MeetingDay",
-            guard: ({ context }) => !context.personSaved && isInGrammar(context.lastResult![0].utterance),
-            actions: assign(({ context }) => ({
-              personSaved: true,
-              person: getPerson(context.lastResult![0].utterance),
-            })),
+            guard: ({ context }) => context.lastResult!["topIntent"] == "CreateMeeting",
+            target: "CheckEntities"
           },
           {
-            target: "Greeting",
-            guard: ({ context }) => !context.personSaved && !isInGrammar(context.lastResult![0].utterance),
-          },
-          // Day
-          {
-            target: "WholeDay",
-            guard: ({ context }) => !context.daySaved && isInGrammar(context.lastResult![0].utterance),
-            actions: assign(({ context }) => ({
-              daySaved: true,
-              day: getDay(context.lastResult![0].utterance),
-            })),
-          },
-          {
-            target: "MeetingDay",
-            guard: ({ context }) => !context.daySaved && !isInGrammar(context.lastResult![0].utterance),
-          },
-          // Time
-          {
-            target: "MeetingConfirm",
-            guard: ({ context }) => !context.timeSaved && isInGrammar(context.lastResult![0].utterance),
-            actions: assign(({ context }) => ({
-              timeSaved: true,
-              time: getTime(context.lastResult![0].utterance),
-            })),
-          },
-          {
-            target: "MeetingTime",
-            guard: ({ context }) => !context.timeSaved && !isInGrammar(context.lastResult![0].utterance),
-          },
+            guard: ({ context }) => context.lastResult!["topIntent"] == "WhoIs",
+            target: "CheckPerson"
+          }
         ],
       },
       states: {
         Prompt: {
           entry: {
             type: "spst.speak",
-            params: ({ context }) => ({
-              utterance: isInGrammar(context.lastResult![0].utterance)
-              ? "OK"
-              : "This is not in the grammar."
+            params: ({
+              utterance: "Hmm"
             }),
           },
         },
       },
+    },
+    CheckPerson: {
+      entry: ({ context }) => {
+        let found = getEntities(context.lastResult?.entities || [], context);
+      },
+      always: [
+        {
+          target: "Greeting",
+          guard: ({ context }) => !context.whoPerson
+      },
+        {
+          target: "WhoIs",
+          guard: ({ context }) => !!context.whoPerson
+        }]
+    },
+    CheckEntities: {
+      entry: ({ context }) => {
+        let found = getEntities(context.lastResult?.entities || [], context);
+      },
+      always: [
+        { target: "MeetingPerson", guard: ({ context }) => !context.personSaved },
+        { target: "MeetingDay", guard: ({ context }) => !context.daySaved },
+        { target: "WholeDay", guard: ({ context }) => !context.timeSaved },
+        { target: "MeetingTime", guard: ({ context }) => !context.timeSaved },
+        { target: "MeetingConfirm" },
+      ],
     },
     MeetingConfirmed: {
       entry: { type: "spst.speak", params: { utterance: "Appointment created!" }},
@@ -403,10 +472,10 @@ const dmMachine = setup({
       entry: { type: "spst.speak", params: { utterance: "Appointment cancelled!" }},
       on: { SPEAK_COMPLETE: "Done" },
     },
- 
+
     Done: {
       on: {
-        CLICK: "WaitToStart",
+        CLICK: "WaitToStart"
       },
     },
   },
@@ -420,6 +489,7 @@ const dmActor = createActor(dmMachine, {
 dmActor.subscribe((state) => {
   console.group("State update");
   console.log("State value:", state.value);
+  console.log("NLU: ", state.context.lastResult)
   console.log("State context:", state.context);
   console.groupEnd();
 });
