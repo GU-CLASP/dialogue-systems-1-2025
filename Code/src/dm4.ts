@@ -7,9 +7,9 @@ import { DMContext, DMEvents, Intent, Entity, NLUObject } from "./types";
 const inspector = createBrowserInspector();
 
 const azureCredentials = {
-  endpoint:
+  endpoint: //"https://northeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
     "https://erkoo.cognitiveservices.azure.com/sts/v1.0/issuetoken", // insert your own endpoint
-  key: KEY, // insert your own key is azure.ts
+  key: KEY, // insert your own key in azure.ts
 };
 
 const azureLanguageCredentials = {
@@ -34,34 +34,8 @@ interface FamousPersonEntry {
 }
 
 const famousPersons : {[index : string] : FamousPersonEntry} = {
-  "frank zappa" : {info: "frank zappa was a jazz musician who made awesome music in the 70s"},
+  "frank zappa" : {info: "frank zappa was a composer and guitarist who made awesome music in the 70s"},
   "robert fripp" : {info: "robert fripp is a guitarist and song writer, most famous for being the only constant member of the band King Crimson since the late 60s"},
-}
-
-interface DecisionEntry {
-  "decision": string;
-}
-
-// Used to get a decision "yes" or "no" from a decision entity
-const decisions : {[index : string] : DecisionEntry} = {
-  "yes": { decision: "yes"},
-  "yeah": { decision: "yes"},
-  "yup": { decision: "yes"},
-  "yes, please": { decision: "yes"},
-  "ok": { decision: "yes"},
-  "alright": { decision: "yes"},
-  "absolutely": { decision: "yes"},
-  "yes, indeed": { decision: "yes"},
-  "of course": { decision: "yes"},
-  "sure": { decision: "yes"},
-  "you bet": { decision: "yes"},
-  "no": { decision: "no"},
-  "nope": { decision: "no"},
-  "absolutely not": { decision: "no"},
-  "i don't think so": { decision: "no"},
-  "no no": { decision: "no"},
-  "no way": { decision: "no"},
-
 }
 
 // Search for entity of type entityType in the entityList, as given in interpretation
@@ -107,6 +81,16 @@ const dmMachine = setup({
   id: "DM",
   initial: "Prepare",
   
+  on: {
+    RECOGNISED: {
+      actions: assign(({ event }) => {
+        return { lastResult: event.value, interpretation: event.nluValue };
+      }),
+    },
+    ASR_NOINPUT: {
+      actions: assign({ lastResult: null, interpretation: null}),
+    },
+  },
   
   states: {
 
@@ -121,16 +105,7 @@ const dmMachine = setup({
 
     Menu : {
       initial: "InitialMessage",
-      on: {
-        RECOGNISED: {
-          actions: assign(({ event }) => {
-            return { lastResult: event.value, interpretation: event.nluValue };
-          }),
-        },
-        ASR_NOINPUT: {
-          actions: assign({ lastResult: null, interpretation: null}),
-        },
-      },
+      
       states: {
         InitialMessage: {
           entry: {type: "spst.speak", params: {utterance: `Hi! What can I help you with?`}},
@@ -187,7 +162,7 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [
                   {
                     target: "#DM.Booking.Day",
-                    guard: ({ context }) => !!context.lastResult && !!context.interpretation,
+                    guard: ({ context }) => !!context.lastResult && !!context.interpretation && !!getEntity("person", context.interpretation!.entities),
                     actions: assign(({ context }) => {
                       return { person: getEntity("person", context.interpretation!.entities)}
                     })
@@ -224,7 +199,7 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [
                   {
                     target: "#DM.Booking.WholeDay",
-                    guard: ({ context }) => !!context.lastResult && !!context.interpretation,
+                    guard: ({ context }) => !!context.lastResult && !!context.interpretation && !!getEntity("day", context.interpretation!.entities),
                     actions: assign(({ context }) => {
                       return { day: getEntity("day", context.interpretation!.entities)}
                     })
@@ -261,11 +236,11 @@ const dmMachine = setup({
                   // Go to Time or Confirm depending on if the answer is yes or no.
                   {
                     target: "#DM.Booking.Time",
-                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("decision", context.interpretation?.entities) && decisions[getEntity("decision", context.interpretation?.entities)!].decision == `no`,
+                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("no", context.interpretation!.entities)  //&& decisions[getEntity("decision", context.interpretation?.entities)!].decision == `no`,
                   },
                   {
                     target: "#DM.Booking.Confirm",
-                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("decision", context.interpretation?.entities) && decisions[getEntity("decision", context.interpretation?.entities)!].decision == `yes`,
+                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("yes", context.interpretation!.entities) //&& decisions[getEntity("decision", context.interpretation?.entities)!].decision == `yes`,
                   },
                   {
                     target: "Again",
@@ -298,7 +273,7 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [
                   {
                     target: "#DM.Booking.Confirm",
-                    guard: ({ context }) => !!context.lastResult && !!context.interpretation,
+                    guard: ({ context }) => !!context.lastResult && !!context.interpretation && !!getEntity("time", context.interpretation!.entities),
                     actions: assign(({ context }) => {
                       return { time: getEntity("time", context.interpretation!.entities)}
                     })
@@ -339,12 +314,12 @@ const dmMachine = setup({
                   // Start over if the user is not happy.
                   {
                     target: "StartOver",
-                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("decision", context.interpretation?.entities) && decisions[getEntity("decision", context.interpretation?.entities)!].decision == `no`,
+                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("no", context.interpretation?.entities) //&& decisions[getEntity("decision", context.interpretation?.entities)!].decision == `no`,
                   },
                   // If the user says yes, go to Done
                   {
                     target: "#DM.Booking.Done",
-                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("decision", context.interpretation?.entities) && decisions[getEntity("decision", context.interpretation?.entities)!].decision == `yes`,
+                    guard: ({ context }) => !!context.interpretation?.entities && !!getEntity("yes", context.interpretation?.entities) //&& decisions[getEntity("decision", context.interpretation?.entities)!].decision == `yes`,
                   },
                   {
                     target: "Again",
@@ -360,9 +335,9 @@ const dmMachine = setup({
               on: {SPEAK_COMPLETE: "Prompt"},
             },
             StartOver: {
-              entry: {type: "spst.speak", params: {utterance: `We start over then.`}},
+              entry: {type: "spst.speak", params: {utterance: `Alright.`}},
               on: {SPEAK_COMPLETE: {
-                target: "#DM.Booking.Who",
+                target: "#DM.Menu",
                 actions: assign({ time: null, person: null, day: null}),
                 }
               }
