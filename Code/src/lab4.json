@@ -1,0 +1,268 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "appointment",
+        "multilingual": false,
+        "description": "",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "Create a meeting"
+            },
+            {
+                "category": "WhoMerylStreep"
+            }
+        ],
+        "entities": [
+            {
+                "category": "MeetingPerson",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "MeetingTime",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "MeetingDay",
+                "compositionSetting": "combineComponents"
+            }
+        ],
+        "utterances": [
+            {
+                "text": "Can you help me set up a meeting with Maria?",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingPerson",
+                        "offset": 38,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I have a meeting with Tom today.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingPerson",
+                        "offset": 22,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What actress plays the mom in Mammia Mia?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "What actress played Julia Child?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who played Julia Child in Julie and Julia?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "What famous actress is in Mamma Mia?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "What's the name of the actress playing the main character in Sophie's Choice?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who plays the main character in Sophie's Choice?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who plays the mom in Mammia Mia?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "What's the name of the actress who plays the boss in Devil Wears Prada?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "What's the name of the actress who plays the mom in Mamma Mia?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who plays the boss in Devil Wears Prada?",
+                "language": "en-us",
+                "intent": "WhoMerylStreep",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I have an appointment.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Add an appointment to my schedule with Martha at 8:00.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingPerson",
+                        "offset": 39,
+                        "length": 6
+                    },
+                    {
+                        "category": "MeetingTime",
+                        "offset": 49,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Add a meeting to my schedule.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you help me set up a meeting on Friday?",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingDay",
+                        "offset": 36,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Help me set up an appointment with Fred on Saturday at 12:00.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingPerson",
+                        "offset": 35,
+                        "length": 4
+                    },
+                    {
+                        "category": "MeetingDay",
+                        "offset": 43,
+                        "length": 8
+                    },
+                    {
+                        "category": "MeetingTime",
+                        "offset": 55,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need to set an appointment with the dentist.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingPerson",
+                        "offset": 34,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I have an appointment today.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you create a meeting?",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I have a meeting at 4:00.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingTime",
+                        "offset": 20,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Set a meeting for me on Tuesday at 5:00.",
+                "language": "en-us",
+                "intent": "Create a meeting",
+                "entities": [
+                    {
+                        "category": "MeetingDay",
+                        "offset": 24,
+                        "length": 7
+                    },
+                    {
+                        "category": "MeetingTime",
+                        "offset": 35,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            }
+        ]
+    }
+}

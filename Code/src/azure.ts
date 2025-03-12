@@ -1,0 +1,2 @@
+export const KEY = "2krUBstsNmWwtGMVDW2cLzP48HJ4FvZtZ6DjrgifXRXRmcFah8WkJQQJ99BBACi5YpzXJ3w3AAAYACOGOwpt";
+export const NLU_KEY = "Jxd4accJt1yyVsJs2v5nvPyox6B5mMNAvApjGycbhjhT906S6QzmJQQJ99BCACi5YpzXJ3w3AAAaACOGGAdR";

@@ -8,6 +8,7 @@ export interface DMContext {
   day: string;
   time: string;
   question: string;
+  intent: string;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
