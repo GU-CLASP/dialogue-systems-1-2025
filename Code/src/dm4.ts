@@ -161,7 +161,7 @@ const dmMachine = setup({
     Greeting: {
       // entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
       entry: ({ context, event }) => {
-        console.log("Test...");  
+        console.log("dfdsfdfdsfsd");  
         console.log("Context:", context);  
         console.log("Event:", event);
       },
@@ -169,7 +169,9 @@ const dmMachine = setup({
       on: {
         LISTEN_COMPLETE: [
           {
-            target: "CheckGrammar",
+            // target: "CheckGrammar",
+            target: "AppointmentCreated",
+            // target: "CheckIntension",
             guard: ({ context }) => !!context.lastResult,
           },
           { target: ".NoInput" },
@@ -178,18 +180,18 @@ const dmMachine = setup({
       states: {
         // start the conversation
         Createconversation: {
-          entry: { type: "spst.speak", params: { utterance: `Let's create an appointment! ` } },
-          on: { SPEAK_COMPLETE: "AskPerson" },
+          entry: { type: "spst.speak", params: { utterance: `Let's start a conversation! ` } },
+          on: { SPEAK_COMPLETE: "AskIntension" },
         },
 
-        AskPerson: {
-          entry: { type: "spst.speak", params: { utterance: `Who are you meeting with?` } },
+        AskIntension: {
+          entry: { type: "spst.speak", params: { utterance: `Please say "Appointment" for Creating a meeting, and say "Introuduction" for getting to know a celebrity.` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
           entry: {
             type: "spst.speak",
-            params: { utterance: `I can't hear you! Who are you meeting with?` },
+            params: { utterance: `I can't hear you! Please say "Appointment" for Creating a meeting, and say "Introuduction" for getting to know a celebrity.` },
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
@@ -203,8 +205,13 @@ const dmMachine = setup({
                   console.log("NLU Value:", event.nluValue); // Log event.nluValue
                 },
                 assign(({ event }) => {
-                  return { lastResult: event.value };
+                  // return { lastResult: event.value};
+                  return { lastResult: event.nluValue.topIntent}; // now event.nluValue is temporarily in context.lastResult
                 }),
+                
+                ({ context }) => {
+                  console.log("Updated Context.lastResult:", context.lastResult); // Log the updated context.lastResult
+                },
               ],
             },
             ASR_NOINPUT: {
@@ -214,48 +221,6 @@ const dmMachine = setup({
         },
       },
     },
-    
-    CheckGrammar: {
-      entry: [
-        // Assign extracted information from user's input to the context
-        assign(({ context }) => {
-          // Get the latest recognized speech (convert it to lowercase for consistency)
-          const utterance = context.lastResult?.[0]?.utterance.toLowerCase() || "";
-    
-          return {
-            appointment: {
-              ...context.appointment, // Keep existing appointment details
-              person: getPerson(utterance) || context.appointment.person, // Extract name if available
-            },
-          };
-        }),
-    
-        // Speak out the recognized utterance and check if it's in the grammar list
-        { 
-          type: "spst.speak",
-          params: ({ context }) => ({
-            utterance: `You just said: ${context.lastResult![0].utterance}. And it ${
-              isInGrammar(context.lastResult![0].utterance) ? "is" : "is not"
-            } in your given list.`,
-          }),
-        },
-      ],
-      
-      on: {
-        SPEAK_COMPLETE: [
-          {
-            // target: "Step2AskDay", 
-            target: "AppointmentCreated", 
-            guard: ({ context }) => !!context.appointment.person, // Only proceed if a valid person is assigned
-          },
-          {
-            target: "Greeting.AskPerson", // Go back to ask again if no valid person was found
-          },
-        ],
-      },
-    },
-    
-
 
     AppointmentCreated: {
       entry: [
