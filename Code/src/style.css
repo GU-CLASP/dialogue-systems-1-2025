@@ -33,6 +33,7 @@ p {
 }
 
 button.voice-button {
+  display: block; /* Ensure button is visible */
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   background-color: #4facfe;
@@ -41,6 +42,7 @@ button.voice-button {
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: 1rem; /* Adds spacing from elements above */
 }
 
 button.voice-button:hover {

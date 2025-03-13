@@ -1,3 +1,6 @@
 # dialogue-systems-1-2025
 
-1- Add a pdf reader to read the report-lab2.pdf file
+It is needed to state to the chatbot these three entities:
+1- That you want to have a meeting
+2- with someone
+3- on a given date

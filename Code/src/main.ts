@@ -1,20 +1,24 @@
 import "./style.css";
-import typescriptLogo from "./typescript.svg";
-import viteLogo from "/vite.svg";
-import { setupButton } from "./dm3.ts";
+import { setupButton } from "./dm4_test_fixed";
+
+// Set up the main application UI
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <div class="card">
-      <button id="startButton" type="button">Start</button>
+      <button id="speakButton" type="button">Speak</button>
     </div>
   </div>
 `;
 
-const button = document.querySelector<HTMLButtonElement>("#startButton");
-if (button) {
-  console.log("✅ Start button found and setting up!");
-  setupButton(button);
+const speakButton = document.querySelector<HTMLButtonElement>("#speakButton");
+
+if (speakButton) {
+  console.log("✅ Speak button found and setting up!");
+  speakButton.addEventListener("click", () => {
+    console.log("🎤 Bot is now listening...");
+    setupButton(speakButton); // Ensures the bot listens when Speak is clicked
+  });
 } else {
-  console.error("❌ ERROR: Start button not found in the DOM.");
+  console.error("❌ ERROR: Speak button not found in the DOM.");
 }
