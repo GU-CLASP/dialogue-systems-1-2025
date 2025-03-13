@@ -16,7 +16,7 @@
   "dependencies": {
     "@statelyai/inspect": "^0.4.0",
     "fuse.js": "^7.1.0",
-    "speechstate": "2.8.0",
+    "speechstate": "^2.10.0",
     "xstate": "^5.19.2"
   }
 }
