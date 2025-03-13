@@ -47,10 +47,10 @@ function getEntityText(entities: { category: string; text: string }[], targetCat
 };
 
 function getPersonIntroduction(person: string | null): string {
-  if (!person) return "No person was provided.";
+  if (!person) return "No person was provided or This person you said can not be recognized.";
   
   const introduction = grammar[person.toLowerCase()];
-  return introduction ? introduction : `I don't have information about ${person}.`;
+  return introduction ? introduction : `We don't have information about ${person}.`;
 }
 
 const grammar: {[index: string]: string} = {
@@ -127,8 +127,6 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: "MakeAppointment",
-            // target: "AppointmentCreated",
-            // guard: ({ context }) => !!context.lastResult, // right now its value is either "Create a meeting" or "Who is X", a value assigned from event.nluValue.topIntension.
             guard: ({ context }) => !!context.lastResult && context.lastResult === "Create a meeting" && context.utterance === "appointment", // right now its value is either "Create a meeting" or "Who is X", a value assigned from event.nluValue.topIntension.
           },
 
@@ -197,11 +195,6 @@ const dmMachine = setup({
 
      MakeAppointment: {
       // entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
-      entry: ({ context, event }) => {
-        console.log("dfdsfdfdsfsd");  
-        console.log("Context:", context);  
-        console.log("Event:", event);
-      },
       initial: "Greeting",
       on: {
         LISTEN_COMPLETE: [
@@ -249,7 +242,6 @@ const dmMachine = setup({
                 }),
 
                 assign({
-                 
                   person:  ({ event }) => getEntityText(event.nluValue.entities, "person"),
                   day:  ({ event }) => getEntityText(event.nluValue.entities, "day"),
                   time:  ({ event }) => getEntityText(event.nluValue.entities, "time"),
@@ -259,6 +251,9 @@ const dmMachine = setup({
                 // 3. Log the updated context.lastResult and its type
                 ({ context }) => {
                   console.log("Updated Context.lastResult:", context.lastResult);
+                  console.log("Introduction about this person:", getPersonIntroduction(context.person));
+
+                
                   // console.log("Type of Context.lastResult:", typeof context.lastResult);
                 },
               ],
@@ -272,12 +267,9 @@ const dmMachine = setup({
     },
 
     Introduction:{
-      // entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
-      entry: ({ context, event }) => {
-        console.log("dfdsfdfdsfsd");  
-        console.log("Context:", context);  
-        console.log("Event:", event);
-      },
+      // entry: ({ context, event }) => {
+      //   console.log("dfdsfdfdsfsd");  console.log("Context:", context);  console.log("Event:", event);
+      // },
       initial: "Greeting",
       on: {
         LISTEN_COMPLETE: [
@@ -301,7 +293,7 @@ const dmMachine = setup({
         NoInput: {
           entry: {
             type: "spst.speak",
-            params: { utterance: `I can't hear you! Please say 'Tell me more about', then plus the person's name!Name is necessary here!` },
+            params: { utterance: `I can't hear you! Please say 'Tell me more about', then plus the person's name!Name is necessary here!For example, tell me more about Elon Musk.` },
           },
           on: { SPEAK_COMPLETE: "Ask" },
         },
@@ -325,9 +317,6 @@ const dmMachine = setup({
 
                 assign({       
                   person:  ({ event }) => getEntityText(event.nluValue.entities, "person"),
-                  // day: null,// Keep it unchanged
-                  // time: null,// Keep it unchanged
-                  // confirmation: null, // Keep it unchanged
                   }),
                         
                 // 3. Log the updated context.lastResult and its type
@@ -346,11 +335,8 @@ const dmMachine = setup({
       },
     },
 
-
     AppointmentCreated: {
       entry: [
-        ({ context, event }) => console.log("Test...", context, event), // Debug log
-
         ({ context }) => {
           // Base message
           let message = "Your appointment has been created";
@@ -369,35 +355,36 @@ const dmMachine = setup({
           // Finalize with a period
           message += ".";
     
+          // Save message in context for later use
+          context.utterance = message; 
+    
           // Log message for debugging
           console.log("Final Appointment Message:", message);
-
         },
-        
-        // Need to figure out how to speach out this updated message
-        { 
-          type: "spst.speak", 
-          params: { utterance: "Your appointment has been created." } 
+    
+        // Dynamically speak the generated message
+        ({ context }) => {
+          context.spstRef.send({
+            type: "SPEAK",
+            value: { utterance: context.utterance },
+          });
         },
-
       ],
       on: { CLICK: "Greeting" },
-      
     },
-
-
-
-    // this state is for testing, need to be implemented later.
+    
     Celebrity: {
       entry: [
-        ({ context }) => console.log(getPersonIntroduction(context.person)), // Debug log
-        { 
-          type: "spst.speak", 
-          params: { utterance: "Celebrity." } 
-        }
+        ({ context }) => {
+          const introduction = getPersonIntroduction(context.person);
+          console.log(introduction); // Debug log
+          context.spstRef.send({
+            type: "SPEAK",
+            value: { utterance: introduction },
+          });
+        },
       ],
       on: { CLICK: "Greeting" },
-      
     },
 
   },
