@@ -94,3 +94,28 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+table {
+  text-align: center;
+  padding:10px;
+  border:1px dashed #888;
+}
+
+td {
+  width: 30px;
+  height: 30px;
+}
+
+.dark {
+  background:#333;
+  
+}
+
+.inpt {
+  width: 30px;
+  height: 30px;
+  font-size:24px;
+  text-align:center;
+  border: 2px solid #222;
+}

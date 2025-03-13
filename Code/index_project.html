@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+    <div id="crossword">
+      <table>
+        <tbody>
+          <tr>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td id="A1">A</td>
+            <td id="A2">S</td>
+            <td class="dark"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <style>
+table {
+  text-align: center;
+  padding:10px;
+  border:1px dashed #888;
+}
+
+td {
+  width: 30px;
+  height: 30px;
+}
+
+.dark {
+  background:#333;
+  
+}
+
+.inpt {
+  width: 30px;
+  height: 30px;
+  font-size:24px;
+  text-align:center;
+  border: 2px solid #c92020;
+}
+    </style>
+  </body>
+</html>
+https://code2care.org/html/crossword-puzzle-pure-html-css-javascript/

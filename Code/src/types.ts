@@ -1,12 +1,14 @@
 import { Hypothesis, SpeechStateExternalEvent } from "speechstate";
 import { AnyActorRef } from "xstate";
 
+interface clue {letter: string, position: number}
 export interface DMContext {
   spstRef: AnyActorRef;
-  lastResult?: Hypothesis[] | null;
-  person_reply?: Hypothesis[] | null;
-  day_reply?: Hypothesis[] | null;
-  time_reply?: Hypothesis[] | null;
+  lastResult?: string | null;
+  wordToFind?: string | null;
+  givenAnswer?: string | null;
+  clues?: clue[] | null;
+  language?: string | null;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
