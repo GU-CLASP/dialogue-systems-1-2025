@@ -37,16 +37,21 @@ function getEntityText(entities: { category: string; text: string }[], targetCat
   if (entities.length === 0) {
     return null;
   }
-
   // Loop through entities to find the one that matches targetCategory
   for (let entity of entities) {
     if (entity.category === targetCategory) {
       return entity.text; // Return the extracted text
     }
   }
-
   return null; // Return null if no matching category is found
 };
+
+function getPersonIntroduction(person: string | null): string {
+  if (!person) return "No person was provided.";
+  
+  const introduction = grammar[person.toLowerCase()];
+  return introduction ? introduction : `I don't have information about ${person}.`;
+}
 
 const grammar: {[index: string]: string} = {
   // Technology
@@ -128,7 +133,8 @@ const dmMachine = setup({
           },
 
           {
-            target:"Celebrity",
+            // target:"Celebrity",
+            target:"Introduction",
             guard: ({ context }) => !!context.lastResult && context.lastResult  === "Who is X" && context.utterance === "introduction", // right now its value is either "Create a meeting" or "Who is X", a value assigned from event.nluValue.topIntension.
             
 
@@ -144,7 +150,7 @@ const dmMachine = setup({
         },
 
         AskIntension: {
-          entry: { type: "spst.speak", params: { utterance: `Please say 'Appointment' to schedule a meeting, or say 'Introduction' to learn more about a celebrity.` } },
+          entry: { type: "spst.speak", params: { utterance: `Please say 'Appointment' to schedule a meeting, or say 'Introduction' to learn more about a celebrity. 'Appointment' or 'Introuduction'?` } },
           on: { SPEAK_COMPLETE: "Ask" },
         },
         NoInput: {
@@ -265,6 +271,81 @@ const dmMachine = setup({
       },
     },
 
+    Introduction:{
+      // entry: ({context, event}) => console.log("dfdsfdfdsfsd", context, event),
+      entry: ({ context, event }) => {
+        console.log("dfdsfdfdsfsd");  
+        console.log("Context:", context);  
+        console.log("Event:", event);
+      },
+      initial: "Greeting",
+      on: {
+        LISTEN_COMPLETE: [
+          {
+            target: "Celebrity",
+            guard: ({ context }) => !!context.lastResult && !!context.person, 
+          },
+          { target: ".NoInput" },
+        ],
+      },
+      states: {
+        // start the conversation
+        Greeting: {
+          entry: { type: "spst.speak", params: { utterance: "Now, let us get to know a celebrity! " } },
+          on: { SPEAK_COMPLETE: "AskPerson" },
+        },
+        AskPerson: {
+          entry: { type: "spst.speak", params: { utterance: `Please say 'Tell me more about', then plus the person's name! ` } },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        NoInput: {
+          entry: {
+            type: "spst.speak",
+            params: { utterance: `I can't hear you! Please say 'Tell me more about', then plus the person's name!Name is necessary here!` },
+          },
+          on: { SPEAK_COMPLETE: "Ask" },
+        },
+        Ask: {
+          entry: { type: "spst.listen" },
+          on: {
+            RECOGNISED: {
+              actions: [
+                // 1. Log event.nluValue
+                ({ event }) => {
+                  console.log("NLU Value:", event.nluValue);
+                  console.log("Event Value:", event.value);
+                  console.log("NLU Value's entitiy's people content:",getEntityText( event.nluValue.entities, "person"));
+
+                },
+          
+                // 2. Assign event.nluValue.topIntent to context.lastResult
+                assign({
+                  lastResult: ({ event }) => event.nluValue.entities,
+                }),
+
+                assign({       
+                  person:  ({ event }) => getEntityText(event.nluValue.entities, "person"),
+                  // day: null,// Keep it unchanged
+                  // time: null,// Keep it unchanged
+                  // confirmation: null, // Keep it unchanged
+                  }),
+                        
+                // 3. Log the updated context.lastResult and its type
+                ({ context }) => {
+                  console.log("Updated Context.lastResult:", context.lastResult);
+                  console.log("context.person:", context.person);
+                  // console.log("Type of Context.lastResult:", typeof context.lastResult);
+                },
+              ],
+            },
+            ASR_NOINPUT: {
+              actions: assign({ lastResult: null }),
+            },
+          },
+        },
+      },
+    },
+
 
     AppointmentCreated: {
       entry: [
@@ -309,7 +390,7 @@ const dmMachine = setup({
     // this state is for testing, need to be implemented later.
     Celebrity: {
       entry: [
-        // ({ context, event }) => console.log("Test...", context, event), // Debug log
+        ({ context }) => console.log(getPersonIntroduction(context.person)), // Debug log
         { 
           type: "spst.speak", 
           params: { utterance: "Celebrity." } 
