@@ -1,0 +1,160 @@
+[
+    {
+      "name": "Mark Elliot Zuckerberg",
+      "nickname": null,
+      "birthdate": "May 14, 1984",
+      "nationality": "American",
+      "occupation": ["Businessman"],
+      "known_for": ["Co-founding Facebook", "CEO of Meta Platforms"],
+      "companies": [
+        {
+          "name": "Facebook",
+          "role": "Co-founder"
+        },
+        {
+          "name": "Meta Platforms",
+          "role": "Chairman & CEO"
+        }
+      ],
+      "achievements": [
+        "Co-founded Facebook in 2004",
+        "Became the world's youngest self-made billionaire in 2008",
+        "Net worth of $214.1 billion as of March 2025",
+        "Second richest person globally"
+      ],
+      "philanthropy": [],
+      "net_worth": "$214.1 billion (as of March 2025)",
+      "legacy": "Revolutionized social media and digital communication."
+    },
+    {
+      "name": "Elon Musk",
+      "nickname": null,
+      "birthdate": "June 28, 1971",
+      "nationality": "South African (naturalized U.S. citizen)",
+      "occupation": ["Businessman"],
+      "known_for": [
+        "Founder of Tesla and SpaceX",
+        "Owner of Twitter (rebranded as X)",
+        "Founder of Neuralink and The Boring Company"
+      ],
+      "companies": [
+        {
+          "name": "Tesla",
+          "role": "CEO & Product Architect"
+        },
+        {
+          "name": "SpaceX",
+          "role": "CEO & Chief Engineer"
+        },
+        {
+          "name": "Twitter (rebranded as X)",
+          "role": "Owner"
+        },
+        {
+          "name": "Neuralink",
+          "role": "Co-founder"
+        },
+        {
+          "name": "The Boring Company",
+          "role": "Founder"
+        }
+      ],
+      "achievements": [
+        "Founded SpaceX in 2002 and Tesla in 2004",
+        "Revolutionized reusable rockets and electric vehicles",
+        "Founded OpenAI in 2015, co-founded Neuralink in 2016, and launched The Boring Company in 2017",
+        "Acquired Twitter and rebranded it as X in 2023",
+        "Net worth of $330 billion as of March 2025",
+        "Named Time's Person of the Year in 2021"
+      ],
+      "philanthropy": [],
+      "net_worth": "$330 billion (as of March 2025)",
+      "legacy": "Pioneer in electric vehicles, space exploration, and renewable energy."
+    },
+    {
+      "name": "Bill Gates",
+      "nickname": "Bill Gates",
+      "birthdate": "October 28, 1955",
+      "nationality": "American",
+      "occupation": ["Businessman", "Philanthropist"],
+      "known_for": [
+        "Co-founding Microsoft",
+        "Philanthropy through the Bill & Melinda Gates Foundation"
+      ],
+      "companies": [
+        {
+          "name": "Microsoft",
+          "role": "Co-founder"
+        },
+        {
+          "name": "Cascade Investment",
+          "role": "Founder"
+        },
+        {
+          "name": "TerraPower",
+          "role": "Founder"
+        },
+        {
+          "name": "Gates Ventures",
+          "role": "Founder"
+        },
+        {
+          "name": "Breakthrough Energy",
+          "role": "Founder"
+        }
+      ],
+      "achievements": [
+        "Co-founded Microsoft with Paul Allen",
+        "Held positions of CEO, president, and chairman at Microsoft",
+        "Pioneer of the microcomputer revolution",
+        "Transitioned to philanthropy, focusing on climate change, global health, and education"
+      ],
+      "philanthropy": [
+        "Established the Bill & Melinda Gates Foundation",
+        "Led early 21st-century vaccination campaigns, contributing to the eradication of wild poliovirus in Africa",
+        "Founder of the Giving Pledge, a commitment by billionaires to donate a significant portion of their wealth"
+      ],
+      "net_worth": "$114 billion (as of March 2025)",
+      "legacy": "One of the wealthiest individuals in the world, influential in both technology and global philanthropy."
+    },
+    {
+      "name": "Jeffrey Preston Bezos",
+      "nickname": "Jeff Bezos",
+      "birthdate": "January 12, 1964",
+      "nationality": "American",
+      "occupation": ["Businessman"],
+      "known_for": [
+        "Founder of Amazon",
+        "Executive Chairman of Amazon",
+        "Founder of Blue Origin"
+      ],
+      "companies": [
+        {
+          "name": "Amazon",
+          "role": "Founder"
+        },
+        {
+          "name": "Blue Origin",
+          "role": "Founder"
+        },
+        {
+          "name": "The Washington Post",
+          "role": "Owner"
+        },
+        {
+          "name": "Altos Labs",
+          "role": "Co-founder"
+        }
+      ],
+      "achievements": [
+        "Founded Amazon in 1994, which became the world's largest e-commerce and cloud computing company",
+        "Founded Blue Origin in 2000, a private aerospace manufacturer and sub-orbital spaceflight company",
+        "Purchased The Washington Post in 2013 for $250 million",
+        "Co-founded Altos Labs in 2021"
+      ],
+      "philanthropy": [],
+      "net_worth": "$209.5 billion (as of March 2025)",
+      "legacy": "Revolutionized e-commerce, cloud computing, and space exploration."
+    }
+  ]
+    
