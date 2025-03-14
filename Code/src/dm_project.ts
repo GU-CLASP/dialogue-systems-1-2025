@@ -18,7 +18,7 @@ const settings: Settings = {
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
-  ttsDefaultVoice: "en-US-DavisNeural",
+  ttsDefaultVoice: "en-US-DavisMultilingualNeural",
   /* speechRecognitionEndpointId: "9fb1d792-feb6-47ef-aac9-ec2e46998109" */
 };
 
@@ -29,8 +29,8 @@ interface definition { [language: string]: string }
 const words: { [word: string]: {definition: definition, connections: connection }} = {
   finger: {
     definition: {
-      en: "Part of your hand",
-      fr: "Une partie de ta main"
+      english: "Part of your hand",
+      french: "Une partie de ta main"
     },
     connections: {
       luggage: {letter: "G", position: 3}
@@ -38,8 +38,8 @@ const words: { [word: string]: {definition: definition, connections: connection 
   },
   watch: {
     definition: {
-      en: "Worn on your wrist that tells time",
-      fr: "À ton poignet, elle donne l'heure"
+      english: "Worn on your wrist that tells time",
+      french: "À ton poignet, elle donne l'heure"
     },
     connections: {
       hour: {letter: "H", position: 1},
@@ -48,8 +48,8 @@ const words: { [word: string]: {definition: definition, connections: connection 
   },
   laptop: {
     definition: {
-      en: "Portable computer",
-      fr: "Ordinateur portable"
+      english: "Portable computer",
+      french: "Ordinateur portable"
     },
     connections: {
       luggage: {letter: "L", position: 1}
@@ -57,8 +57,8 @@ const words: { [word: string]: {definition: definition, connections: connection 
   },
   luggage: {
     definition: {
-      en: "Travel bag",
-      fr: "Sac de voyage"
+      english: "Travel bag",
+      french: "Sac de voyage"
     },
     connections: {
       laptop: {letter: "L", position: 1},
@@ -68,8 +68,8 @@ const words: { [word: string]: {definition: definition, connections: connection 
   },
   hour: {
     definition: {
-      en: "A period of 60 minutes",
-      fr: "Une durée de 60 minutes"},
+      english: "A period of 60 minutes",
+      french: "Une durée de 60 minutes"},
     connections: {
       watch: {letter: "H", position: 5}
     }
@@ -77,11 +77,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
 }
 
 const discovered: { [word: string]: boolean } = {}
-console.log(getClues("luggage"))
-
 
 function selectWord() {
-  const filteredWords = Object.keys(words).filter((word)=> !discovered[word])
+  let filteredWords = Object.keys(words).filter((word)=> !discovered[word])
   const i = Math.floor(Math.random()*filteredWords.length);
   return filteredWords[i];
 }
@@ -126,8 +124,12 @@ function sayClues(clues: clue[]) {
   return utterance
 }
 
-function getDefinition(word: string) {
-  return words[word].definition.en
+function getDefinition(word: string, language: string) {
+  let utterance : string = words[word].definition[language]
+  if (language == 'french'){
+    utterance = '<lang xml:lang="fr-FR">' + utterance + '</lang>'
+  }
+  return utterance
 }
 
 function updateDiscovered(word: string) {
@@ -176,7 +178,7 @@ const dmMachine = setup({
     },
     Greeting: {
       id: "Greeting",
-      entry: { type: "spst.speak", params: { utterance: `Hi! Let's play some crosswords!` } },
+      entry: { type: "spst.speak", params: { utterance: `Hi! Welcome to the voiced crosswords!` } },
       on: { SPEAK_COMPLETE: "Main" },
     },
     NoInput: {
@@ -186,181 +188,209 @@ const dmMachine = setup({
       },
       on: { SPEAK_COMPLETE: "Main.hist" },
     },
-    AskSettings: {
-      entry: { type: "spst.speak", params: { utterance: `You might want to combine fun and learning.
-        There are 2 play modes: English only for both puzzle and definitions in English, or French-English
-        for puzzle in English and definitions in French. Which mode do you want to play?` } },
-      on: { SPEAK_COMPLETE: "ListenSettings" },
-    },
-    ListenSettings: {
-      entry: { type: "spst.listen" },
-      on: {
-        RECOGNISED: { 
-          actions: assign(({ event }) => { 
-            return { language: event.value[0].utterance.toLowerCase() }; 
-          }),
-        },
-        ASR_NOINPUT: { 
-          actions: assign({ language: null })
-        },
-        LISTEN_COMPLETE: [ 
-          {
-            target: "Main",
-            guard: ({ context }) => !!context.language,
-          },
-          { target: "#DM.NoInput" },
-      ],
-      },
-    },
     Main:{
       id: "Main",
-      initial: "SelectWord",
+      initial: "Settings",
       states: {
         hist:{
           type: "history",
           history: "deep"
         },
-        SelectConnectedWord: {
-          id: "SelectConnectedWord",
-          entry: assign(({ context }) => { 
-            return { wordToFind: selectConnectedWord(context.wordToFind!) }}),
-            always: [
-              { target: "GetClues",
-                guard: ({ context }) => anyClues(context.wordToFind!) 
-              },
-              { target: "GiveDefinition" },
-            ],
-        },
-        SelectWord: {
-          id: "SelectWord",
-          entry: assign(({ context }) => { 
-            return { wordToFind: selectWord() }}),
-          always: [
-            { target: "GetClues",
-              guard: ({ context }) => anyClues(context.wordToFind!) 
-            },
-            { target: "GiveDefinition" },
-          ],
-        },
-        GetClues: {
-          id: "GetClues",
-          entry: assign(({ context }) => { 
-            return { clues: getClues(context.wordToFind!) }}),
-          always: { target: "GiveDefinition" },
-        },
-        GiveDefinition:{
-          id: "GiveDefinition",
-          entry: { type: "spst.speak",
-            params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
-              anyClues(context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
-                getDefinition(context.wordToFind!)}` }) },
-          on: { SPEAK_COMPLETE: "ListenAnswer" },
-        },
-        ListenAnswer:{
-          id: "ListenAnswer",
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: { 
-              actions: assign(({ event }) => { 
-                return { givenAnswer: event.value[0].utterance.toLowerCase() }; 
-              }),
-            },
-            ASR_NOINPUT: { 
-              actions: assign({ givenAnswer: null })
-            },
-            LISTEN_COMPLETE: [ 
-                {
-                  target: "CheckAnswer",
-                  guard: ({ context }) => !!context.givenAnswer,
-                },
-                { target: "#DM.NoInput" },
-            ],
-          },
-        },
-        CheckAnswer: {
-          id: "CheckAnswer",
-          entry: {
-            type: "spst.speak",
-            params: ({ context }) => ( { utterance: `You just said: ${context.givenAnswer}, and ${
-              context.givenAnswer! == context.wordToFind ? "that's": "that's not"} correct`})
-            },
+        Settings: {
+          id: "Settings",
+          initial: "AskSettings",
           on: { SPEAK_COMPLETE:
             [ 
-              { target: "UpdateDiscovered",
-                guard: ({ context }) => (context.givenAnswer! == context.wordToFind),
+              { target: "Play",
+                guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
               },
-              { target: "AskTryAgain" },
+              { target: ".AskSettings" },
             ],
           },
-        },
-        AskTryAgain:{
-          id: "AskTryAgain",
-          entry: {
-            type: "spst.speak",
-            params: { utterance: "Do you want to try again and propose another answer?"},
-          },
-          on: { SPEAK_COMPLETE: "ListenTryAgain"},
-        },
-        ListenTryAgain:{
-          id: "ListenTryAgain",
-          entry: { type: "spst.listen" },
-          on: {
-            RECOGNISED: { 
-              actions: assign(({ event }) => { 
-                return { lastResult: event.value[0].utterance.toLowerCase() }; 
-              }),
+          states: {
+            AskSettings: {
+              entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
+                Puzzles are invariably in English, but you can choose to have definitions either in English or in French.
+                Which language do you want to select for definitions?` } },
+              on: { SPEAK_COMPLETE: "ListenSettings" },
             },
-            ASR_NOINPUT: { 
-              actions: assign({ lastResult: null })
-            },
-            LISTEN_COMPLETE: [ 
-              {
-                target: "CheckTryAgain",
-                guard: ({ context }) => !!context.lastResult,
+            ListenSettings: {
+              entry: { type: "spst.listen" },
+              on: {
+                RECOGNISED: { 
+                  actions: assign(({ event }) => { 
+                    return { language: event.value[0].utterance.toLowerCase() }; 
+                  }),
+                },
+                ASR_NOINPUT: { 
+                  actions: assign({ language: null })
+                },
+                LISTEN_COMPLETE: [ 
+                  {
+                    target: "CheckSettings",
+                    guard: ({ context }) => !!context.language,
+                  },
+                  { target: "#DM.NoInput" },
+                ],
               },
-              { target: "#DM.NoInput" },
-            ],
-          },
+            },
+            CheckSettings: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: `You just said: ${context.language}, ${
+                      context.language! == "english" || context.language! == "french" ?
+                      "OK, let's play!" :"Please, reply 'English' or 'French'"}`})
+              },
+            },
+          }
         },
-        CheckTryAgain: {
-          id: "CheckTryAgain",
-          entry: {
-            type: "spst.speak",
-            params: ({ context }) => ( { utterance: `You just said: ${context.lastResult!}, ${
-              context.lastResult! == "yes" || context.lastResult! == "no" ? context.lastResult! == "yes" ?
-              "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
+        Play: {
+          id: "Play",
+          initial: "SelectWord",
+          states: {
+            SelectConnectedWord: {
+              id: "SelectConnectedWord",
+              entry: assign(({ context }) => { 
+                return { wordToFind: selectConnectedWord(context.wordToFind!) }}),
+                always: [
+                  { target: "GetClues",
+                    guard: ({ context }) => anyClues(context.wordToFind!) 
+                  },
+                  { target: "GiveDefinition" },
+                ],
             },
-          on: { SPEAK_COMPLETE: [ 
-            { target: "GiveDefinition",
-              guard: ({ context }) => (context.lastResult! == "yes"),
+            SelectWord: {
+              id: "SelectWord",
+              entry: assign(({ context }) => { 
+                return { wordToFind: selectWord() }}),
+              always: [
+                { target: "GetClues",
+                  guard: ({ context }) => anyClues(context.wordToFind!) 
+                },
+                { target: "GiveDefinition" },
+              ],
             },
-            { target: "SelectWord",
-              guard: ({ context }) => (context.lastResult! == "no"),
+            GetClues: {
+              id: "GetClues",
+              entry: assign(({ context }) => { 
+                return { clues: getClues(context.wordToFind!) }}),
+              always: { target: "GiveDefinition" },
             },
-            { target: "AskTryAgain" },
-          ],},
-        },    
-        UpdateDiscovered: {
-          id: "UpdateDiscovered",
-          entry: ({ context }) => updateDiscovered(context.wordToFind!),
-          always: [
-            { target: "Done",
-              guard: ({ context }) => (Object.keys(discovered).length == Object.keys(words).length)
+            GiveDefinition:{
+              id: "GiveDefinition",
+              entry: { type: "spst.speak",
+                params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
+                  anyClues(context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
+                    getDefinition(context.wordToFind!, context.language!)}` }) },
+              on: { SPEAK_COMPLETE: "ListenAnswer" },
             },
-            {
-              target: "SelectConnectedWord",
-              guard: ({ context }) => StillConnectedWordsToDiscover(context.wordToFind!),
+            ListenAnswer:{
+              id: "ListenAnswer",
+              entry: { type: "spst.listen" },
+              on: {
+                RECOGNISED: { 
+                  actions: assign(({ event }) => { 
+                    return { givenAnswer: event.value[0].utterance.toLowerCase() }; 
+                  }),
+                },
+                ASR_NOINPUT: { 
+                  actions: assign({ givenAnswer: null })
+                },
+                LISTEN_COMPLETE: [ 
+                    {
+                      target: "CheckAnswer",
+                      guard: ({ context }) => !!context.givenAnswer,
+                    },
+                    { target: "#DM.NoInput" },
+                ],
+              },
             },
-            { target: "SelectWord" },
-          ]
-        },
-        Done: {
-          entry: {type: "spst.speak",
-          params: {utterance: `Well done! You just completed the crossword puzzle!`}
-          },
-          on: {
-            CLICK: "#DM.Greeting",
-          },
+            CheckAnswer: {
+              id: "CheckAnswer",
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: `You just said: ${context.givenAnswer}, and ${
+                  context.givenAnswer! == context.wordToFind ? "that's": "that's not"} correct`})
+                },
+              on: { SPEAK_COMPLETE:
+                [ 
+                  { target: "UpdateDiscovered",
+                    guard: ({ context }) => (context.givenAnswer! == context.wordToFind),
+                  },
+                  { target: "AskTryAgain" },
+                ],
+              },
+            },
+            AskTryAgain:{
+              id: "AskTryAgain",
+              entry: {
+                type: "spst.speak",
+                params: { utterance: "Do you want to try again and propose another answer?"},
+              },
+              on: { SPEAK_COMPLETE: "ListenTryAgain"},
+            },
+            ListenTryAgain:{
+              id: "ListenTryAgain",
+              entry: { type: "spst.listen" },
+              on: {
+                RECOGNISED: { 
+                  actions: assign(({ event }) => { 
+                    return { lastResult: event.value[0].utterance.toLowerCase() }; 
+                  }),
+                },
+                ASR_NOINPUT: { 
+                  actions: assign({ lastResult: null })
+                },
+                LISTEN_COMPLETE: [ 
+                  {
+                    target: "CheckTryAgain",
+                    guard: ({ context }) => !!context.lastResult,
+                  },
+                  { target: "#DM.NoInput" },
+                ],
+              },
+            },
+            CheckTryAgain: {
+              id: "CheckTryAgain",
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: `You just said: ${context.lastResult!}, ${
+                  context.lastResult! == "yes" || context.lastResult! == "no" ? context.lastResult! == "yes" ?
+                  "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
+                },
+              on: { SPEAK_COMPLETE: [ 
+                { target: "GiveDefinition",
+                  guard: ({ context }) => (context.lastResult! == "yes"),
+                },
+                { target: "SelectWord",
+                  guard: ({ context }) => (context.lastResult! == "no"),
+                },
+                { target: "AskTryAgain" },
+              ],},
+            },    
+            UpdateDiscovered: {
+              id: "UpdateDiscovered",
+              entry: ({ context }) => updateDiscovered(context.wordToFind!),
+              always: [
+                { target: "Done",
+                  guard: ({ context }) => (Object.keys(discovered).length == Object.keys(words).length)
+                },
+                {
+                  target: "SelectConnectedWord",
+                  guard: ({ context }) => StillConnectedWordsToDiscover(context.wordToFind!),
+                },
+                { target: "SelectWord" },
+              ]
+            },
+            Done: {
+              entry: {type: "spst.speak",
+              params: {utterance: `Well done! You just completed the crossword puzzle!`}
+              },
+              on: {
+                CLICK: "#DM.Greeting",
+              },
+            },
+          }
         },
       },
     }
@@ -390,4 +420,8 @@ export function setupButton(element: HTMLButtonElement) {
     };
     element.innerHTML = `${meta.view}`;
   });
+}
+
+export function initPuzzle(element: HTMLElement){
+    element.innerHTML = "<p>blabla</p>"
 }
