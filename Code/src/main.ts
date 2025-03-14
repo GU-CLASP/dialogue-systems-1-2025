@@ -1,7 +1,8 @@
 import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import viteLogo from "/vite.svg";
-import { setupButton } from "./dm_project.ts";
+import { setupButton, initPuzzle } from "./dm_project.ts";
+
 //https://code2care.org/html/crossword-puzzle-pure-html-css-javascript/
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -10,5 +11,5 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     </div>
   </div>
 `;
-
+initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!);
 setupButton(document.querySelector<HTMLButtonElement>("#counter")!);
