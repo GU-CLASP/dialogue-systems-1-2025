@@ -119,6 +119,7 @@ function getClues(word:string) {
 }
 
 function sayClues(clues: clue[]) {
+  clues.sort((a, b) => a.position - b.position);
   let utterance : string = ""
   for (let clue of clues) {
     let thisutterance: string  = `letter "${clue.letter}" in position ${clue.position}, `
@@ -204,7 +205,7 @@ const dmMachine = setup({
           initial: "AskSettings",
           on: { SPEAK_COMPLETE:
             [ 
-              { target: "Play",
+              { target: "Instructions",
                 guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
               },
               { target: ".AskSettings" },
@@ -242,10 +243,21 @@ const dmMachine = setup({
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${context.language}, ${
                       context.language! == "english" || context.language! == "french" ?
-                      "OK, let's play!" :"Please, reply 'English' or 'French'"}`})
+                      "OK, well noted" :"Please, reply 'English' or 'French'"}`})
               },
             },
           }
+        },
+        Instructions: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ( { utterance: `Before to start, please listen carefully the following instructions.
+              After selecting a word randomly, I will give you the length of the word along with previously found letters if any.
+              The definition will be given in ${context.language}, and you will have 5 seconds of thinking before giving your answer in English.
+              If your answer is correct, we go on with a word connected to the previous one. Otherwise you can either try again or continue with another word.
+              Now, let's play some crosswords!!`})
+          },
+          on: { SPEAK_COMPLETE: "Play" },
         },
         Play: {
           id: "Play",
@@ -285,7 +297,10 @@ const dmMachine = setup({
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
                   anyClues(context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
                     getDefinition(context.wordToFind!, context.language!)}` }) },
-              on: { SPEAK_COMPLETE: "ListenAnswer" },
+              on: { SPEAK_COMPLETE: "LetThink" },
+            },
+            LetThink:{
+              after: { 5000: { target: "ListenAnswer" }}
             },
             ListenAnswer:{
               id: "ListenAnswer",
