@@ -1,0 +1,522 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "dialogue-systems-clu-sol",
+        "multilingual": false,
+        "description": "Recognise intents",
+        "language": "en-gb"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "create a meeting"
+            },
+            {
+                "category": "Who is Mihaly Csikszentmihalyi"
+            }
+        ],
+        "entities": [
+            {
+                "category": "Day",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Person",
+                "compositionSetting": "combineComponents"
+            }
+        ],
+        "utterances": [
+            {
+                "text": "Can you give me a brief overview of Martin Seligman's work?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 36,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "In what areas did Edmund Husserl make an impact?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 18,
+                        "length": 14
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What are Jacques Lacan's major achievements?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 9,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Would you mind explaining who Sigmund Freud is?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 30,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What is the significance of Martin Seligman in the field of psychology?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 28,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'm curious as to who Martin Seligman is.",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you provide some background information on Jaqcues Lacan?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 49,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is the individual Sigmund Freud?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me about Jacques Lacan?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who exactly is Sigmund Freud?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 15,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Go ahead and coordinate a meeting on Thursday!",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 37,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would appreciate it if you could establish a meeting for Monday with Dylan.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 59,
+                        "length": 6
+                    },
+                    {
+                        "category": "Person",
+                        "offset": 71,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Would you mind creating a meeting for Thursday?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 38,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please initiate a meeting with Dylan.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you book a meeting for me on Saturday?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 35,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please organize a meeting with Peter.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you create a meeting please for Friday?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 36,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need you to arrange a meeting for Sunday with Alexander.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 36,
+                        "length": 6
+                    },
+                    {
+                        "category": "Person",
+                        "offset": 48,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you set up a meeting with Dylan on Monday?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 32,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 41,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please schedule a meeting with Peter on Friday.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 40,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you give me a brief overview of Mihaly Csikszentmihalyi's work?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 36,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "In what areas did Mihaly Csikszentmihalyi make an impact?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 18,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What are Mihaly Csikszentmihalyi's major achievements?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 9,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Would you mind explaining who Mihaly Csikszentmihalyi is?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 30,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What is the significance of Mihaly Csikszentmihalyi in the field of psychology?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 28,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'm curious as to who Mihaly Csikszentmihalyi is.",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you provide some background information on Mihaly Csikszentmihalyi?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 49,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is the individual Mihaly Csikszentmihalyi?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me about Mihaly Csikszentmihalyi?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who exactly is Mihaly Csikszentmihalyi?",
+                "language": "en-gb",
+                "intent": "Who is Mihaly Csikszentmihalyi",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 15,
+                        "length": 23
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Go ahead and coordinate a meeting!",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would appreciate it if you could establish a meeting.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Would you mind creating a meeting?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please initiate a meeting.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you book a meeting for me?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please organize a meeting.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you create a meeting please?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need you to arrange a meeting.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Could you set up a meeting?",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please schedule a meeting at your earliest convenience.",
+                "language": "en-gb",
+                "intent": "create a meeting",
+                "entities": [],
+                "dataset": "Train"
+            }
+        ]
+    }
+}
