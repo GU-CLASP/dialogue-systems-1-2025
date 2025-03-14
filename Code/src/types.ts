@@ -10,6 +10,8 @@ export interface DMContext {
   agree: Boolean | null;
   disagree: Boolean | null;
   change: string | null;
+  info: string | null;
+  appointment: Boolean | null;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };

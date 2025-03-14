@@ -1,0 +1,476 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "Appointment",
+        "multilingual": true,
+        "description": "",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "CreateAppointment"
+            },
+            {
+                "category": "FindX"
+            }
+        ],
+        "entities": [
+            {
+                "category": "Person",
+                "compositionSetting": "combineComponents",
+                "requiredComponents": [
+                    "learned"
+                ]
+            },
+            {
+                "category": "Time",
+                "compositionSetting": "combineComponents",
+                "requiredComponents": [
+                    "learned"
+                ]
+            },
+            {
+                "category": "Day",
+                "compositionSetting": "combineComponents",
+                "requiredComponents": [
+                    "learned"
+                ]
+            },
+            {
+                "category": "Celebrity",
+                "compositionSetting": "combineComponents"
+            }
+        ],
+        "utterances": [
+            {
+                "text": "That's wrong, I didn't say that.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "That's right! I'm meeting my friend for the whole day.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 26,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "It's fine, thank you!",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Of course, that is correct.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Negative, I don't want to meet for the whole day.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Nope, I don't think so.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "No, it won't.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Yes, sure!",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me who Dolly Parton is?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 20,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me some things about Taylor Swift?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 34,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Is Dolly Parton a famous person?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 3,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me what you know about Ryan Gosling.",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 28,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What do you know about Emma Watson?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 23,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I don't know who Taylor Swift is.",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 17,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Give me some information about Keira Knightley.",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 31,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Do you know Emma Watson?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 12,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me who is Keira Knightley.",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 15,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is Noam Chomsky?",
+                "language": "en-us",
+                "intent": "FindX",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 7,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Book an appointment with Caroline at 18:00 on Wednesday.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 25,
+                        "length": 8
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 37,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 46,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to create a meeting with Naya on Tuesday at 4 in the afternoon.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 32,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 40,
+                        "length": 7
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 51,
+                        "length": 18
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Create appointment with Roxana at 20:00 on Tuesday.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 24,
+                        "length": 6
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 34,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 43,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Meeting with Claudia on Monday at 7 in the evening.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 13,
+                        "length": 7
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 24,
+                        "length": 6
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 34,
+                        "length": 16
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I am visiting grandma for a couple of hours on Monday at 16:00.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 14,
+                        "length": 7
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 47,
+                        "length": 6
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 57,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I am seeing Victoria on Wednesday morning for the whole day.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 12,
+                        "length": 8
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 24,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Booking appointment with eye doctor at 10:00 on Friday. ",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 25,
+                        "length": 10
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 39,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 48,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Appointment with Vlad on Thursday at 13:00.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 17,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 25,
+                        "length": 8
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 37,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Book meeting with George, on Sunday at 3 in the afternoon.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 18,
+                        "length": 6
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 29,
+                        "length": 6
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 39,
+                        "length": 18
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to meet with Christina on Saturday at 17:00.",
+                "language": "en-us",
+                "intent": "CreateAppointment",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 20,
+                        "length": 9
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 33,
+                        "length": 8
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 45,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            }
+        ]
+    }
+}

@@ -2,6 +2,7 @@ import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
+import { NLU_KEY } from "./azure";
 import { DMContext, DMEvents } from "./types";
 
 const inspector = createBrowserInspector();
@@ -10,98 +11,55 @@ const azureCredentials = {
   endpoint:
     "https://northeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
   key: KEY,
-};
+  };
 
-const settings: Settings = {
-  azureCredentials: azureCredentials,
-  azureRegion: "northeurope",
-  asrDefaultCompleteTimeout: 0,
-  asrDefaultNoInputTimeout: 5000,
-  locale: "en-US",
-  ttsDefaultVoice: "en-US-DavisNeural",
-};
+const azureLanguageCredentials = {
+    endpoint: "https://language-nerds-88.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview"      /** your Azure CLU prediction URL */,
+    key: NLU_KEY,                                                              /** reference to your Azure CLU key */
+    deploymentName: "appointment",                                            /** your Azure CLU deployment */
+    projectName: "Appointment",                                               /** your Azure CLU project name */
+  };
+  
 
+const settings = {
+    azureLanguageCredentials: azureLanguageCredentials /** global activation of NLU */,
+    azureCredentials: azureCredentials,
+    azureRegion: "northeurope",
+    asrDefaultCompleteTimeout: 0,
+    asrDefaultNoInputTimeout: 5000,
+    locale: "en-US",
+    ttsDefaultVoice: "en-US-DavisNeural",
+
+  };
+          
 interface GrammarEntry {
+  info?: string;
   person?: string;
   day?: string;
   time?: string;
   agree?: boolean;
   disagree?: boolean;
-//VG part:
-  change?: string;
+  appointment?: boolean;
 }
 
 const grammar: { [index: string]: GrammarEntry } = {
-  christina: { person: "Christina Klironomou" },
-  roxanna: { person: "Roxana Dimofte" },
-  caroline: { person: "Caroline Natalie Grand-Clement" },
-  claudia: { person: "Claudia Smith"},
-  george: {person: "George Anderson"},
-  vlad: { person: "Vladislav Maraev" },
-  aya: { person: "Nayat Astaiza Soriano" },
-  victoria: { person: "Victoria Daniilidou" },
-  monday: { day: "Monday" },
-  tuesday: { day: "Tuesday" },
-  wednesday: { day: "Wednesday" },
-  thursday: { day: "Thursday" },
-  friday: { day: "Friday" },
-  saturday: { day: "Saturday" },  
-  sunday: { day: "Sunday" },
-  "10": { time: "10:00" },
-  "11": { time: "11:00" },
-  "12": { time: "12:00" },
-  "13": { time: "13:00" },
-  "14": { time: "14:00" },
-  "15": { time: "15:00" },
-  "16": { time: "16:00" },
-  "17": { time: "17:00" },
-  "18": { time: "18:00" },
-  "19": { time: "19:00" },
-  "20": { time: "20:00" },
+  "dolly parton": {info: "Dolly Rebecca Parton (born January 19, 1946) is an American country music singer."},            
+  "taylor swift": {info: "Taylor Alison Swift (born December 13, 1989) is an American singer, following a career mostly in country and pop music."},
+  "emma watson": {info: "Emma Charlotte Duerre Watson (born April 15, 1990) is an English actress, mostly known for her role as Hermione Granger in the Harry Potter movie series."},
+  "ryan gosling": {info: "Ryan Thomas Gosling (born November 12, 1980) is a Canadian actor, mostly known for his roles in drama/romantic movies."},
+  "keira knightley": {info: "Keira Christina Knightley (born March 26, 1985) is an English actress, known for her roles in a variety of adventure, drama and period piece movies."},
+  "noam chomsky": {info: "Avram Noam Chomsky (born December 7, 1928) is an American linguist, political activist, and philosopher."},
+  appointment: {appointment:true},
+//note: I have kept the values of positive and negative answer in my grammar, instead of having entities for them, because the model was encountering problems recognizing those entities  
   sure : {agree:true},
   yes : {agree:true},
-  fine : {agree:true},
   good : {agree:true},
   no : {disagree:true},
-  nope : {disagree:true},
-  negative: {disagree:true},
-  //VG part:
-  "on monday": { day: "Monday" },
-  "on tuesday": { day: "Tuesday" },
-  "on wednesday": { day: "Wednesday" },
-  "on thursday": { day: "Thursday" },
-  "on friday": { day: "Friday" },
-  "on saturday": { day: "Saturday" },
-  "on sunday": { day: "Sunday" },
-  "at 10": { time: "10:00" },
-  "at 11": { time: "11:00" },
-  "at 13": { time: "13:00" },
-  "at 14": { time: "14:00" },
-  "at 15": { time: "15:00" },
-  "at 16": { time: "16:00" },
-  "at 17": { time: "17:00" },
-  "at 18": { time: "18:00" },
-  "at 19": { time: "19:00" },
-  "at 20": { time: "20:00" },
-  "person": {change: "person" },
-  "day": {change: "day"},
-  "time": {change: "time"}
+  negative: {disagree:true}
 };
 
 function isInGrammar(utterance: string) {
   return utterance.toLowerCase() in grammar;
-}
-
-function getPerson(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).person;
-}
-
-function getDay(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).day;
-}
-
-function getTime(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).time;
 }
 
 function posiveAnswer(utterance: string) {
@@ -109,13 +67,13 @@ function posiveAnswer(utterance: string) {
 }
   
 function negativeAnswer(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).disagree;
+  return (grammar[utterance.toLowerCase()] || {}).disagree; 
+} 
+
+function getCelebrityInfo(utterance: string) {                                                
+  return (grammar[utterance.toLowerCase()]|| {}).info;
 }
 
-//VG part:
-function getChange(utterance: string) {
-  return (grammar[utterance.toLowerCase()] || {}).change;
-}
 
 const dmMachine = setup({
   types: {
@@ -135,6 +93,7 @@ const dmMachine = setup({
     "spst.listen": ({ context }) =>
       context.spstRef.send({
         type: "LISTEN",
+        value: { nlu: true }
       }),
   },
 }).createMachine({
@@ -147,10 +106,9 @@ const dmMachine = setup({
     time: null,
     agree: null,
     disagree: null,
+    change: null,
     info:null,
     appointment:null,
-  //VG part:
-    change: null
   }),
   id: "DM",
   initial: "Prepare",
@@ -166,8 +124,47 @@ const dmMachine = setup({
       initial: "Prompt",
       states: {
         Prompt: {
-          entry: { type: "spst.speak", params: { utterance: `Let's create an appointment!` } },
-          on: { SPEAK_COMPLETE: "Who" },
+          entry: { type: "spst.speak", params: { utterance: `Hello there!` } },
+          on: { SPEAK_COMPLETE: "Intent" },
+        },
+        Intent: {
+          entry: { type: "spst.listen" },
+              on: {
+                RECOGNISED:[
+                {
+                guard: ({event}) => event.nluValue.topIntent === "CreateAppointment",
+                actions: assign({ appointment:true }) 
+                },
+                {
+                guard: ({event}) => event.nluValue.topIntent === "FindX", // && isInGrammar(event.nluValue.entities[0].text),
+                actions: assign(({ event }) => {
+                  return { info: getCelebrityInfo(event.nluValue.entities[0].text)};
+                }),
+                }], 
+                LISTEN_COMPLETE: [
+                  {
+                  guard: ({ context }) => context.appointment !=null,
+                  target: "Who"
+                  }, 
+                  {
+                  guard: ({ context }) => context.info !=null,
+                  target: "GetCelebrity",
+                  },
+                  {target: "Prompt"}
+                ],
+                ASR_NOINPUT: {
+                  actions: assign({ info: null }),
+                },
+              },
+        },
+        GetCelebrity: {
+          entry: {
+            type: "spst.speak",
+            params: ({ context }) => ({
+             utterance: `${context.info}`,
+            }),
+            },  
+            on: { SPEAK_COMPLETE: "Done"},
         },
         Who: {
           entry: { type: "spst.speak",
@@ -178,27 +175,22 @@ const dmMachine = setup({
           entry: { type: "spst.listen" },
               on: {
                 RECOGNISED:{
-                  guard: ({event}) => isInGrammar(event.value[0].utterance),
-                  actions: assign(({ event }) => {
-                    return { person: getPerson(event.value[0].utterance)};
+                  actions:
+                  assign({person: ({event}) => event.nluValue.entities[0].text
                   }),
                 },
                 LISTEN_COMPLETE: [
                   {
-                  guard: ({ context }) => context.person!=null && context.day!=null && context.time!= null,    //for the VG part
-                  target: "LastCheck"
+                  guard: ({ context }) => context.day!=null,
+                  target: "HowLong",
                   },
-                  {
-                  guard: ({ context }) => context.person!=null,
-                  target: "WhenD",
-                  },
-                  {target: "Who"}
+                  {target: "WhenD"}
                 ],
                 ASR_NOINPUT: {
-                  actions: assign({ person: null }),
+                  actions: assign({ day: null }),
                 },
               },
-        },
+      },
         WhenD: {
             entry: { type: "spst.speak",
             params: { utterance: `On which day is your meeting?` } },
@@ -208,16 +200,11 @@ const dmMachine = setup({
           entry: { type: "spst.listen" },
               on: {
                 RECOGNISED: {
-                  guard: ({event}) => isInGrammar(event.value[0].utterance),
-                  actions: assign(({ event }) => {
-                    return { day: getDay(event.value[0].utterance)};
-                  }),
+                  actions:
+                assign({day: ({event}) => event.nluValue.entities[0].text
+                }),
                   },
                   LISTEN_COMPLETE: [
-                    {
-                    guard: ({ context }) => context.person!=null && context.day!=null && context.time!=null,   //for the VG part
-                    target: "LastCheck"
-                    },
                     {
                     guard: ({ context }) => context.day!=null,
                     target: "HowLong",
@@ -230,38 +217,38 @@ const dmMachine = setup({
                 },
         },
         HowLong: {                                                                                       
-            entry: { type: "spst.speak",
-            params: { utterance: `Will it take the whole day?` } },
-            on: { SPEAK_COMPLETE: "GetAnswer"},
+              entry: { type: "spst.speak",
+              params: { utterance: `Will it take the whole day?` } },
+              on: { SPEAK_COMPLETE: "GetAnswer"},
         },
         GetAnswer: {
-          entry: { type: "spst.listen" },
-              on: {
-                RECOGNISED: {
-                  guard: ({event}) => isInGrammar(event.value[0].utterance),
-                  actions: assign(({ event }) => {
-                    return { agree: posiveAnswer(event.value[0].utterance),
-                             disagree: negativeAnswer(event.value[0].utterance)};
-                  }),
-               },
-               LISTEN_COMPLETE: [
-                {
-                guard: ({ context }) => context.agree==null && context.disagree==null,
-                target: "HowLong",
-                },
-                {
-                guard: ({ context }) => context.disagree==true,
-                target: "WhenT",
-                },
-                {
-                guard: ({ context }) => context.agree==true,
-                target: "LastCheck",
-                }
-              ],              
-              ASR_NOINPUT: {
-                actions: assign({ agree: null, disagree: null }),
-              },
-            },
+              entry: { type: "spst.listen" },
+                  on: {
+                    RECOGNISED:  {
+                        guard: ({event}) => isInGrammar(event.value[0].utterance),
+                        actions: assign(({ event }) => {
+                           return { agree: posiveAnswer(event.value[0].utterance),
+                                    disagree: negativeAnswer(event.value[0].utterance)};
+                    }),
+                    },
+                       LISTEN_COMPLETE: [
+                        {
+                        guard: ({ context }) => context.agree==null && context.disagree==null,
+                        target: "HowLong",
+                        },
+                        {
+                        guard: ({ context }) => context.disagree==true,
+                        target: "WhenT",
+                        },
+                        {
+                        guard: ({ context }) => context.agree==true,
+                        target: "LastCheck",
+                        }
+                      ],              
+                      ASR_NOINPUT: {
+                        actions: assign({ agree: null, disagree: null }),
+                      },
+                    },
        },
        WhenT: {
           entry: { type: "spst.speak" ,
@@ -272,9 +259,8 @@ const dmMachine = setup({
         entry: { type: "spst.listen" },
             on: {
               RECOGNISED: {
-                guard: ({event}) => isInGrammar(event.value[0].utterance),
-                actions: assign(({ event }) => {
-                  return { time: getTime(event.value[0].utterance)};
+                actions:
+                assign({time: ({event}) => event.nluValue.entities[0].text
                 }),
              },
              LISTEN_COMPLETE: [
@@ -288,8 +274,8 @@ const dmMachine = setup({
               actions: assign({ time: null }),
             },
           },
-      },                 
-      LastCheck: {
+       },                 
+       LastCheck: {
         entry: {
           type: "spst.speak",
           params: ({ context }) => ({
@@ -305,61 +291,23 @@ const dmMachine = setup({
               RECOGNISED: {
                 guard: ({event}) => isInGrammar(event.value[0].utterance),
                 actions: assign(({ event }) => {
-                  return { agree: posiveAnswer(event.value[0].utterance),
-                           disagree: negativeAnswer(event.value[0].utterance)};
-                }),
-             },
+                   return { agree: posiveAnswer(event.value[0].utterance),
+                            disagree: negativeAnswer(event.value[0].utterance)};
+            }),
+            },
             LISTEN_COMPLETE: [
               {
               guard: ({ context }) => context.agree==null && context.disagree==null,
               target: "LastCheck",
               },
               {
-              guard: ({ context }) => context.disagree!=null,
-              target: "WhatsWrong",
-              },
+              guard: ({ context }) => context.disagree != null,
+              target: "Who",
+              },  
               {target: "Confirmation"}
             ],
             ASR_NOINPUT: {
               actions: assign({ agree: null, disagree: null }),
-            },
-          },
-      },
-      //VG part:
-      WhatsWrong:{                                                                                      
-        entry: { type: "spst.speak",
-        params: { utterance: `What do you want to change? Person, day or time?` } },
-        on: { SPEAK_COMPLETE: "GetChange"},
-      },
-      GetChange:{
-        entry: { type: "spst.listen" },
-            on: {
-              RECOGNISED: {
-                guard: ({event}) => isInGrammar(event.value[0].utterance),
-                actions: assign(({ event }) => {
-                  return { change: getChange(event.value[0].utterance)};
-                }),
-             },
-            LISTEN_COMPLETE: [
-              {
-              guard: ({ context }) => context.change=="person",
-              target: "Who",
-              },
-              {
-              guard: ({ context }) => context.change=="day",
-              target: "WhenD",
-              },
-              {
-              guard: ({ context }) => context.change=="time",
-              target: "HowLong",
-              },
-              {
-              guard: ({ context }) => context.change==null,
-              target: "WhatsWrong"
-              }
-            ],
-            ASR_NOINPUT: {
-              actions: assign({ change: null }),
             },
           },
       },
