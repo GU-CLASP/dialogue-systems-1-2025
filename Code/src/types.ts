@@ -15,6 +15,8 @@ export interface DMContext {
   slots?: any;
   currentAppointment?: Appointment;
   appointments?: any;
+  currentIntent?: string | null;
+  extractedEntities?: any;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" };
