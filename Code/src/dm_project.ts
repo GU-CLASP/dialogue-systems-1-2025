@@ -78,8 +78,11 @@ const words: { [word: string]: {definition: definition, connections: connection 
 
 const discovered: { [word: string]: boolean } = {}
 
-function selectWord() {
+function selectWord(wordToFind: string|null) {
   let filteredWords = Object.keys(words).filter((word)=> !discovered[word])
+  if (Object.keys(discovered).length < Object.keys(words).length -1) {
+    filteredWords = filteredWords.filter((word)=> !(word==wordToFind))
+  }
   const i = Math.floor(Math.random()*filteredWords.length);
   return filteredWords[i];
 }
@@ -262,7 +265,7 @@ const dmMachine = setup({
             SelectWord: {
               id: "SelectWord",
               entry: assign(({ context }) => { 
-                return { wordToFind: selectWord() }}),
+                return { wordToFind: selectWord(context.wordToFind!) }}),
               always: [
                 { target: "GetClues",
                   guard: ({ context }) => anyClues(context.wordToFind!) 
@@ -317,9 +320,19 @@ const dmMachine = setup({
                   { target: "UpdateDiscovered",
                     guard: ({ context }) => (context.givenAnswer! == context.wordToFind),
                   },
-                  { target: "AskTryAgain" },
+                  { target: "Encourage",
+                    guard: ({ context }) => Object.keys(discovered).length == Object.keys(words).length -1
+                  },
+                  {
+                    target: "AskTryAgain"
+                  }
                 ],
               },
+            },
+            Encourage:{
+              entry: { type: "spst.speak",
+                params: { utterance: `Keep trying, you're almost there! That's the last word to find!` } },
+              on: { SPEAK_COMPLETE: "GiveDefinition"},
             },
             AskTryAgain:{
               id: "AskTryAgain",
