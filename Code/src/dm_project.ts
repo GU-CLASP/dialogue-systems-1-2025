@@ -26,7 +26,7 @@ interface clue {letter: string, position: number}
 interface connection { [word: string]: clue }
 interface definition { [language: string]: string }
 
-const words: { [word: string]: {definition: definition, connections: connection }} = {
+const words: { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }} = {
   finger: {
     definition: {
       english: "Part of your hand",
@@ -34,7 +34,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
     },
     connections: {
       luggage: {letter: "G", position: 3}
-    }
+    },
+    location: "1.3",
+    across: false
   },
   watch: {
     definition: {
@@ -44,7 +46,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
     connections: {
       hour: {letter: "H", position: 1},
       luggage: {letter: "A", position: 5},
-    }
+    },
+    location: "3.5",
+    across: false
   },
   laptop: {
     definition: {
@@ -53,7 +57,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
     },
     connections: {
       luggage: {letter: "L", position: 1}
-    }
+    },
+    location: "4.1",
+    across: false
   },
   luggage: {
     definition: {
@@ -64,7 +70,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
       laptop: {letter: "L", position: 1},
       watch: {letter: "A", position: 2},
       finger: {letter: "G", position: 4},
-    }
+    },
+    location: "4.1",
+    across: true
   },
   hour: {
     definition: {
@@ -72,7 +80,9 @@ const words: { [word: string]: {definition: definition, connections: connection 
       french: "Une durée de 60 minutes"},
     connections: {
       watch: {letter: "H", position: 5}
-    }
+    },
+    location: "7.5",
+    across: true
   },
 }
 
@@ -106,7 +116,6 @@ function anyClues(word: string) {
   return !!discoveredConnectedWords.length
 }
 
-
 function getClues(word:string) {
   const connectedWords = Object.keys(words[word].connections)
   const discoveredConnectedWords = connectedWords.filter((word) => discovered[word])
@@ -139,6 +148,34 @@ function getDefinition(word: string, language: string) {
 function updateDiscovered(word: string) {
   discovered[word] = true
 }
+
+function displayWord(word:string) {
+  let location: string = words[word].location
+  let row: number = Number(location.split(".")[0])
+  let column: number = Number(location.split(".")[1])
+  let across: boolean = words[word].across
+  let length : number = word.length
+  if (across == true) {
+    for (let step = 0; step < length; step++) {
+      let tileRow: number = row
+      let tileColumn: number = column + step
+      let tileId: string = tileRow.toString() + "." + tileColumn.toString()
+      let tile: HTMLElement = document.getElementById(tileId)!
+      tile.textContent = word[step].toUpperCase()
+    }
+  }
+  else {
+    for (let step = 0; step < length; step++) {
+      let tileRow: number = row + step
+      let tileColumn: number = column
+      let tileId: string = tileRow.toString() + "." + tileColumn.toString()
+      let tile: HTMLElement = document.getElementById(tileId)!
+      tile.textContent = word[step].toUpperCase()
+    }
+  }
+}
+
+
 
 const dmMachine = setup({
   types: {
@@ -398,7 +435,7 @@ const dmMachine = setup({
             },    
             UpdateDiscovered: {
               id: "UpdateDiscovered",
-              entry: ({ context }) => updateDiscovered(context.wordToFind!),
+              entry: ({ context }) => (updateDiscovered(context.wordToFind!), displayWord(context.wordToFind!)),
               always: [
                 { target: "Done",
                   guard: ({ context }) => (Object.keys(discovered).length == Object.keys(words).length)
@@ -451,5 +488,100 @@ export function setupButton(element: HTMLButtonElement) {
 }
 
 export function initPuzzle(element: HTMLElement){
-    element.innerHTML = "<p>blabla</p>"
+    element.innerHTML = `<div id="crossword">
+      <table>
+        <tbody>
+          <tr id="1">
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td id="1.3" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="2">
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td id="2.3" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="3">
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td id="3.3" class="white"></td>
+            <td class="dark"></td>
+            <td id="3.5" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="4">
+            <td id="4.1" class="white"></td>
+            <td id="4.2" class="white"></td>
+            <td id="4.3" class="white"></td>
+            <td id="4.4" class="white"></td>
+            <td id="4.5" class="white"></td>
+            <td id="4.6" class="white"></td>
+            <td id="4.7" class="white"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id ="5">
+            <td id="5.1" class="white"></td>
+            <td class="dark"></td>
+            <td id="5.3" class="white"></td>
+            <td class="dark"></td>
+            <td id="5.5" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="6">
+            <td id="6.1" class="white"></td>
+            <td class="dark"></td>
+            <td id="6.3" class="white"></td>
+            <td class="dark"></td>
+            <td id="6.5" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="7">
+            <td id="7.1" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td id="7.5" class="white"></td>
+            <td id="7.6" class="white"></td>
+            <td id="7.7" class="white"></td>
+            <td id="7.8" class="white"></td>
+          </tr>
+          <tr id="8">
+            <td id="8.1" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+          <tr id="9">
+            <td id="9.1" class="white"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+            <td class="dark"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`
 }
