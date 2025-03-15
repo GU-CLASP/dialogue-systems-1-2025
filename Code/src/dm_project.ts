@@ -151,31 +151,79 @@ function updateDiscovered(word: string) {
 
 function displayWord(word:string) {
   let location: string = words[word].location
-  let row: number = Number(location.split(".")[0])
-  let column: number = Number(location.split(".")[1])
+  let row: string = location.split(".")[0]
+  let column: string = location.split(".")[1]
   let across: boolean = words[word].across
   let length : number = word.length
   if (across == true) {
     for (let step = 0; step < length; step++) {
-      let tileRow: number = row
-      let tileColumn: number = column + step
-      let tileId: string = tileRow.toString() + "." + tileColumn.toString()
+      let tileColumn: number = Number(column) + step
+      let tileId: string = row + "." + tileColumn.toString()
       let tile: HTMLElement = document.getElementById(tileId)!
       tile.textContent = word[step].toUpperCase()
     }
   }
   else {
     for (let step = 0; step < length; step++) {
-      let tileRow: number = row + step
-      let tileColumn: number = column
-      let tileId: string = tileRow.toString() + "." + tileColumn.toString()
+      let tileRow: number = Number(row) + step
+      let tileId: string = tileRow.toString() + "." + column
       let tile: HTMLElement = document.getElementById(tileId)!
       tile.textContent = word[step].toUpperCase()
     }
   }
 }
 
+function highlightWord(word: string) {
+  let location: string = words[word].location
+  let row: string = location.split(".")[0]
+  let column: string = location.split(".")[1]
+  let across: boolean = words[word].across
+  let length : number = word.length
+  if (across == true) {
+    for (let step = 0; step < length; step++) {
+      let tileColumn: number = Number(column) + step
+      let tileId: string = row + "." + tileColumn.toString()
+      let tile: HTMLElement = document.getElementById(tileId)!
+      tile.setAttribute("class", "yellow")
+    }
+  }
+  else {
+    for (let step = 0; step < length; step++) {
+      let tileRow: number = Number(row) + step
+      let tileId: string = tileRow.toString() + "." + column
+      let tile: HTMLElement = document.getElementById(tileId)!
+      tile.setAttribute("class", "yellow")
+    }
+  }
+}
 
+function clearHighlighting(word: string | null) {
+  if (word ==  null) {
+  }
+  else {
+    let location: string = words[word!].location
+    let row: string = location.split(".")[0]
+    let column: string = location.split(".")[1]
+    let across: boolean = words[word!].across
+    let length : number = word!.length
+    if (across == true) {
+      for (let step = 0; step < length; step++) {
+        let tileColumn: number = Number(column) + step
+        let tileId: string = row + "." + tileColumn.toString()
+        let tile: HTMLElement = document.getElementById(tileId)!
+        tile.setAttribute("class", "white")
+      }
+    }
+    else {
+      for (let step = 0; step < length; step++) {
+        let tileRow: number = Number(row) + step
+        let tileId: string = tileRow.toString() + "." + column
+        let tile: HTMLElement = document.getElementById(tileId)!
+        tile.setAttribute("class", "white")
+      }
+    }
+  }
+}
 
 const dmMachine = setup({
   types: {
@@ -304,17 +352,16 @@ const dmMachine = setup({
               id: "SelectConnectedWord",
               entry: assign(({ context }) => { 
                 return { wordToFind: selectConnectedWord(context.wordToFind!) }}),
-                always: [
-                  { target: "GetClues",
-                    guard: ({ context }) => anyClues(context.wordToFind!) 
-                  },
-                  { target: "GiveDefinition" },
-                ],
+              always: { target: "HighlightWord" },
             },
             SelectWord: {
               id: "SelectWord",
               entry: assign(({ context }) => { 
                 return { wordToFind: selectWord(context.wordToFind!) }}),
+              always: { target: "HighlightWord" },
+            },
+            HighlightWord: {
+              entry: ({ context }) => highlightWord(context.wordToFind!),
               always: [
                 { target: "GetClues",
                   guard: ({ context }) => anyClues(context.wordToFind!) 
@@ -427,7 +474,8 @@ const dmMachine = setup({
                 { target: "GiveDefinition",
                   guard: ({ context }) => (context.lastResult! == "yes"),
                 },
-                { target: "SelectWord",
+                { actions: ({ context }) => clearHighlighting(context.wordToFind!),
+                  target: "SelectWord",
                   guard: ({ context }) => (context.lastResult! == "no"),
                 },
                 { target: "AskTryAgain" },
@@ -435,7 +483,8 @@ const dmMachine = setup({
             },    
             UpdateDiscovered: {
               id: "UpdateDiscovered",
-              entry: ({ context }) => (updateDiscovered(context.wordToFind!), displayWord(context.wordToFind!)),
+              entry: ({ context }) => (updateDiscovered(context.wordToFind!),
+              displayWord(context.wordToFind!), clearHighlighting(context.wordToFind!)),
               always: [
                 { target: "Done",
                   guard: ({ context }) => (Object.keys(discovered).length == Object.keys(words).length)
