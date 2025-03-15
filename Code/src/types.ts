@@ -8,6 +8,8 @@ export interface DMContext {
   meetingTime: string | null;
   response: string | null;
   confirmationMessage: string | null;
+  answer: string | null;
+  intent: string | null;
 }
 
 export type DMEvents =
@@ -15,6 +17,7 @@ export type DMEvents =
   | { type: "CLICK" }
   | { type: "ASRTTS_READY" }
   | { type: "SPEAK_COMPLETE" }
-  | { type: "RECOGNISED"; value: Hypothesis[] }
+  | { type: "RECOGNISED"; value: Hypothesis[]; nluValue?: any }
   | { type: "ASR_NOINPUT" }
-  | { type: "LISTEN_COMPLETE" };
+  | { type: "LISTEN_COMPLETE"};;
+
