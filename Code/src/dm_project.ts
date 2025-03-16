@@ -2,7 +2,7 @@ import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure.ts";
-import { DMContext, DMEvents } from "./types.ts";
+import { DMContext, DMEvents, clue, puzzle } from "./types.ts";
 
 const inspector = createBrowserInspector();
 
@@ -21,11 +21,6 @@ const settings: Settings = {
   ttsDefaultVoice: "en-US-DavisMultilingualNeural",
   /* speechRecognitionEndpointId: "9fb1d792-feb6-47ef-aac9-ec2e46998109" */
 };
-
-interface clue {letter: string, position: number}
-interface connection { [word: string]: clue }
-interface definition { [language: string]: string }
-interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
 
 const words0: puzzle = {
   finger: {

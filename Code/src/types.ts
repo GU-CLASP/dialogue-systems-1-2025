@@ -1,11 +1,10 @@
 import { Hypothesis, SpeechStateExternalEvent } from "speechstate";
 import { AnyActorRef } from "xstate";
-/* import { clue, connection, definition, puzzle } from "dm_project" */
 
-interface clue {letter: string, position: number}
-interface connection { [word: string]: clue }
-interface definition { [language: string]: string }
-interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
+export interface clue {letter: string, position: number}
+export interface connection { [word: string]: clue }
+export interface definition { [language: string]: string }
+export interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
 export interface DMContext {
   spstRef: AnyActorRef;
   language?: string | null;
