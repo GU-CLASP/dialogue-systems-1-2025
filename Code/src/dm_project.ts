@@ -25,8 +25,9 @@ const settings: Settings = {
 interface clue {letter: string, position: number}
 interface connection { [word: string]: clue }
 interface definition { [language: string]: string }
+interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
 
-const words: { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }} = {
+const words: puzzle = {
   finger: {
     definition: {
       english: "Part of your hand",
@@ -87,6 +88,55 @@ const words: { [word: string]: {definition: definition, connections: connection,
 }
 
 const discovered: { [word: string]: boolean } = {}
+
+function initPuzzle(element: HTMLElement){
+  let lastColumns : number[] = []
+  let lastRows : number[] = []
+  let whites: string[] = []
+  for (let word of Object.keys(words)) {
+    if (words[word].across == true) {
+      let row: number = Number(words[word].location.split(".")[0])
+      let firstColumn: number = Number(words[word].location.split(".")[1])
+      let lastColumn: number = firstColumn + word.length
+      lastColumns.push(lastColumn)
+      for (let step = 0; step < word.length; step++) {
+        let tileColumn: number = firstColumn + step
+        let tileId: string = row + "." + tileColumn.toString()
+        whites.push(tileId)
+      }
+    }
+    else {
+      let column: number = Number(words[word].location.split(".")[1])
+      let firstRow: number = Number(words[word].location.split(".")[0])
+      let lastRow: number = firstRow + word.length
+      lastRows.push(lastRow)
+      for (let step = 0; step < word.length; step++) {
+        let tileRow: number = firstRow + step
+        let tileId: string = tileRow.toString() + "." + column
+        whites.push(tileId)
+      }
+    }
+  }
+  let numberColumns: number = Math.max(...lastColumns)
+  let numberRows: number = Math.max(...lastRows)
+  let stringHTML: string = `<div id="crossword"><table><tbody>`
+  for (let row = 1; row < numberRows; row++) {
+    stringHTML += `<tr>`
+    for (let column = 1; column < numberColumns; column++) {
+      if (whites.includes(`${row}.${column}`)) {
+        stringHTML += `<td id="${row}.${column}" class="white"></td>`
+      }
+      else {
+        stringHTML += `<td class="dark"></td>`
+      }
+    }
+    stringHTML += `</tr>`
+  }
+  stringHTML += `</tbody></table></div>`
+  element.innerHTML = stringHTML
+}
+
+initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!)
 
 function selectWord(wordToFind: string|null) {
   let filteredWords = Object.keys(words).filter((word)=> !discovered[word])
@@ -534,103 +584,4 @@ export function setupButton(element: HTMLButtonElement) {
     };
     element.innerHTML = `${meta.view}`;
   });
-}
-
-export function initPuzzle(element: HTMLElement){
-    element.innerHTML = `<div id="crossword">
-      <table>
-        <tbody>
-          <tr id="1">
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td id="1.3" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="2">
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td id="2.3" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="3">
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td id="3.3" class="white"></td>
-            <td class="dark"></td>
-            <td id="3.5" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="4">
-            <td id="4.1" class="white"></td>
-            <td id="4.2" class="white"></td>
-            <td id="4.3" class="white"></td>
-            <td id="4.4" class="white"></td>
-            <td id="4.5" class="white"></td>
-            <td id="4.6" class="white"></td>
-            <td id="4.7" class="white"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id ="5">
-            <td id="5.1" class="white"></td>
-            <td class="dark"></td>
-            <td id="5.3" class="white"></td>
-            <td class="dark"></td>
-            <td id="5.5" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="6">
-            <td id="6.1" class="white"></td>
-            <td class="dark"></td>
-            <td id="6.3" class="white"></td>
-            <td class="dark"></td>
-            <td id="6.5" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="7">
-            <td id="7.1" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td id="7.5" class="white"></td>
-            <td id="7.6" class="white"></td>
-            <td id="7.7" class="white"></td>
-            <td id="7.8" class="white"></td>
-          </tr>
-          <tr id="8">
-            <td id="8.1" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-          <tr id="9">
-            <td id="9.1" class="white"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-            <td class="dark"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>`
 }
