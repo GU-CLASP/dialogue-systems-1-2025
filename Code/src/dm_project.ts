@@ -27,7 +27,7 @@ interface connection { [word: string]: clue }
 interface definition { [language: string]: string }
 interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
 
-const words: puzzle = {
+const words0: puzzle = {
   finger: {
     definition: {
       english: "Part of your hand",
@@ -87,9 +87,162 @@ const words: puzzle = {
   },
 }
 
+const words1: puzzle = {
+  walk: {
+    definition: {
+      english: "Eyes is to see as leg is to...",
+      french: "Les yeux pour voir et les jambes pour..."
+    },
+    connections: {
+      library: {letter: "L", position: 1}
+    },
+    location: "1.3",
+    across: true
+  },
+  sunday: {
+    definition: {
+      english: "Holiday of the week",
+      french: "Congé hebdomadaire"
+    },
+    connections: {
+      smooth: {letter: "S", position: 1},
+      library: {letter: "A", position: 5},
+    },
+    location: "5.1",
+    across: true
+  },
+  team: {
+    definition: {
+      english: "Playing game together",
+      french: "Joue ensemble"
+    },
+    connections: {
+      tiger: {letter: "T", position: 1},
+      september: {letter: "M", position: 6}
+    },
+    location: "8.9",
+    across: true
+  },
+  teacher: {
+    definition: {
+      english: "A person who teaches in school",
+      french: "Une personne qui enseigne à l'école"
+    },
+    connections: {
+      smooth: {letter: "T", position: 5},
+      house: {letter: "H", position: 1},
+      four: {letter: "R", position: 4},
+    },
+    location: "9.1",
+    across: true
+  },
+  hundred: {
+    definition: {
+      english: "58 + 42 =",
+      french: "58 + 42 ="},
+    connections: {
+      house: {letter: "U", position: 3},
+      tiger: {letter: "E", position: 4}
+    },
+    location: "11.4",
+    across: true
+  },
+  red: {
+    definition: {
+      english: "Traffic color light which means stop",
+      french: "Couleur de feu qui signale l'arrêt obligatoire"},
+    connections: {
+      september: {letter: "R", position: 9},
+    },
+    location: "11.12",
+    across: true
+  },
+  camel: {
+    definition: {
+      english: "Ship of the desert",
+      french: "Vaisseau du désert"},
+    connections: {
+      house: {letter: "E", position: 5},
+    },
+    location: "13.2",
+    across: true
+  },
+  library: {
+    definition: {
+      english: "Collection of books",
+      french: "Collection de livres"},
+    connections: {
+      walk: {letter: "L", position: 3},
+      sunday: {letter: "A", position: 5}
+    },
+    location: "1.5",
+    across: false
+  },
+  september: {
+    definition: {
+      english: "Ninth month of the year",
+      french: "Neuvième mois de l'année"},
+    connections: {
+      team: {letter: "M", position: 4},
+      red: {letter: "R", position: 1}
+    },
+    location: "3.12",
+    across: false
+  },
+  smooth: {
+    definition: {
+      english: "Opposite of rough",
+      french: "Contraire de rugueux"},
+    connections: {
+      sunday: {letter: "S", position: 1},
+      teacher: {letter: "T", position: 1}
+    },
+    location: "5.1",
+    across: false
+  },
+  four: {
+    definition: {
+      english: "How many bails are required in cricket?",
+      french: "Combien faut-il de barrettes au cricket ?"},
+    connections: {
+      teacher: {letter: "R", position: 7},
+    },
+    location: "6.7",
+    across: false
+  },
+  tiger: {
+    definition: {
+      english: "National animal of India",
+      french: "Animal national de l´Inde"},
+    connections: {
+      team: {letter: "T", position: 1},
+      hundred: {letter: "E", position: 6}
+    },
+    location: "8.9",
+    across: false
+  },
+  house: {
+    definition: {
+      english: "A place where we live",
+      french: "Un lieu de vie"},
+    connections: {
+      teacher: {letter: "H", position: 5},
+      hundred: {letter: "U", position: 2},
+      camel: {letter: "E", position: 4},
+    },
+    location: "9.5",
+    across: false
+  },
+}
+
+const puzzles: {[index: number] : puzzle} = {
+  0: words0,
+  1: words1
+}
 const discovered: { [word: string]: boolean } = {}
 
-function initPuzzle(element: HTMLElement){
+
+function initPuzzle(element: HTMLElement, words: puzzle){
   let lastColumns : number[] = []
   let lastRows : number[] = []
   let whites: string[] = []
@@ -136,37 +289,36 @@ function initPuzzle(element: HTMLElement){
   element.innerHTML = stringHTML
 }
 
-initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!)
 
-function selectWord(wordToFind: string|null) {
-  let filteredWords = Object.keys(words).filter((word)=> !discovered[word])
-  if (Object.keys(discovered).length < Object.keys(words).length -1) {
+function selectWord(words: puzzle, wordToFind: string|null) {
+  let filteredWords = Object.keys(words!).filter((word)=> !discovered[word])
+  if (Object.keys(discovered).length < Object.keys(words!).length -1) {
     filteredWords = filteredWords.filter((word)=> !(word==wordToFind))
   }
   const i = Math.floor(Math.random()*filteredWords.length);
   return filteredWords[i];
 }
 
-function StillConnectedWordsToDiscover(word:string) {
+function StillConnectedWordsToDiscover(words: puzzle, word:string) {
   const connectedWords = Object.keys(words[word].connections)
   const ConnectedWordsToDiscover = connectedWords.filter((word)=> !discovered[word])
   return !!ConnectedWordsToDiscover.length
 }
 
-function selectConnectedWord(word: string) {
+function selectConnectedWord(words: puzzle, word: string) {
   const connectedWords = Object.keys(words[word].connections)
   const filteredConnectedWords = connectedWords.filter((word)=> !discovered[word])
   const i = Math.floor(Math.random()*filteredConnectedWords.length);
   return filteredConnectedWords[i]
 }
 
-function anyClues(word: string) {
+function anyClues(words: puzzle, word: string) {
   const connectedWords = Object.keys(words[word].connections)
   const discoveredConnectedWords = connectedWords.filter((word)=> discovered[word])
   return !!discoveredConnectedWords.length
 }
 
-function getClues(word:string) {
+function getClues(words: puzzle, word:string) {
   const connectedWords = Object.keys(words[word].connections)
   const discoveredConnectedWords = connectedWords.filter((word) => discovered[word])
   const clues : clue[] = []
@@ -187,7 +339,7 @@ function sayClues(clues: clue[]) {
   return utterance
 }
 
-function getDefinition(word: string, language: string) {
+function getDefinition(words: puzzle, word: string, language: string) {
   let utterance : string = words[word].definition[language]
   if (language == 'french'){
     utterance = '<lang xml:lang="fr-FR">' + utterance + '</lang>'
@@ -199,7 +351,7 @@ function updateDiscovered(word: string) {
   discovered[word] = true
 }
 
-function displayWord(word:string) {
+function displayWord(words: puzzle, word:string) {
   let location: string = words[word].location
   let row: string = location.split(".")[0]
   let column: string = location.split(".")[1]
@@ -223,7 +375,7 @@ function displayWord(word:string) {
   }
 }
 
-function highlightWord(word: string) {
+function highlightWord(words: puzzle, word: string) {
   let location: string = words[word].location
   let row: string = location.split(".")[0]
   let column: string = location.split(".")[1]
@@ -247,7 +399,7 @@ function highlightWord(word: string) {
   }
 }
 
-function clearHighlighting(word: string | null) {
+function clearHighlighting(words: puzzle, word: string | null) {
   if (word ==  null) {
   }
   else {
@@ -300,6 +452,8 @@ const dmMachine = setup({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
     language: null,
+    level: null,
+    words: null,
     lastResult: null,
     wordToFind: null,
     givenAnswer: null,
@@ -337,23 +491,15 @@ const dmMachine = setup({
         },
         Settings: {
           id: "Settings",
-          initial: "AskSettings",
-          on: { SPEAK_COMPLETE:
-            [ 
-              { target: "Instructions",
-                guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
-              },
-              { target: ".AskSettings" },
-            ],
-          },
+          initial: "AskLanguage",
           states: {
-            AskSettings: {
+            AskLanguage: {
               entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
-                Puzzles are invariably in English, but you can choose to have definitions either in English or in French.
+                In puzzles, words to find are in English, but you can choose to get definitions either in English or in French.
                 Which language do you want to select for definitions?` } },
-              on: { SPEAK_COMPLETE: "ListenSettings" },
+              on: { SPEAK_COMPLETE: "ListenLanguage" },
             },
-            ListenSettings: {
+            ListenLanguage: {
               entry: { type: "spst.listen" },
               on: {
                 RECOGNISED: { 
@@ -366,30 +512,87 @@ const dmMachine = setup({
                 },
                 LISTEN_COMPLETE: [ 
                   {
-                    target: "CheckSettings",
+                    target: "CheckLanguage",
                     guard: ({ context }) => !!context.language,
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            CheckSettings: {
+            CheckLanguage: {
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${context.language}, ${
                       context.language! == "english" || context.language! == "french" ?
                       "OK, well noted" :"Please, reply 'English' or 'French'"}`})
               },
+              on: { SPEAK_COMPLETE:
+                [ 
+                  { target: "AskLevel",
+                    guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
+                  },
+                  { target: "AskLanguage" },
+                ],
+              },
+            },
+            AskLevel: {
+              entry: { type: "spst.speak", params: { utterance: `There are 3 different levels of difficulty.
+                Level 0 - to train and familiarize yourself with the game.
+                Level 1 - for beginners. And Level 2 - for more advanced players.
+                Which level do you want to play?` } },
+              on: { SPEAK_COMPLETE: "ListenLevel" },
+            },
+            ListenLevel: {
+              entry: { type: "spst.listen" },
+              on: {
+                RECOGNISED: { 
+                  actions: assign(({ event }) => { 
+                    return { level: event.value[0].utterance.toLowerCase() }; 
+                  }),
+                },
+                ASR_NOINPUT: { 
+                  actions: assign({ level: null })
+                },
+                LISTEN_COMPLETE: [ 
+                  {
+                    target: "CheckLevel",
+                    guard: ({ context }) => !!context.level,
+                  },
+                  { target: "#DM.NoInput" },
+                ],
+              },
+            },
+            CheckLevel: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: `You just said: ${context.level}, ${
+                      context.level! == "0" || context.level! == "1" || context.level! == "2"?
+                      "OK, well noted" :"Please, reply '0', '1' or '2'"}`})
+              },
+              on: { SPEAK_COMPLETE:
+                [ 
+                  { actions: assign(({ context }) => { return { words: puzzles[Number(context.level!)] }}),
+                    target: "#DM.Main.InitializePuzzle",
+                    guard: ({ context }) => (context.level! == "0" || context.level! == "1" || context.level! == "2"),
+                  },
+                  { target: "AskLevel" },
+                ],
+              },
             },
           }
+        },
+        InitializePuzzle: {
+          entry: ({ context }) => initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!),
+          always: { target: "Instructions" },
         },
         Instructions: {
           entry: {
             type: "spst.speak",
-            params: ({ context }) => ( { utterance: `Before to start, please listen carefully the following instructions.
+            params: ({ context }) => ( { utterance: `Before to start, please listen carefully to the following instructions.
+              Level ${context.level} puzzle counts ${Object.keys(puzzles[Number(context.level)]).length} words to find.
               After selecting a word randomly, I will give you the length of the word along with previously found letters if any.
               The definition will be given in ${context.language}, and you will have 5 seconds of thinking before giving your answer in English.
-              If your answer is correct, we go on with a word connected to the previous one. Otherwise you can either try again or continue with another word.
+              If your answer is correct, we go on with the next word, connected to the previous one if any. Otherwise you can either try again or continue with another word.
               Now, let's play some crosswords!!`})
           },
           on: { SPEAK_COMPLETE: "Play" },
@@ -401,20 +604,20 @@ const dmMachine = setup({
             SelectConnectedWord: {
               id: "SelectConnectedWord",
               entry: assign(({ context }) => { 
-                return { wordToFind: selectConnectedWord(context.wordToFind!) }}),
+                return { wordToFind: selectConnectedWord(context.words!, context.wordToFind!) }}),
               always: { target: "HighlightWord" },
             },
             SelectWord: {
               id: "SelectWord",
               entry: assign(({ context }) => { 
-                return { wordToFind: selectWord(context.wordToFind!) }}),
+                return { wordToFind: selectWord(context.words!, context.wordToFind!) }}),
               always: { target: "HighlightWord" },
             },
             HighlightWord: {
-              entry: ({ context }) => highlightWord(context.wordToFind!),
+              entry: ({ context }) => highlightWord(context.words!, context.wordToFind!),
               always: [
                 { target: "GetClues",
-                  guard: ({ context }) => anyClues(context.wordToFind!) 
+                  guard: ({ context }) => anyClues(context.words!, context.wordToFind!) 
                 },
                 { target: "GiveDefinition" },
               ],
@@ -422,15 +625,15 @@ const dmMachine = setup({
             GetClues: {
               id: "GetClues",
               entry: assign(({ context }) => { 
-                return { clues: getClues(context.wordToFind!) }}),
+                return { clues: getClues(context.words!, context.wordToFind!) }}),
               always: { target: "GiveDefinition" },
             },
             GiveDefinition:{
               id: "GiveDefinition",
               entry: { type: "spst.speak",
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
-                  anyClues(context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
-                    getDefinition(context.wordToFind!, context.language!)}` }) },
+                  anyClues(context.words!, context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
+                    getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
@@ -470,7 +673,7 @@ const dmMachine = setup({
                     guard: ({ context }) => (context.givenAnswer! == context.wordToFind),
                   },
                   { target: "Encourage",
-                    guard: ({ context }) => Object.keys(discovered).length == Object.keys(words).length -1
+                    guard: ({ context }) => Object.keys(discovered).length == Object.keys(context.words!).length -1
                   },
                   {
                     target: "AskTryAgain"
@@ -524,7 +727,7 @@ const dmMachine = setup({
                 { target: "GiveDefinition",
                   guard: ({ context }) => (context.lastResult! == "yes"),
                 },
-                { actions: ({ context }) => clearHighlighting(context.wordToFind!),
+                { actions: ({ context }) => clearHighlighting(context.words!, context.wordToFind!),
                   target: "SelectWord",
                   guard: ({ context }) => (context.lastResult! == "no"),
                 },
@@ -534,14 +737,14 @@ const dmMachine = setup({
             UpdateDiscovered: {
               id: "UpdateDiscovered",
               entry: ({ context }) => (updateDiscovered(context.wordToFind!),
-              displayWord(context.wordToFind!), clearHighlighting(context.wordToFind!)),
+              displayWord(context.words!, context.wordToFind!), clearHighlighting(context.words!, context.wordToFind!)),
               always: [
                 { target: "Done",
-                  guard: ({ context }) => (Object.keys(discovered).length == Object.keys(words).length)
+                  guard: ({ context }) => (Object.keys(discovered).length == Object.keys(context.words!).length)
                 },
                 {
                   target: "SelectConnectedWord",
-                  guard: ({ context }) => StillConnectedWordsToDiscover(context.wordToFind!),
+                  guard: ({ context }) => StillConnectedWordsToDiscover(context.words!, context.wordToFind!),
                 },
                 { target: "SelectWord" },
               ]
