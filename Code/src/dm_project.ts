@@ -244,13 +244,24 @@ const puzzles: {[index: number] : puzzle} = {
 }
 const discovered: { [word: string]: boolean } = {}
 
+
+function detectedLanguage(entities: any) {
+  return !!entities.find( x => x.category === "language")
+}
+
+function getLanguage(entities: any) {
+  let obj_lang = entities.find( x => x.category === "language")
+  let index_lang = entities.indexOf(obj_lang)
+  return entities[index_lang].text.toLowerCase()
+}
+
 function getLevelAsNumber(level: string) {
   let levelAsNumber = undefined
   if (level == "0" || level == "zero" || level == "0th" || level == "zeroth" || level == "training" || level == "train") {
     levelAsNumber = 0
   }
   else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
-    levelAsNumber = 2
+    levelAsNumber = 0
   }
   else if (level == "1" || level == "one" || level == "1st" || level == "first" || level == "beginner" || level == "beginners") {
     levelAsNumber = 1
@@ -525,9 +536,9 @@ const dmMachine = setup({
                 RECOGNISED: [
                   { 
                   actions: assign(({ event }) => { 
-                    return { lastResult: event.nluValue, language: event.nluValue.entities[0].text.toLowerCase() }; 
+                    return { lastResult: event.nluValue, language: getLanguage(event.nluValue.entities) }; 
                   }),
-                  guard: (({ event }) => event.nluValue.topIntent == "set language" && !!event.nluValue.entities[0])
+                  guard: (({ event }) => event.nluValue.topIntent == "set language" && detectedLanguage(event.nluValue.entities))
                   },
                   { 
                   actions: assign({ language: "notDetected" })
@@ -539,33 +550,27 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [ 
                   {
                     target: "CheckLanguage",
-                    guard: ({ context }) => !!context.language && context.language != "notDetected",
-                  },
-                  {
-                    target: "LanguageNotDetected",
-                    guard: ({ context }) => !!context.language && context.language == "notDetected",
+                    guard: ({ context }) => !!context.language,
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            LanguageNotDetected: {
-              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand. Do you want the definitions in French or English?`}},
-              on: {SPEAK_COMPLETE: "ListenLanguage"} 
-            },
             CheckLanguage: {
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${context.language}, ${
+                params: ({ context }) => ( { utterance: ` ${
+                      context.language! == "english" || context.language! == "french" || context.language! != "notDetected"?
                       context.language! == "english" || context.language! == "french" ?
-                      "OK, well noted" : "Please, reply 'English' or 'French'"}`}),
+                      "OK, well noted" : "Definitions are available only in English or French" :
+                      "Sorry, I didn't get the language. Do you want the definitions in English or French?"}`}),
               },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "AskLevel",
                     guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
                   },
-                  { target: "AskLanguage" },
+                  { target: "ListenLanguage" },
                 ],
               },
             },
@@ -744,40 +749,54 @@ const dmMachine = setup({
             },
             ListenTryAgain:{
               id: "ListenTryAgain",
-              entry: { type: "spst.listen" },
+              entry: { type: "spst.listen.nlu" },
               on: {
-                RECOGNISED: { 
+                RECOGNISED: [
+                  { 
                   actions: assign(({ event }) => { 
-                    return { lastResult: event.value[0].utterance.toLowerCase() }; 
+                    return { lastResult: event.nluValue, yn: event.nluValue.entities[0].category }; 
                   }),
-                },
+                  guard: (({ event }) => !!event.nluValue.entities[0].category)
+                  },
+                  { 
+                  actions: assign({ yn: "notDetected" })
+                  }
+                ],
                 ASR_NOINPUT: { 
-                  actions: assign({ lastResult: null })
+                  actions: assign({ yn: null })
                 },
-                LISTEN_COMPLETE: [ 
+                LISTEN_COMPLETE: [  
                   {
                     target: "CheckTryAgain",
-                    guard: ({ context }) => !!context.lastResult,
+                    guard: ({ context }) => !!context.yn && context.yn != "notDetected",
+                  },
+                  {
+                    target: "YNNotDetected",
+                    guard: ({ context }) => !!context.yn && context.yn == "notDetected",
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
+            YNNotDetected: {
+              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand.`}},
+              on: {SPEAK_COMPLETE: "AskTryAgain"} 
+            },
             CheckTryAgain: {
               id: "CheckTryAgain",
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${context.lastResult!}, ${
-                  context.lastResult! == "yes" || context.lastResult! == "no" ? context.lastResult! == "yes" ?
+                params: ({ context }) => ( { utterance: `You just said: ${context.yn!}, ${
+                  context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
                   "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
                 },
               on: { SPEAK_COMPLETE: [ 
                 { target: "GiveDefinition",
-                  guard: ({ context }) => (context.lastResult! == "yes"),
+                  guard: ({ context }) => (context.yn! == "yes"),
                 },
                 { actions: ({ context }) => clearHighlighting(context.words!, context.wordToFind!),
                   target: "SelectWord",
-                  guard: ({ context }) => (context.lastResult! == "no"),
+                  guard: ({ context }) => (context.yn! == "no"),
                 },
                 { target: "AskTryAgain" },
               ],},

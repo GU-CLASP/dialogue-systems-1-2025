@@ -14,6 +14,7 @@ export interface DMContext {
   wordToFind?: string | null;
   givenAnswer?: string | null;
   clues?: clue[] | null;
+  yn?: string | null;
   
 }
 
