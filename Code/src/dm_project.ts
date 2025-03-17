@@ -244,6 +244,19 @@ const puzzles: {[index: number] : puzzle} = {
 }
 const discovered: { [word: string]: boolean } = {}
 
+function getLevelAsNumber(level: string) {
+  let levelAsNumber = undefined
+  if (level == "0" || level == "zero" || level == "0th" || level == "zeroth" || level == "training" || level == "train") {
+    levelAsNumber = 0
+  }
+  else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
+    levelAsNumber = 2
+  }
+  else if (level == "1" || level == "one" || level == "1st" || level == "first" || level == "beginner" || level == "beginners") {
+    levelAsNumber = 1
+  }
+  return levelAsNumber
+  }
 
 function initPuzzle(element: HTMLElement, words: puzzle){
   let lastColumns : number[] = []
@@ -515,11 +528,11 @@ const dmMachine = setup({
                     return { lastResult: event.nluValue, language: event.nluValue.entities[0].text.toLowerCase() }; 
                   }),
                   guard: (({ event }) => event.nluValue.topIntent == "set language" && !!event.nluValue.entities[0])
-                },
-                { 
+                  },
+                  { 
                   actions: assign({ language: "notDetected" })
-                },
-              ],
+                  },
+                ],
                 ASR_NOINPUT: { 
                   actions: assign({ language: null })
                 },
@@ -564,37 +577,51 @@ const dmMachine = setup({
               on: { SPEAK_COMPLETE: "ListenLevel" },
             },
             ListenLevel: {
-              entry: { type: "spst.listen" },
+              entry: { type: "spst.listen.nlu" },
               on: {
-                RECOGNISED: { 
+                RECOGNISED: [
+                  { 
                   actions: assign(({ event }) => { 
-                    return { level: event.value[0].utterance.toLowerCase() }; 
+                    return { lastResult: event.nluValue, level: event.nluValue.entities[0].text.toLowerCase() }; 
                   }),
-                },
+                  guard: (({ event }) => event.nluValue.topIntent == "set level" && !!event.nluValue.entities[0])
+                  },
+                  { 
+                  actions: assign({ level: "notDetected" })
+                  }
+                ],
                 ASR_NOINPUT: { 
                   actions: assign({ level: null })
                 },
                 LISTEN_COMPLETE: [ 
                   {
                     target: "CheckLevel",
-                    guard: ({ context }) => !!context.level,
+                    guard: ({ context }) => !!context.level && context.level != "notDetected",
+                  },
+                  {
+                    target: "LevelNotDetected",
+                    guard: ({ context }) => !!context.level && context.level == "notDetected",
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
+            LevelNotDetected: {
+              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand. Do you want to play level 0, 1 or 2?`}},
+              on: {SPEAK_COMPLETE: "ListenLevel"} 
+            },
             CheckLevel: {
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${context.level}, ${
-                      context.level! == "0" || context.level! == "1" || context.level! == "2"?
+                      getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 ?
                       "OK, well noted" :"Please, reply '0', '1' or '2'"}`})
               },
               on: { SPEAK_COMPLETE:
                 [ 
-                  { actions: assign(({ context }) => { return { words: puzzles[Number(context.level!)] }}),
+                  { actions: assign(({ context }) => { return { words: puzzles[getLevelAsNumber(context.level!)!] }}),
                     target: "#DM.Main.InitializePuzzle",
-                    guard: ({ context }) => (context.level! == "0" || context.level! == "1" || context.level! == "2"),
+                    guard: ({ context }) => (getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2),
                   },
                   { target: "AskLevel" },
                 ],
@@ -610,7 +637,7 @@ const dmMachine = setup({
           entry: {
             type: "spst.speak",
             params: ({ context }) => ( { utterance: `Before to start, please listen carefully to the following instructions.
-              Level ${context.level} puzzle counts ${Object.keys(puzzles[Number(context.level)]).length} words to find.
+              Level ${getLevelAsNumber(context.level!)} puzzle counts ${Object.keys(puzzles[getLevelAsNumber(context.level!)!]).length} words to find.
               After selecting a word randomly, I will give you the length of the word along with previously found letters if any.
               The definition will be given in ${context.language}, and you will have 5 seconds of thinking before giving your answer in English.
               If your answer is correct, we go on with the next word, connected to the previous one if any. Otherwise you can either try again or continue with another word.
