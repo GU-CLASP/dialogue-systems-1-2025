@@ -4,6 +4,11 @@ The original performance: https://www.youtube.com/watch?v=4AWJBMawRZk
 
 For B-VG, I have employed another language other than English, customized voices with SSML intonation(prosody), pitch, break and rate has been handled via Audacity to sync with the background audio and simulated the original duet by using two different voices. I have worked with a total of four artificial Azure audio:
 
+edit: <mstts:backgroundaudio src="https://raw.githubusercontent.com/Bora-Valar-Kara/dialogue-systems-1-2025/refs/heads/main/test.mp3
+" volume="0.7" fadein="3000" fadeout="4000"/>
+
+should be addded in between <speak and <voice
+
 verse:
 
 <!--ID=B7267351-473F-409D-9765-754A8EBCDE05;Version=1|{"VoiceNameToIdMapItems":[{"Id":"3e7c9283-5b48-4bf8-acec-ec7e4a51828c","Name":"Microsoft Server Speech Text to Speech Voice (tr-TR, AhmetNeural)","ShortName":"tr-TR-AhmetNeural","Locale":"tr-TR","VoiceType":"StandardVoice"}]}-->
