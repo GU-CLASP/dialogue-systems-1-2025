@@ -1,7 +1,7 @@
 import { assign, createActor, setup } from "xstate";
 import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
-import { KEY } from "./azure.ts";
+import { KEY, NLU_KEY } from "./azure.ts";
 import { DMContext, DMEvents, clue, puzzle } from "./types.ts";
 
 const inspector = createBrowserInspector();
@@ -12,7 +12,15 @@ const azureCredentials = {
   key: KEY,
 };
 
+const azureLanguageCredentials = {
+  endpoint: "https://nlult2216.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview" /** your Azure CLU prediction URL */,
+  key: NLU_KEY /** reference to your Azure CLU key */,
+  deploymentName: "crosswords" /** your Azure CLU deployment */,
+  projectName: "crosswords" /** your Azure CLU project name */,
+};
+
 const settings: Settings = {
+  azureLanguageCredentials: azureLanguageCredentials /** global activation of NLU */,
   azureCredentials: azureCredentials,
   azureRegion: "northeurope",
   asrDefaultCompleteTimeout: 0,
@@ -441,7 +449,11 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
-    
+    "spst.listen.nlu": ({ context }) =>
+       context.spstRef.send({
+         type: "LISTEN",
+         value: { nlu: true } /** Local activation of NLU */,
+       }),
   },
 }).createMachine({
   context: ({ spawn }) => ({
@@ -490,36 +502,50 @@ const dmMachine = setup({
           states: {
             AskLanguage: {
               entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
-                In puzzles, words to find are in English, but you can choose to get definitions either in English or in French.
+                Words in puzzles are in English, but you can choose to get definitions either in English or in French.
                 Which language do you want to select for definitions?` } },
               on: { SPEAK_COMPLETE: "ListenLanguage" },
             },
             ListenLanguage: {
-              entry: { type: "spst.listen" },
+              entry: { type: "spst.listen.nlu" },
               on: {
-                RECOGNISED: { 
+                RECOGNISED: [
+                  { 
                   actions: assign(({ event }) => { 
-                    return { language: event.value[0].utterance.toLowerCase() }; 
+                    return { lastResult: event.nluValue, language: event.nluValue.entities[0].text.toLowerCase() }; 
                   }),
+                  guard: (({ event }) => event.nluValue.topIntent == "set language" && !!event.nluValue.entities[0])
                 },
+                { 
+                  actions: assign({ language: "notDetected" })
+                },
+              ],
                 ASR_NOINPUT: { 
                   actions: assign({ language: null })
                 },
                 LISTEN_COMPLETE: [ 
                   {
                     target: "CheckLanguage",
-                    guard: ({ context }) => !!context.language,
+                    guard: ({ context }) => !!context.language && context.language != "notDetected",
+                  },
+                  {
+                    target: "LanguageNotDetected",
+                    guard: ({ context }) => !!context.language && context.language == "notDetected",
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
+            },
+            LanguageNotDetected: {
+              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand. Do you want the definitions in French or English?`}},
+              on: {SPEAK_COMPLETE: "ListenLanguage"} 
             },
             CheckLanguage: {
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${context.language}, ${
                       context.language! == "english" || context.language! == "french" ?
-                      "OK, well noted" :"Please, reply 'English' or 'French'"}`})
+                      "OK, well noted" : "Please, reply 'English' or 'French'"}`}),
               },
               on: { SPEAK_COMPLETE:
                 [ 

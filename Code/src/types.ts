@@ -7,10 +7,10 @@ export interface definition { [language: string]: string }
 export interface puzzle { [word: string]: {definition: definition, connections: connection, location: string, across: boolean }}
 export interface DMContext {
   spstRef: AnyActorRef;
-  language?: string | null;
+  language?: string| null;
   level?: string | null;
   words?: puzzle | null;
-  lastResult?: string | null;
+  lastResult?: any | null;
   wordToFind?: string | null;
   givenAnswer?: string | null;
   clues?: clue[] | null;
