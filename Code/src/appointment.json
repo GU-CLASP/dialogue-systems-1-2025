@@ -1,0 +1,531 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "appointment",
+        "multilingual": true,
+        "description": "lab4-ds",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "create_a_meeting"
+            },
+            {
+                "category": "who_is_x"
+            }
+        ],
+        "entities": [
+            {
+                "category": "meeting_time",
+                "compositionSetting": "combineComponents",
+                "prebuilts": [
+                    {
+                        "category": "DateTime"
+                    }
+                ],
+                "requiredComponents": [
+                    "learned",
+                    "prebuilts"
+                ]
+            },
+            {
+                "category": "person",
+                "compositionSetting": "combineComponents",
+                "prebuilts": [
+                    {
+                        "category": "Person.Name"
+                    }
+                ],
+                "requiredComponents": [
+                    "learned",
+                    "prebuilts"
+                ]
+            }
+        ],
+        "utterances": [
+            {
+                "text": "What did Ben Thomas do?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Do you have any information about Carlos?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Please give information about Kenny.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Who was Nanny?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Who is Lebron?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Please create an appointment with Paula at 3 PM.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Can you book a meeting with Marlon at 2 AM.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Schedule a meeting with Murad at 6 AM.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Make a meeting with Ornlu at 5 PM.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "Create an appointment with Johnson at 2 AM.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [],
+                "dataset": "Test"
+            },
+            {
+                "text": "What did Malala Yousafzai do?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 9,
+                        "length": 16
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me about Stephen Hawking.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 14,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is Elon Musk?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 7,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What can you tell me about Frida?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 27,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Information about Obama.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 18,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'd like to learn about Leonardo da Vinci.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 24,
+                        "length": 17
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me about William Shakespeare.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 14,
+                        "length": 19
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who was Kobe Bryant?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 8,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you inform me about Johan?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 24,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to be informed about Beethoven.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 28,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What can you tell me about Mozart?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 27,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Do you know something about Michael Jackson?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 28,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Inform me about Bob Marley.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 16,
+                        "length": 10
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Provide information about Chuck Schuldiner.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 26,
+                        "length": 16
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What did Nikola Tesla do?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 9,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What was Curie's work about?",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 9,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me some facts about Albert Einstein.",
+                "language": "en-us",
+                "intent": "who_is_x",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 25,
+                        "length": 15
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Would you book a meeting with John at 2 a.m.?",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 30,
+                        "length": 4
+                    },
+                    {
+                        "category": "meeting_time",
+                        "offset": 38,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Book an appointment with Karen at 10 a.m..",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 25,
+                        "length": 5
+                    },
+                    {
+                        "category": "meeting_time",
+                        "offset": 34,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you help me arrange an appointment at 11 a.m. with Lucy Paul?",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "meeting_time",
+                        "offset": 42,
+                        "length": 7
+                    },
+                    {
+                        "category": "person",
+                        "offset": 55,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Set up a meeting for me at 12 a.m. with Paul Lauren please.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "meeting_time",
+                        "offset": 27,
+                        "length": 7
+                    },
+                    {
+                        "category": "person",
+                        "offset": 40,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you schedule a meeting at 1 p.m. with Vernon?",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "meeting_time",
+                        "offset": 30,
+                        "length": 6
+                    },
+                    {
+                        "category": "person",
+                        "offset": 42,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Schedule an appointment with Clementine Burden at 2 p.m. for me.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 29,
+                        "length": 17
+                    },
+                    {
+                        "category": "meeting_time",
+                        "offset": 50,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Arrange me a meeting at 3 p.m. with Lee for me.",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "meeting_time",
+                        "offset": 24,
+                        "length": 6
+                    },
+                    {
+                        "category": "person",
+                        "offset": 36,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Create a meeting with Ryan at 4 p.m..",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 22,
+                        "length": 4
+                    },
+                    {
+                        "category": "meeting_time",
+                        "offset": 30,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you book an appointment at 5 p.m. with Michael Scott?",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "meeting_time",
+                        "offset": 31,
+                        "length": 6
+                    },
+                    {
+                        "category": "person",
+                        "offset": 43,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you make an appointment with Kevin Malone at 6 p.m.?",
+                "language": "en-us",
+                "intent": "create_a_meeting",
+                "entities": [
+                    {
+                        "category": "person",
+                        "offset": 33,
+                        "length": 12
+                    },
+                    {
+                        "category": "meeting_time",
+                        "offset": 49,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            }
+        ]
+    }
+}
