@@ -255,16 +255,27 @@ function getLanguage(entities: any) {
   return entities[index_lang].text.toLowerCase()
 }
 
+function detectedLevel(entities: any) {
+  return !!entities.find( x => x.category === "level")
+}
+
+function getLevel(entities: any) {
+  let obj_level = entities.find( x => x.category === "level")
+  let index_level = entities.indexOf(obj_level)
+  return entities[index_level].text.toLowerCase()
+}
+
+/* function below needed because can't find a way to access the entity list key from CLU */
 function getLevelAsNumber(level: string) {
   let levelAsNumber = undefined
   if (level == "0" || level == "zero" || level == "0th" || level == "zeroth" || level == "training" || level == "train") {
     levelAsNumber = 0
   }
-  else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
-    levelAsNumber = 0
-  }
   else if (level == "1" || level == "one" || level == "1st" || level == "first" || level == "beginner" || level == "beginners") {
     levelAsNumber = 1
+  }
+  else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
+    levelAsNumber = 0
   }
   return levelAsNumber
   }
@@ -587,9 +598,9 @@ const dmMachine = setup({
                 RECOGNISED: [
                   { 
                   actions: assign(({ event }) => { 
-                    return { lastResult: event.nluValue, level: event.nluValue.entities[0].text.toLowerCase() }; 
+                    return { lastResult: event.nluValue, level: getLevel(event.nluValue.entities) }; 
                   }),
-                  guard: (({ event }) => event.nluValue.topIntent == "set level" && !!event.nluValue.entities[0])
+                  guard: (({ event }) => event.nluValue.topIntent == "set level" && detectedLevel(event.nluValue.entities))
                   },
                   { 
                   actions: assign({ level: "notDetected" })
@@ -601,34 +612,37 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [ 
                   {
                     target: "CheckLevel",
-                    guard: ({ context }) => !!context.level && context.level != "notDetected",
+                    guard: ({ context }) => !!context.level
                   },
-                  {
+/*                   {
                     target: "LevelNotDetected",
                     guard: ({ context }) => !!context.level && context.level == "notDetected",
-                  },
+                  }, */
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            LevelNotDetected: {
+            /* LevelNotDetected: {
               entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand. Do you want to play level 0, 1 or 2?`}},
               on: {SPEAK_COMPLETE: "ListenLevel"} 
-            },
+            }, */
             CheckLevel: {
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${context.level}, ${
+                params: ({ context }) => ( { utterance: ` ${
+                      getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 || context.level! != "notDetected"?
                       getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 ?
-                      "OK, well noted" :"Please, reply '0', '1' or '2'"}`})
+                      `You selected level ${getLevelAsNumber(context.level!)}.` : "Only levels 0, 1 and 2 are available" :
+                      "Sorry, I didn't get the level. Do you want to play level 0, level 1 or level 2?"}`})
               },
               on: { SPEAK_COMPLETE:
                 [ 
                   { actions: assign(({ context }) => { return { words: puzzles[getLevelAsNumber(context.level!)!] }}),
                     target: "#DM.Main.InitializePuzzle",
-                    guard: ({ context }) => (getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2),
+                    guard: ({ context }) => 
+                      (getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2),
                   },
-                  { target: "AskLevel" },
+                  { target: "ListenLevel" },
                 ],
               },
             },
