@@ -280,6 +280,14 @@ function getLevelAsNumber(level: string) {
   return levelAsNumber
   }
 
+function detectedYes(entities: any) {
+ return !!entities.find( x => x.category === "yes")
+}
+
+function detectedNo(entities: any) {
+  return !!entities.find( x => x.category === "no")
+}
+
 function initPuzzle(element: HTMLElement, words: puzzle){
   let lastColumns : number[] = []
   let lastRows : number[] = []
@@ -614,18 +622,10 @@ const dmMachine = setup({
                     target: "CheckLevel",
                     guard: ({ context }) => !!context.level
                   },
-/*                   {
-                    target: "LevelNotDetected",
-                    guard: ({ context }) => !!context.level && context.level == "notDetected",
-                  }, */
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            /* LevelNotDetected: {
-              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand. Do you want to play level 0, 1 or 2?`}},
-              on: {SPEAK_COMPLETE: "ListenLevel"} 
-            }, */
             CheckLevel: {
               entry: {
                 type: "spst.speak",
@@ -768,10 +768,16 @@ const dmMachine = setup({
                 RECOGNISED: [
                   { 
                   actions: assign(({ event }) => { 
-                    return { lastResult: event.nluValue, yn: event.nluValue.entities[0].category }; 
+                    return { lastResult: event.nluValue, yn: "yes" }; 
                   }),
-                  guard: (({ event }) => !!event.nluValue.entities[0].category)
+                  guard: (({ event }) => detectedYes(event.nluValue.entities) && !detectedNo(event.nluValue.entities))
                   },
+                  { 
+                    actions: assign(({ event }) => { 
+                      return { lastResult: event.nluValue, yn: "no" }; 
+                    }),
+                    guard: (({ event }) => detectedNo(event.nluValue.entities) && !detectedYes(event.nluValue.entities))
+                    },
                   { 
                   actions: assign({ yn: "notDetected" })
                   }
@@ -782,25 +788,17 @@ const dmMachine = setup({
                 LISTEN_COMPLETE: [  
                   {
                     target: "CheckTryAgain",
-                    guard: ({ context }) => !!context.yn && context.yn != "notDetected",
-                  },
-                  {
-                    target: "YNNotDetected",
-                    guard: ({ context }) => !!context.yn && context.yn == "notDetected",
+                    guard: ({ context }) => !!context.yn,
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            YNNotDetected: {
-              entry: {type: "spst.speak", params: { utterance: `Sorry, I don't understand.`}},
-              on: {SPEAK_COMPLETE: "AskTryAgain"} 
-            },
             CheckTryAgain: {
               id: "CheckTryAgain",
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${context.yn!}, ${
+                params: ({ context }) => ( { utterance: ` ${
                   context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
                   "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
                 },
