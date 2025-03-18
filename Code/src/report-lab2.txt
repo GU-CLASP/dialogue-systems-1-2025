@@ -1,0 +1,20 @@
+Write a report (max 1 page) which describes errors and limitation of your app.
+Fix a couple of them and briefly describe your solution in the report. You don’t have to fix all the limitations.
+Add your report to the repository in PDF format (report-lab2.pdf)
+
+In this assignment, a system for creating appointments was created. In the initial system, the user could consecutively determine their person of interest, the day, if it would take the whole day or at a specific time. Some limitations were: 
+
+1. The user is not asked for a location of the meeting.
+2. The user is not asked to provide a duration of the meeting.
+3. The user is not asked for which week they want to schedule the meeting.
+4. If a mistake was made, this can only be corrected at the two confirmation stages. This does not provide flexibility to correct mistakes.
+5. There is a set order of questions, which does not provide flexibility.
+6. The user can't provide specific times, meetings can only start at whole hours.
+7. There are a lot of unknown entities.
+8. The availability of the person of interest is not taken into account or updated. 
+9. The user can only use single-word-replies.
+10. Difficulty recognizing replies.
+
+I accounted for issues 1, 2 and 3 by adding additional question states to the machine. Following that, I made the programme slightly more flexible (issue 4) by adding confirmation states to each question, which can be used to either go back to the previous state or continue to the next state. This way, mistakes can be corrected before continuing to other questions. However, ideally, the user would be able to say some word (i.e. 'Menu') to get to a menu state (issue 5) from which they can access all questions (i.e. say 'Person' to determine the person, then return back to the menu). This way, the user can determine their own order. It would require some way of tracking which questions have been answered. I tried to do this, but got stuck with numerous errors each time; hence I have not implemented it. Another aspect of the current system that could be improved is that now, no unknown entities can be added to the grammar (issue 7), which causes there to be a limited number of weeks, people or locations that can be referred to. Probably most importantly: the availability of the person of interest is not taken into account (issue 8). It would have been better to create some dictionary type of structure with the times and days each person is available, which would get compared to characteristics of the meeting the user desires. Issues 6, 9 and 10 really boil down to the same issue, which is that the current grammar only stores single words. This causes it to not be able to recognize 'half past eight', 'eight o'clock', '45 minutes', 'week 8' and 'the university', but only 'eight', '45', '8', 'university'. Replies like 'noway' and 'ofcourse' are also a bit difficult, as they can be pronounced with a pause - causing them to not be recognized as a single word.  
+
+I think the general fallback of my code is that there is a lot of repetition. The confirmation states could be substates of their question states. The fixes for states 1, 2, 3 and 4 generally rely on the same code structure (as for all the other states). I tried to implement the states in a nested way for a long time, but continuously got lost in errors that had to do with hierarchy and guards. Another fallback is that it's not explicitly clear to the user what they can expect of the machine, or what is expected of them when responding to it. 
