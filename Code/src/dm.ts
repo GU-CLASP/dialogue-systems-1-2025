@@ -325,7 +325,7 @@ const dmMachine = setup({
                 target: "ProcessingConfirmWholeDay",
               },
               {guard: ({event}) => getDeny(event.value[0].utterance),
-                target: "ProcessingDay",
+                target: "PromptWho",
               },              
               {target : "PromptWholeDay"},
             ],
@@ -425,7 +425,7 @@ const dmMachine = setup({
           entry: { type: "spst.speak", 
           params: ({context }) => ({ utterance: `Do you want an apointment with ${context.person} on ${context.day} between ${context.starttime} and ${context.endtime} ?`}) 
           },
-          on: { SPEAK_COMPLETE: "HearConfirmWholeDay" },
+          on: { SPEAK_COMPLETE: "HearConfirmDetails" },
         },
 
         HearConfirmDetails: {
@@ -437,7 +437,7 @@ const dmMachine = setup({
                 target: "ProcessingConfirmDetails",
               },
               {guard: ({event}) => getDeny(event.value[0].utterance),
-                target: "PromptGreeting",
+                target: "PromptWho",
               },              
               {target : "PromptConfirmDetails"},
             ],
@@ -459,7 +459,7 @@ const dmMachine = setup({
         PromptAppointmentBooked: {
           entry: { type: "spst.speak",
           params: { utterance: `Your appointment has been booked`}},
-          on: {SPEAK_COMPLETE: "#Greeting"}
+          on: {SPEAK_COMPLETE: "#Done"}
         },
       },
     },

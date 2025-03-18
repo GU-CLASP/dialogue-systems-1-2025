@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../../dm_version1.ts"]
+  "include": ["src", "../../dm_version1.ts", "../../project_scrapNotes.ts"]
 }

@@ -1,0 +1,35 @@
+My hypothesis is that the machine will have issues with phonemes which 
+are not in english/the assigned language. Hence, I tested some swedish 
+words wich consisted of phonemes which wouldn't be found (in standard)
+English:
+
+Word tested: Göteborg
+certainty: 0.08830869, 0.6616148, 0.1313996
+though I said: Ye de Bourre, Yet the bore, He has to bore you
+
+Word tested: kex (translation: biscuite)
+certainty: 0.6798867, 0.20087129, 0.39452058
+though I said: kicks, kicks, kicks
+
+Word tested: Långben (translation: Goofy (from Mickey Mouse))
+certainty: 0.064350836, 0.10604273, 0.11188358
+though I said: Longbian, long beyond, Longbian
+
+Word tested: Andra Långgatan
+certainty: 0.13732457
+though I said: Andra Longgarten
+
+Word tested: Järntorget
+certainty: 0.105675586
+thought I said: you haven't told yet
+
+Based on the words I tested my hypothesis seems to check out. The system
+tries to find a word/phrase in its vocabulary which is phonetically 
+close to the utterance, but can't since the word is not in its vocabulary.
+Hence, the certainty remains low. Consequently, the ASR cannot handle 
+codeswitching even if the word is a placename. The entire utterance
+needs to be in one language -- resulting in an inability to hande any 
+utterance which is not found in the vocabulary of the language picked in 
+the settings.
+
+For part B I picked the poem 'Jag såg ett träd' by Edith Södergran
