@@ -1,0 +1,601 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "appointment",
+        "multilingual": false,
+        "description": "",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "create meeting"
+            },
+            {
+                "category": "who is X"
+            },
+            {
+                "category": "confirmation"
+            }
+        ],
+        "entities": [
+            {
+                "category": "Celebrity",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Occupation",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Person",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Appointment Type",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Day",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Time",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Positive Confirmation",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Negative Confirmation",
+                "compositionSetting": "combineComponents"
+            }
+        ],
+        "utterances": [
+            {
+                "text": "No, that doesn't work.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 0,
+                        "length": 2
+                    },
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 9,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'd say yes!",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 8,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I can't do that on Friday actually.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 2,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Nevermind.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 0,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Sure!",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 0,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I don't think that fits.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 2,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "That sounds great!",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 12,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "That works.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 0,
+                        "length": 10
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Yep, that's okay.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 0,
+                        "length": 3
+                    },
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 12,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'm not sure.",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Negative Confirmation",
+                        "offset": 4,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Yes, let's do that!",
+                "language": "en-us",
+                "intent": "confirmation",
+                "entities": [
+                    {
+                        "category": "Positive Confirmation",
+                        "offset": 0,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can we set up a meeting on Wednesday at the doctor's office?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 27,
+                        "length": 9
+                    },
+                    {
+                        "category": "Appointment Type",
+                        "offset": 37,
+                        "length": 22
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need to meet before Sunday.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Time",
+                        "offset": 15,
+                        "length": 6
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 22,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Thursday works for me.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 0,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Is a hairdresser available Saturday morning?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 3,
+                        "length": 13
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 27,
+                        "length": 8
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 36,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I'm available Monday 14th.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 14,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can we meet at four thirty?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Time",
+                        "offset": 15,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can I make a doctor's appointment Friday at eleven?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Appointment Type",
+                        "offset": 11,
+                        "length": 22
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 34,
+                        "length": 6
+                    },
+                    {
+                        "category": "Time",
+                        "offset": 44,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to meet Lana on Tuesday for a hair appointment.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 21,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 29,
+                        "length": 7
+                    },
+                    {
+                        "category": "Appointment Type",
+                        "offset": 41,
+                        "length": 18
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I wish I knew more about Megan Rapinoe.",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 25,
+                        "length": 13
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to know more about this painter Frida Kahlo.",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 39,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What do you know about this actor?",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 23,
+                        "length": 10
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who's that?",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to know about Pedro Pascal.",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 21,
+                        "length": 12
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What can you tell me about Rima Hassan?",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 27,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Do you know something about Ingmar Bergman?",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 28,
+                        "length": 14
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is Fatima Daas?",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Celebrity",
+                        "offset": 7,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to know more about the singer Flatsound.",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 32,
+                        "length": 10
+                    },
+                    {
+                        "category": "Celebrity",
+                        "offset": 43,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Tell me more about Christopher.",
+                "language": "en-us",
+                "intent": "who is X",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 19,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "When is the next available appointment?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Wednesday, I'd like to get an appointment to cut my hair.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Day",
+                        "offset": 0,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to meet a doctor on Thursday.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 21,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need a meeting with a nurse now.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 22,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need to see a doctor.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 14,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hello, could I make an appointment at the hair salon?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can I arrange a meeting with a doctor?",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Occupation",
+                        "offset": 29,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to make an appointment.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I need an appointment.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to meet Christopher.",
+                "language": "en-us",
+                "intent": "create meeting",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 15,
+                        "length": 11
+                    }
+                ],
+                "dataset": "Train"
+            }
+        ]
+    }
+}
