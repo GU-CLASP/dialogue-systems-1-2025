@@ -1,0 +1,766 @@
+{
+    "projectFileVersion": "2024-11-15-preview",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "Conversation",
+        "settings": {
+            "confidenceThreshold": 0,
+            "normalizeCasing": false,
+            "augmentDiacritics": false
+        },
+        "projectName": "appointment",
+        "multilingual": false,
+        "description": "Creating appointment using NLU",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "Conversation",
+        "intents": [
+            {
+                "category": "None"
+            },
+            {
+                "category": "MeetWithPerson"
+            },
+            {
+                "category": "WhoIsPerson"
+            }
+        ],
+        "entities": [
+            {
+                "category": "Person",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Day",
+                "compositionSetting": "combineComponents"
+            },
+            {
+                "category": "Hour",
+                "compositionSetting": "combineComponents"
+            }
+        ],
+        "utterances": [
+            {
+                "text": "Can you arrange a meeting with Saruman at 12 o'clock on Thursday?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 7
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 42,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 56,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hey. Please arrange me a meeting with Gandalf at 21 o'clock on Wednesday.",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 38,
+                        "length": 7
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 49,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 63,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you arrange a meeting with Sauron at 15 o'clock on Friday?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 41,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 55,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to meet with Gollum at 4 o'clock, on Monday.",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 20,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 30,
+                        "length": 1
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 44,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to meet wit Legolas on Sunday at 1 o'clock!",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 25,
+                        "length": 7
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 36,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 46,
+                        "length": 1
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you talk a little bit about Frodo?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 32,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What is one thing can you tell me about Frodo?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 40,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What do you think about Sauron?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 24,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "What can you say about Boromir?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 23,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hello. Can you tell me a bit about Gollum?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 35,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hello! I want to learn about Frodo. What can you tell me about him?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 29,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hi! What can you tell me about David?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 31,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is Gandalf? I want to know about him!",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 7,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me something about Pippin, please?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 32,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you provide information about Mary, please?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 34,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you give me information about John?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 34,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to learn about Jane. Can you tell me a little bit about her?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 28,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I wanna know about David. Can you tell me about him?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 19,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me who Anna is?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 20,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hello. Can you tell me about Sam?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 29,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hey. I want to know about Sam. Can you tell?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 26,
+                        "length": 3
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you tell me who Bilbo is?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 20,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to know about Frodo.",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 21,
+                        "length": 5
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who the hell is Saruman?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 16,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Who is Saruman?",
+                "language": "en-us",
+                "intent": "WhoIsPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 7,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hey. I want to meet with Jake at 18 on Thursday.",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 25,
+                        "length": 4
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 33,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 39,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Set me up a meeting. I will meet with Anna on Saturday. And the time is 9 am!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 38,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 46,
+                        "length": 8
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 72,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Arrange me a meeting! The person is David. The day is Thursday. The time is 19.",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 36,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 54,
+                        "length": 8
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 76,
+                        "length": 2
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you please arrange me a meeting with Jane on Tuesday at 11? ",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 41,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 49,
+                        "length": 7
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 60,
+                        "length": 2
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to meet with John on Friday at 2 pm.",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 26,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 34,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 44,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I want to meet with Edward on Monday at 16. Can you set up this meeting?",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 20,
+                        "length": 6
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 30,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 40,
+                        "length": 2
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hi there! I want to meet with my friend Mary at 7 pm on Tuesday! Can you help?",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 40,
+                        "length": 4
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 48,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 56,
+                        "length": 7
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hi there! Arrange a meeting with 9 am on Sunday with my friend Peregrin!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Hour",
+                        "offset": 33,
+                        "length": 4
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 41,
+                        "length": 6
+                    },
+                    {
+                        "category": "Person",
+                        "offset": 63,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hello! Can you arrange a meeting for me with Pippin at 23 on Saturday please?",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 45,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 55,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 61,
+                        "length": 8
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Hi! I wanna meet with Sam at 21 on Friday!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 22,
+                        "length": 3
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 29,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 35,
+                        "length": 6
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like to meet with Gimli at 13 on Wednesday!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 26,
+                        "length": 5
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 35,
+                        "length": 2
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 41,
+                        "length": 9
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Please set up a meeting with Sauron on Saturday at 2 pm!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 29,
+                        "length": 6
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 39,
+                        "length": 8
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 51,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "I would like you to arrange a meeting for me with Frodo on Sunday at 1 am!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 50,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 59,
+                        "length": 6
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 69,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Can you arrange me a meeting? I wanna meet with Bilbo. The day is Tuesday and the hour is 4 pm!",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 48,
+                        "length": 5
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 66,
+                        "length": 7
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 90,
+                        "length": 4
+                    }
+                ],
+                "dataset": "Train"
+            },
+            {
+                "text": "Arrange me a meeting henchman! I want to meet with Legolas on Thursday at 16.",
+                "language": "en-us",
+                "intent": "MeetWithPerson",
+                "entities": [
+                    {
+                        "category": "Person",
+                        "offset": 51,
+                        "length": 7
+                    },
+                    {
+                        "category": "Day",
+                        "offset": 62,
+                        "length": 8
+                    },
+                    {
+                        "category": "Hour",
+                        "offset": 74,
+                        "length": 2
+                    }
+                ],
+                "dataset": "Train"
+            }
+        ]
+    }
+}
