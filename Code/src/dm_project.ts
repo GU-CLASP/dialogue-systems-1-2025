@@ -488,6 +488,14 @@ const dmMachine = setup({
           utterance: params.utterance,
         },
       }),
+      "spst.speak.fr": ({ context }, params: { utterance: string }) =>
+        context.spstRef.send({
+          type: "SPEAK",
+          value: {
+            utterance: params.utterance,
+            voice: "fr-FR-HenriNeural"
+          },
+      }),
     "spst.listen": ({ context }) =>
       context.spstRef.send({
         type: "LISTEN",
@@ -686,21 +694,38 @@ const dmMachine = setup({
                 { target: "GetClues",
                   guard: ({ context }) => anyClues(context.words!, context.wordToFind!) 
                 },
-                { target: "GiveDefinition" },
+                { target: "GiveLengthClues" },
               ],
             },
             GetClues: {
               id: "GetClues",
               entry: assign(({ context }) => { 
                 return { clues: getClues(context.words!, context.wordToFind!) }}),
-              always: { target: "GiveDefinition" },
+              always: { target: "GiveLengthClues" },
             },
-            GiveDefinition:{
-              id: "GiveDefinition",
+            GiveLengthClues:{
+              id: "GiveLengthClues",
               entry: { type: "spst.speak",
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
-                  anyClues(context.words!, context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"} ${
-                    getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
+                  anyClues(context.words!, context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
+              on: { SPEAK_COMPLETE: [ 
+                {
+                  target: "GiveDefinitionEn",
+                  guard: ({ context }) => context.language == "english"
+                },
+                { target: "GiveDefinitionFr" },
+            ], },
+            },
+            GiveDefinitionEn:{
+              id: "GiveDefinitionEn",
+              entry: { type: "spst.speak",
+                params: ({ context }) => ( { utterance: `${getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
+              on: { SPEAK_COMPLETE: "LetThink" },
+            },
+            GiveDefinitionFr:{
+              id: "GiveDefinitionFr",
+              entry: { type: "spst.speak.fr",
+                params: ({ context }) => ( { utterance: ` ${ getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
@@ -751,7 +776,7 @@ const dmMachine = setup({
             Encourage:{
               entry: { type: "spst.speak",
                 params: { utterance: `Keep trying, you're almost there! That's the last word to find!` } },
-              on: { SPEAK_COMPLETE: "GiveDefinition"},
+              on: { SPEAK_COMPLETE: "GiveLengthClues"},
             },
             AskTryAgain:{
               id: "AskTryAgain",
@@ -803,7 +828,7 @@ const dmMachine = setup({
                   "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
                 },
               on: { SPEAK_COMPLETE: [ 
-                { target: "GiveDefinition",
+                { target: "GiveLengthClues",
                   guard: ({ context }) => (context.yn! == "yes"),
                 },
                 { actions: ({ context }) => clearHighlighting(context.words!, context.wordToFind!),
