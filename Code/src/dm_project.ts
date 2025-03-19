@@ -105,7 +105,7 @@ const words0Fr: puzzle = {
   fleur: {
     definition: {
       english: "the part of a plant that is coloured and has a pleasant smell",
-      french: "la partie d'une plante qui est colorée et qui sent bon"
+      french: "la partie d'une plante qui est colorée et parfumée"
     },
     connections: {
       printemps: {letter: "E", position: 6},
@@ -563,6 +563,17 @@ function repeatAnswer(answer: string, language: string) {
   return utterance
 }
 
+function IsCorrectAnswer(answer: string, wordToFind: string) {
+  let isCorrect: boolean = false
+  if (answer == '100' && wordToFind == "hundred") {
+    isCorrect = true
+  } else if(answer == wordToFind) {
+    isCorrect = true
+  }
+  return isCorrect
+}
+
+
 const dmMachine = setup({
   types: {
     /** you might need to extend these */
@@ -931,12 +942,12 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)}, and ${
-                  context.givenAnswer! == context.wordToFind ? "that's":"that's not"} correct`})
+                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!) ? "that's":"that's not"} correct`})
                 },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "UpdateDiscovered",
-                    guard: ({ context }) => (context.givenAnswer! == context.wordToFind),
+                    guard: ({ context }) => (IsCorrectAnswer(context.givenAnswer!, context.wordToFind!)),
                   },
                   { target: "Encourage",
                     guard: ({ context }) => Object.keys(discovered).length == Object.keys(context.words!).length -1
