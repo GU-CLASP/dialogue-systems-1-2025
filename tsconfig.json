@@ -20,6 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
-  "exclude": ["src/dmParallel.ts"]
+  "include": ["src"]
 }
