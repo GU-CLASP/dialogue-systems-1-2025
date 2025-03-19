@@ -119,7 +119,8 @@ const words0Fr: puzzle = {
       french: "un insecte avec de larges ailes colorées"
     },
     connections: {
-      printemps: {letter: "P", position: 8}
+      printemps: {letter: "P", position: 8},
+      bourgeon: {letter: "O", position: 7}
     },
     location: "3.8",
     across: false
@@ -554,6 +555,14 @@ function clearHighlighting(words: puzzle, word: string | null) {
   }
 }
 
+function repeatAnswer(answer: string, language: string) {
+  let utterance: string = answer
+  if (language == "french") {
+    utterance ='<lang xml:lang="fr-FR">' + utterance + '</lang>'
+  }
+  return utterance
+}
+
 const dmMachine = setup({
   types: {
     /** you might need to extend these */
@@ -577,7 +586,7 @@ const dmMachine = setup({
             voice: "fr-FR-HenriNeural"
           },
       }),
-    "spst.listen": ({ context }) =>
+    "spst.listen.en": ({ context }) =>
       context.spstRef.send({
         type: "LISTEN",
       }),
@@ -641,7 +650,7 @@ const dmMachine = setup({
           states: {
             AskLanguageSol: {
               entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
-                In puzzles, both solutions and definitions are available in English and French.
+                Both puzzles'solutions and definitions are available in English and French.
                 You can choose any combinations of those two languages.
                 Which language do you want to select for solutions?` } },
               on: { SPEAK_COMPLETE: "ListenLanguageSol" },
@@ -726,7 +735,7 @@ const dmMachine = setup({
                 params: ({ context }) => ( { utterance: ` ${
                       context.languageDef! == "english" || context.languageDef! == "french" || context.languageDef! != "notDetected"?
                       context.languageDef! == "english" || context.languageDef! == "french" ?
-                      "OK, well noted" : "Definitions are available only in English or French" :
+                      "Got it." : "Definitions are available only in English or French" :
                       "Sorry, I didn't get the language. Do you want the definitions in English or French?"}`}),
               },
               on: { SPEAK_COMPLETE:
@@ -867,10 +876,37 @@ const dmMachine = setup({
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
-              after: { 5000: { target: "ListenAnswer" }}
+              after: { 5000:
+                [
+                { target: "ListenAnswerEn",
+                  guard: ({ context }) => context.languageSol! == "english" },
+                { target: "ListenAnswerFr"}
+                ]
+              }
             },
-            ListenAnswer:{
-              id: "ListenAnswer",
+            ListenAnswerEn:{
+              id: "ListenAnswerEn",
+              entry: { type: "spst.listen.en" },
+              on: {
+                RECOGNISED: { 
+                  actions: assign(({ event }) => { 
+                    return { givenAnswer: event.value[0].utterance.toLowerCase() }; 
+                  }),
+                },
+                ASR_NOINPUT: { 
+                  actions: assign({ givenAnswer: null })
+                },
+                LISTEN_COMPLETE: [ 
+                    {
+                      target: "CheckAnswer",
+                      guard: ({ context }) => !!context.givenAnswer,
+                    },
+                    { target: "#DM.NoInput" },
+                ],
+              },
+            },
+            ListenAnswerFr:{
+              id: "ListenAnswerFr",
               entry: { type: "spst.listen.fr" },
               on: {
                 RECOGNISED: { 
@@ -894,8 +930,8 @@ const dmMachine = setup({
               id: "CheckAnswer",
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${context.givenAnswer}, and ${
-                  context.givenAnswer! == context.wordToFind ? "that's": "that's not"} correct`})
+                params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)}, and ${
+                  context.givenAnswer! == context.wordToFind ? "that's":"that's not"} correct`})
                 },
               on: { SPEAK_COMPLETE:
                 [ 
