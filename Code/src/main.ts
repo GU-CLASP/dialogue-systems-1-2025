@@ -4,7 +4,7 @@ import viteLogo from "/vite.svg";
 import { setupButton } from "./dm_project.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-<h1 class="heading">Voiced Crossword Puzzle</h1>  
+<h1 class="heading">Voiced Crosswords</h1>  
 
 <div>
     <div class="card">

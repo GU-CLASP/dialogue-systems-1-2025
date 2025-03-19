@@ -30,7 +30,7 @@ const settings: Settings = {
   /* speechRecognitionEndpointId: "9fb1d792-feb6-47ef-aac9-ec2e46998109" */
 };
 
-const words0: puzzle = {
+const words0En: puzzle = {
   finger: {
     definition: {
       english: "Part of your hand",
@@ -90,7 +90,88 @@ const words0: puzzle = {
   },
 }
 
-const words1: puzzle = {
+const words0Fr: puzzle = {
+  oiseau: {
+    definition: {
+      english: "an animal with feathers and wings",
+      french: "un animal couverts de plumes et qui a des ailes"
+    },
+    connections: {
+      printemps: {letter: "I", position: 3}
+    },
+    location: "2.3",
+    across: false
+  },
+  fleur: {
+    definition: {
+      english: "the part of a plant that is coloured and has a pleasant smell",
+      french: "la partie d'une plante qui est colorée et qui sent bon"
+    },
+    connections: {
+      printemps: {letter: "E", position: 6},
+    },
+    location: "1.6",
+    across: false
+  },
+  papillon: {
+    definition: {
+      english: "an insect with large, coloured wings",
+      french: "un insecte avec de larges ailes colorées"
+    },
+    connections: {
+      printemps: {letter: "P", position: 8}
+    },
+    location: "3.8",
+    across: false
+  },
+  fraise: {
+    definition: {
+      english: "a juicy red fruit that can be found in the woods",
+      french: "un fruit rouge juteux que l'on peut trouver dans les bois"
+    },
+    connections: {
+      bourgeon: {letter: "R", position: 4},
+      miel: {letter: "I", position: 2},
+    },
+    location: "8.5",
+    across: false
+  },
+  printemps: {
+    definition: {
+      english: "the season of the year between winter and summer",
+      french: "la saison entre l'hiver et l'été"},
+    connections: {
+      oiseau: {letter: "I", position: 2},
+      fleur: {letter: "E", position: 3},
+      papillon: {letter: "P", position: 1}
+    },
+    location: "3.1",
+    across: true
+  },
+  bourgeon: {
+    definition: {
+      english: "newly formed leaf or flower that has not yet unfolded",
+      french: "bouton de fleur"},
+    connections: {
+      fraise: {letter: "R", position: 2},
+      papillon: {letter: "O", position: 7}
+    },
+    location: "9.2",
+    across: true 
+  },
+  miel: {
+    definition: {
+      english: "some sweet made by bees",
+      french: "une douceur préparée par les abeilles"},
+    connections: {
+      fraise: {letter: "I", position: 4},
+    },
+    location: "11.4",
+    across: true 
+  },
+}
+
+const words1En: puzzle = {
   walk: {
     definition: {
       english: "Eyes is to see as leg is to...",
@@ -238,9 +319,9 @@ const words1: puzzle = {
   },
 }
 
-const puzzles: {[index: number] : puzzle} = {
-  0: words0,
-  1: words1
+const puzzles: {[index: number] : {[language: string] : puzzle}} = {
+  0: {english: words0En, french: words0Fr},
+  1: {english: words1En, french: words0Fr},
 }
 const discovered: { [word: string]: boolean } = {}
 
@@ -500,6 +581,13 @@ const dmMachine = setup({
       context.spstRef.send({
         type: "LISTEN",
       }),
+      "spst.listen.fr": ({ context }) =>
+      context.spstRef.send({
+        type: "LISTEN",
+        value: {
+          locale: "fr-FR"
+        }
+      }),
     "spst.listen.nlu": ({ context }) =>
        context.spstRef.send({
          type: "LISTEN",
@@ -509,7 +597,7 @@ const dmMachine = setup({
 }).createMachine({
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
-    language: null,
+    languageDef: null,
     level: null,
     words: null,
     lastResult: null,
@@ -549,55 +637,104 @@ const dmMachine = setup({
         },
         Settings: {
           id: "Settings",
-          initial: "AskLanguage",
+          initial: "AskLanguageSol",
           states: {
-            AskLanguage: {
+            AskLanguageSol: {
               entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
-                Words in puzzles are in English, but you can choose to get definitions either in English or in French.
-                Which language do you want to select for definitions?` } },
-              on: { SPEAK_COMPLETE: "ListenLanguage" },
+                In puzzles, both solutions and definitions are available in English and French.
+                You can choose any combinations of those two languages.
+                Which language do you want to select for solutions?` } },
+              on: { SPEAK_COMPLETE: "ListenLanguageSol" },
             },
-            ListenLanguage: {
+            ListenLanguageSol: {
               entry: { type: "spst.listen.nlu" },
               on: {
                 RECOGNISED: [
                   { 
                   actions: assign(({ event }) => { 
-                    return { lastResult: event.nluValue, language: getLanguage(event.nluValue.entities) }; 
+                    return { lastResult: event.nluValue, languageSol: getLanguage(event.nluValue.entities) }; 
                   }),
                   guard: (({ event }) => event.nluValue.topIntent == "set language" && detectedLanguage(event.nluValue.entities))
                   },
                   { 
-                  actions: assign({ language: "notDetected" })
+                  actions: assign({ languageSol: "notDetected" })
                   },
                 ],
                 ASR_NOINPUT: { 
-                  actions: assign({ language: null })
+                  actions: assign({ languageSol: null })
                 },
                 LISTEN_COMPLETE: [ 
                   {
-                    target: "CheckLanguage",
-                    guard: ({ context }) => !!context.language,
+                    target: "CheckLanguageSol",
+                    guard: ({ context }) => !!context.languageSol,
                   },
                   { target: "#DM.NoInput" },
                 ],
               },
             },
-            CheckLanguage: {
+            CheckLanguageSol: {
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: ` ${
-                      context.language! == "english" || context.language! == "french" || context.language! != "notDetected"?
-                      context.language! == "english" || context.language! == "french" ?
+                      context.languageSol! == "english" || context.languageSol! == "french" || context.languageSol! != "notDetected"?
+                      context.languageSol! == "english" || context.languageSol! == "french" ?
+                      "OK, well noted" : "Solutions are available only in English or French" :
+                      "Sorry, I didn't get the language. Do you want the solutions in English or French?"}`}),
+              },
+              on: { SPEAK_COMPLETE:
+                [ 
+                  { target: "AskLanguageDef",
+                    guard: ({ context }) => (context.languageSol! == "english" || context.languageSol! == "french"),
+                  },
+                  { target: "ListenLanguageSol" },
+                ],
+              },
+            },
+            AskLanguageDef: {
+              entry: { type: "spst.speak", params: { utterance: `Which language do you want to select for definitions?` } },
+              on: { SPEAK_COMPLETE: "ListenLanguageDef" },
+            },
+            ListenLanguageDef: {
+              entry: { type: "spst.listen.nlu" },
+              on: {
+                RECOGNISED: [
+                  { 
+                  actions: assign(({ event }) => { 
+                    return { lastResult: event.nluValue, languageDef: getLanguage(event.nluValue.entities) }; 
+                  }),
+                  guard: (({ event }) => event.nluValue.topIntent == "set language" && detectedLanguage(event.nluValue.entities))
+                  },
+                  { 
+                  actions: assign({ languageDef: "notDetected" })
+                  },
+                ],
+                ASR_NOINPUT: { 
+                  actions: assign({ languageDef: null })
+                },
+                LISTEN_COMPLETE: [ 
+                  {
+                    target: "CheckLanguageDef",
+                    guard: ({ context }) => !!context.languageDef,
+                  },
+                  { target: "#DM.NoInput" },
+                ],
+              },
+            },
+            CheckLanguageDef: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: ` ${
+                      context.languageDef! == "english" || context.languageDef! == "french" || context.languageDef! != "notDetected"?
+                      context.languageDef! == "english" || context.languageDef! == "french" ?
                       "OK, well noted" : "Definitions are available only in English or French" :
                       "Sorry, I didn't get the language. Do you want the definitions in English or French?"}`}),
               },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "AskLevel",
-                    guard: ({ context }) => (context.language! == "english" || context.language! == "french"),
+                    guard: ({ context }) => (context.languageDef! == "english" || context.languageDef! == "french"),
                   },
-                  { target: "ListenLanguage" },
+                  { target: "ListenLanguageDef" },
                 ],
               },
             },
@@ -645,7 +782,7 @@ const dmMachine = setup({
               },
               on: { SPEAK_COMPLETE:
                 [ 
-                  { actions: assign(({ context }) => { return { words: puzzles[getLevelAsNumber(context.level!)!] }}),
+                  { actions: assign(({ context }) => { return { words: puzzles[getLevelAsNumber(context.level!)!][context.languageSol!] }}),
                     target: "#DM.Main.InitializePuzzle",
                     guard: ({ context }) => 
                       (getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2),
@@ -663,10 +800,11 @@ const dmMachine = setup({
         Instructions: {
           entry: {
             type: "spst.speak",
-            params: ({ context }) => ( { utterance: `Before to start, please listen carefully to the following instructions.
-              Level ${getLevelAsNumber(context.level!)} puzzle counts ${Object.keys(puzzles[getLevelAsNumber(context.level!)!]).length} words to find.
+            params: ({ context }) => ( { utterance: `Before we start, please listen carefully to the following instructions.
+              Level ${getLevelAsNumber(context.level!)} puzzle in ${context.languageSol!} counts ${
+                Object.keys(puzzles[getLevelAsNumber(context.level!)!][context.languageSol!]).length} words to find.
               After selecting a word randomly, I will give you the length of the word along with previously found letters if any.
-              The definition will be given in ${context.language}, and you will have 5 seconds of thinking before giving your answer in English.
+              The definition will be given in ${context.languageDef}, and you will have 5 seconds of thinking before giving your answer in ${context.languageSol!}.
               If your answer is correct, we go on with the next word, connected to the previous one if any. Otherwise you can either try again or continue with another word.
               Now, let's play some crosswords!!`})
           },
@@ -711,7 +849,7 @@ const dmMachine = setup({
               on: { SPEAK_COMPLETE: [ 
                 {
                   target: "GiveDefinitionEn",
-                  guard: ({ context }) => context.language == "english"
+                  guard: ({ context }) => context.languageDef == "english"
                 },
                 { target: "GiveDefinitionFr" },
             ], },
@@ -719,13 +857,13 @@ const dmMachine = setup({
             GiveDefinitionEn:{
               id: "GiveDefinitionEn",
               entry: { type: "spst.speak",
-                params: ({ context }) => ( { utterance: `${getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
+                params: ({ context }) => ( { utterance: `${getDefinition(context.words!, context.wordToFind!, context.languageDef!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             GiveDefinitionFr:{
               id: "GiveDefinitionFr",
-              entry: { type: "spst.speak.fr",
-                params: ({ context }) => ( { utterance: ` ${ getDefinition(context.words!, context.wordToFind!, context.language!)}` }) },
+              entry: { type: "spst.speak",
+                params: ({ context }) => ( { utterance: ` ${ getDefinition(context.words!, context.wordToFind!, context.languageDef!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
@@ -733,7 +871,7 @@ const dmMachine = setup({
             },
             ListenAnswer:{
               id: "ListenAnswer",
-              entry: { type: "spst.listen" },
+              entry: { type: "spst.listen.fr" },
               on: {
                 RECOGNISED: { 
                   actions: assign(({ event }) => { 
