@@ -755,20 +755,45 @@ function IsCorrectAnswer(answer: string, wordToFind: string, language: string) {
   let isCorrect: boolean = false
   if (language == 'english') {
     if (answer == wordToFind) { isCorrect = true }
-    else if (answer == '100' && wordToFind == 'hundred') { isCorrect = true }
+    else if ((answer == '100' && wordToFind == 'hundred') ||
+            (answer == '4' && wordToFind == 'four') ) { isCorrect = true }
   }
   else {
     if (answer == wordToFind) { isCorrect = true }
     else if ((answer == '9' && wordToFind == 'neuf') ||
             (answer == wordToFind + 's') ||
             (wordToFind == answer + 's') ||
-            (answer == 'mentir ?' && wordToFind == 'mentir') ||
-            (answer == 'toi ?' && wordToFind == 'toit')) { isCorrect = true }
+            (answer === 'mentir ?' && wordToFind === 'mentir') ||
+            (answer === 'toi ?' && wordToFind === 'toit')) { isCorrect = true }
   }
   return isCorrect
 }
 
-console.log(IsCorrectAnswer('100', 'hundred', 'english'))
+console.log(IsCorrectAnswer('mentir ?', 'mentir', 'french'))
+
+function getHelp(word: string, words: puzzle, clues: clue[])  {
+  let allPositions : number[] = []
+  let location: string = words[word].location
+  let length : number = word.length
+  for (let step = 0; step < length; step++) {
+      let letterPosition: number = 1 + step
+      allPositions.push(letterPosition)
+  }
+  let unknownPositions: number[] = allPositions
+  if (clues.length != 0) {
+    let knownPositions : number[] = []
+    for (let clue of clues) {
+      knownPositions.push(clue.position)
+    }
+    unknownPositions = allPositions.filter(x => !knownPositions.includes(x))
+  }
+  const i = Math.floor(Math.random()*unknownPositions.length);
+  let randomPosition = unknownPositions[i]
+  let randomLetter = word[randomPosition-1]
+  let help: clue = {letter: randomLetter, position: randomPosition}
+  return help
+}
+
 
 const dmMachine = setup({
   types: {
@@ -819,7 +844,7 @@ const dmMachine = setup({
     lastResult: null,
     wordToFind: null,
     givenAnswer: null,
-    clues: null,
+    clues: [],
   }),
   id: "DM",
   initial: "Prepare",
@@ -1022,6 +1047,7 @@ const dmMachine = setup({
               After selecting a word randomly, I will give you the length of the word along with previously found letters if any.
               The definition will be given in ${context.languageDef}, and you will have 5 seconds of thinking before giving your answer in ${context.languageSol!}.
               If your answer is correct, we go on with the next word, connected to the previous one if any. Otherwise you can either try again or continue with another word.
+              In case you can't find an answer, just say 'help' and I will give you some hint.
               Now, let's play some crosswords!!`})
           },
           on: { SPEAK_COMPLETE: "Play" },
@@ -1061,7 +1087,7 @@ const dmMachine = setup({
               id: "GiveLengthClues",
               entry: { type: "spst.speak",
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
-                  anyClues(context.words!, context.wordToFind!)? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
+                  anyClues(context.words!, context.wordToFind!) || context.clues!.length != 0 ? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
               on: { SPEAK_COMPLETE: [ 
                 {
                   target: "GiveDefinitionEn",
@@ -1137,11 +1163,19 @@ const dmMachine = setup({
               id: "CheckAnswer",
               entry: {
                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)}, and ${
-                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) ? "that's":"that's not"} correct`})
+                params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)} ${
+                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) || context.givenAnswer == 'help'?
+                  context.givenAnswer == 'help' ? "." : ", and that's correct" : ", and that's not correct"}`})
                 },
               on: { SPEAK_COMPLETE:
                 [ 
+                  { actions: assign(({ context }) => { return { help: getHelp(context.wordToFind!, context.words!, context.clues!) }}),
+                    target: "GiveHelp",
+                    guard: ({ context }) => context.givenAnswer! == 'help' && context.clues!.length < context.wordToFind!.length,
+                  },
+                  { target: "RefuseHelp",
+                    guard: ({ context }) => context.givenAnswer! == 'help' && context.clues!.length == context.wordToFind!.length,
+                  },
                   { target: "UpdateDiscovered",
                     guard: ({ context }) => (IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!)),
                   },
@@ -1153,6 +1187,23 @@ const dmMachine = setup({
                   }
                 ],
               },
+            },
+            RefuseHelp: {
+              entry: {
+                type: "spst.speak",
+                params:  { utterance: `I already gave you all the clues! Let's recap'` }
+                },
+                on: { SPEAK_COMPLETE: "GiveLengthClues" },
+            },
+            GiveHelp: {
+             entry: {
+              type: "spst.speak",
+              params: ({ context }) => ( { utterance: `I'm happy to help you. Here is some additional clue: ${
+                sayClues([context.help!])}. You have now 5 more seconds to think.`})
+              },
+              on: { SPEAK_COMPLETE: 
+                {actions: ({ context }) => context.clues!.push(context.help!) ,
+                target: "LetThink" },}
             },
             Encourage:{
               entry: { type: "spst.speak",

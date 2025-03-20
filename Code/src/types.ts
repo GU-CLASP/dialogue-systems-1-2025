@@ -16,6 +16,7 @@ export interface DMContext {
   clues?: clue[] | null;
   yn?: string | null;
   lastResult?: any | null;
+  help?: clue | null;
   
 }
 
