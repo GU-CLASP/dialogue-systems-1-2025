@@ -320,9 +320,196 @@ const words1En: puzzle = {
   },
 }
 
+const words1Fr: puzzle = {
+  équerre: {
+    definition: {
+      english: "used for drawing right angles",
+      french: "pour tracer des angles droits"
+    },
+    connections: {
+      élu: {letter: "E", position: 1}
+    },
+    location: "1.3",
+    across: true
+  },
+  parapluie: {
+    definition: {
+      english: "protection against the rain",
+      french: "protège de la pluie"
+    },
+    connections: {
+      ami: {letter: "A", position: 1},
+      lettres: {letter: "L", position: 1},
+      élu: {letter: "U", position: 3},
+    },
+    location: "3.3",
+    across: true
+  },
+  fraise: {
+    definition: {
+      english: "a red fruit",
+      french: "fruit rouge"
+    },
+    connections: {
+      neuf: {letter: "F", position: 4},
+      armoire: {letter: "A", position: 1},
+      ami: {letter: "I", position: 3},
+    },
+    location: "5.1",
+    across: true
+  },
+  toit: {
+    definition: {
+      english: "covers a building",
+      french: "couvre la maison"
+    },
+    connections: {
+      lettres: {letter: "T", position: 4},
+      singe: {letter: "I", position: 2},
+    },
+    location: "6.8",
+    across: true
+  },
+  mentir: {
+    definition: {
+      english: "to say something untrue",
+      french: "tromper"},
+    connections: {
+      armoire: {letter: "M", position: 3},
+      tuyau: {letter: "T", position: 1},
+      lettres: {letter: "R", position: 5},
+    },
+    location: "7.3",
+    across: true
+  },
+  suer: {
+    definition: {
+      english: "to have sweat come through the skin's pores",
+      french: "mouiller sa chemise"},
+    connections: {
+      lettres: {letter: "S", position: 7},
+      singe: {letter: "E", position: 5}
+    },
+    location: "9.8",
+    across: true
+  },
+  mur: {
+    definition: {
+      english: "separates rooms in the house",
+      french: "sépare les pièces d'une maison"},
+    connections: {
+      film: {letter: "M", position: 4},
+      armoire: {letter: "R", position: 6},
+    },
+    location: "10.1",
+    across: true
+  },
+  enfumer: {
+    definition: {
+      english: "to fill with smoke",
+      french: "remplir de fumée"},
+    connections: {
+      armoire: {letter: "E", position: 7},
+      tuyau: {letter: "U", position: 5}
+    },
+    location: "11.3",
+    across: true
+  },
+  élu: {
+    definition: {
+      english: "chosen by voting",
+      french: "choisi par vote"},
+    connections: {
+      équerre: {letter: "E", position: 7},
+      parapluie: {letter: "U", position: 7}
+    },
+    location: "1.9",
+    across: false
+  },
+  neuf: {
+    definition: {
+      english: "odd number",
+      french: "chiffre impair"},
+    connections: {
+      fraise: {letter: "F", position: 1},
+    },
+    location: "2.1",
+    across: false
+  },
+  ami: {
+    definition: {
+      english: "a person you like",
+      french: "mon meilleur copain"},
+    connections: {
+      parapluie: {letter: "A", position: 2},
+      fraise: {letter: "I", position: 4},
+    },
+    location: "3.4",
+    across: false
+  },
+  lettres: {
+    definition: {
+      english: "they are delivered by the postman",
+      french: "le facteur les distribue"},
+    connections: {
+      parapluie: {letter: "L", position: 6},
+      toit: {letter: "T", position: 1},
+      mentir: {letter: "R", position: 6},
+      suer: {letter: "S", position: 1},
+    },
+    location: "3.8",
+    across: false
+  },
+  armoire: {
+    definition: {
+      english: "furniture for storing clothes",
+      french: "on y range nos vêtements"},
+    connections: {
+      fraise: {letter: "A", position: 3},
+      mentir: {letter: "M", position: 1},
+      mur: {letter: "R", position: 3},
+      enfumer : {letter: "E", position: 1},
+    },
+    location: "5.3",
+    across: false
+  },
+  singe: {
+    definition: {
+      english: "swing from branch to branch",
+      french: "saute de branche en branche"},
+    connections: {
+      toit: {letter: "I", position: 3},
+      suer: {letter: "E", position: 3},
+    },
+    location: "5.10",
+    across: false
+  },
+  film: {
+    definition: {
+      english: "shown in a cinema",
+      french: "on le regarde au cinéma"},
+    connections: {
+      mur: {letter: "M", position: 1},
+    },
+    location: "7.1",
+    across: false
+  },
+  tuyau: {
+    definition: {
+      english: "supplies water into the house",
+      french: "amène l'eau dans la maison"},
+    connections: {
+      mentir: {letter: "T", position: 4},
+      enfumer: {letter: "U", position: 5},
+    },
+    location: "7.6",
+    across: false
+  }
+}
+
 const puzzles: {[index: number] : {[language: string] : puzzle}} = {
   0: {english: words0En, french: words0Fr},
-  1: {english: words1En, french: words0Fr},
+  1: {english: words1En, french: words1Fr},
 }
 const discovered: { [word: string]: boolean } = {}
 
@@ -563,16 +750,24 @@ function repeatAnswer(answer: string, language: string) {
   return utterance
 }
 
-function IsCorrectAnswer(answer: string, wordToFind: string) {
+function IsCorrectAnswer(answer: string, wordToFind: string, language: string) {
   let isCorrect: boolean = false
-  if (answer == '100' && wordToFind == "hundred") {
-    isCorrect = true
-  } else if(answer == wordToFind) {
-    isCorrect = true
+  if (language == 'english') {
+    if (answer == wordToFind) { isCorrect = true }
+    else if (answer == '100' && wordToFind == 'hundred') { isCorrect = true }
+  }
+  else {
+    if (answer == wordToFind) { isCorrect = true }
+    else if ((answer == '9' && wordToFind == 'neuf') ||
+            (answer == wordToFind + 's') ||
+            (wordToFind == answer + 's') ||
+            (answer == 'mentir ?' && wordToFind == 'mentir') ||
+            (answer == 'toi ?' && wordToFind == 'toit')) { isCorrect = true }
   }
   return isCorrect
 }
 
+console.log(IsCorrectAnswer('100', 'hundred', 'english'))
 
 const dmMachine = setup({
   types: {
@@ -942,12 +1137,12 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)}, and ${
-                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!) ? "that's":"that's not"} correct`})
+                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) ? "that's":"that's not"} correct`})
                 },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "UpdateDiscovered",
-                    guard: ({ context }) => (IsCorrectAnswer(context.givenAnswer!, context.wordToFind!)),
+                    guard: ({ context }) => (IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!)),
                   },
                   { target: "Encourage",
                     guard: ({ context }) => Object.keys(discovered).length == Object.keys(context.words!).length -1
