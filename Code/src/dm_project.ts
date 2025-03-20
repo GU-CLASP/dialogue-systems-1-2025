@@ -750,6 +750,7 @@ function repeatAnswer(answer: string, language: string) {
   return utterance
 }
 
+/* TODO: fix problem of non matching TOI ?/TOIT and MENTIR ?/MENTIR */
 function IsCorrectAnswer(answer: string, wordToFind: string, language: string) {
   let isCorrect: boolean = false
   if (language == 'english') {
