@@ -257,7 +257,7 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (answer === wordToFind + 'es') ||
             (wordToFind === answer + 'es') ||
             (answer === wordToFind + '\xA0?') ||
-            (answer === 'toi ?' && wordToFind === 'toit') ||
+            (answer === 'toi\xA0?' && wordToFind === 'toit') ||
             (answer === 'en fumée' && wordToFind === 'enfumer')) { isCorrect = true }
   }
   return isCorrect

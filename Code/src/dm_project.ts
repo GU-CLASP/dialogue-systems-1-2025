@@ -524,8 +524,13 @@ const dmMachine = setup({
               entry: ({ context }) => (updateDiscovered(context.wordToFind!), context.clues = [],
               displayWord(context.words!, context.wordToFind!), clearHighlighting(context.words!, context.wordToFind!)),
               always: [
-                { target: "Done",
-                  guard: ({ context }) => (Object.keys(discovered).length == Object.keys(context.words!).length)
+                { target: "ProposeNextLevel",
+                  guard: ({ context }) => ( Object.keys(discovered).length == Object.keys(context.words!).length &&
+                  getLevelAsNumber(context.level!)! < 2 )
+                },
+                { target: "ReachedLastLevel",
+                  guard: ({ context }) => ( Object.keys(discovered).length == Object.keys(context.words!).length &&
+                  getLevelAsNumber(context.level!)! == 2 )
                 },
                 {
                   target: "SelectConnectedWord",
@@ -534,13 +539,77 @@ const dmMachine = setup({
                 { target: "SelectWord" },
               ]
             },
-            ProposeNextLevel: {
-
+            ReachedLastLevel:{
+              entry: {
+                type: "spst.speak",
+                params: { utterance: `Well done! You just completed the crossword puzzle level 2.
+                  You are welcome to come back again any time!`}
+                },
+                on: { SPEAK_COMPLETE: "Done"},
             },
-            Done: {
-              entry: {type: "spst.speak",
-              params: {utterance: `Well done! You just completed the crossword puzzle!`}
+            ProposeNextLevel: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: `Well done! You just completed the crossword puzzle level ${
+                  getLevelAsNumber(context.level!)}. Do you want to continue playing and move to the next level?`})
+                },
+              on: { SPEAK_COMPLETE: "ListenNextLevel"},
+            },
+            ListenNextLevel:{
+              entry: { type: "spst.listen.nlu" },
+              on: {
+                RECOGNISED: [
+                  { 
+                  actions: assign(({ event }) => { 
+                    return { lastResult: event.nluValue, yn: "yes" }; 
+                  }),
+                  guard: (({ event }) => detectedYes(event.nluValue.entities) && !detectedNo(event.nluValue.entities))
+                  },
+                  { 
+                    actions: assign(({ event }) => { 
+                      return { lastResult: event.nluValue, yn: "no" }; 
+                    }),
+                    guard: (({ event }) => detectedNo(event.nluValue.entities) && !detectedYes(event.nluValue.entities))
+                    },
+                  { 
+                  actions: assign({ yn: "notDetected" })
+                  }
+                ],
+                ASR_NOINPUT: { 
+                  actions: assign({ yn: null })
+                },
+                LISTEN_COMPLETE: [  
+                  {
+                    target: "CheckNextLevel",
+                    guard: ({ context }) => !!context.yn,
+                  },
+                  { target: "#DM.NoInput" },
+                ],
               },
+            },
+            CheckNextLevel: {
+              entry: {
+                type: "spst.speak",
+                params: ({ context }) => ( { utterance: ` ${
+                  context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
+                  `Great! Let's pick the puzzle level ${getLevelAsNumber(context.level!)!+ 1}`:
+                   "I hope you had some fun! Come back again when you want to play!": "Please, reply yes or no"}`})
+                },
+              on: { SPEAK_COMPLETE:
+                [ 
+                  { actions: assign(({ context }) => { return { level: ((getLevelAsNumber(context.level!)!+1).toString()),
+                    words: puzzles[getLevelAsNumber(context.level!)!+1][context.languageSol!] }}),
+                    target: "#DM.Main.InitializePuzzle",
+                    guard: ({ context }) => context.yn! == 'yes',
+                  },
+                  { target: "Done",
+                    guard: ({ context }) => context.yn! == 'no',
+                  },
+                  { target: "ListenNextLevel" }
+                ],
+              },
+            },    
+            Done: {
               on: {
                 CLICK: "#DM.Greeting",
               },
