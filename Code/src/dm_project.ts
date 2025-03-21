@@ -3,6 +3,11 @@ import { Settings, speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY, NLU_KEY } from "./azure.ts";
 import { DMContext, DMEvents, clue, puzzle } from "./types.ts";
+import { puzzles } from "./puzzles.ts";
+import { detectedLanguage, getLanguage, detectedLevel, getLevel, getLevelAsNumber,
+          detectedYes, detectedNo, initPuzzle, selectWord, StillConnectedWordsToDiscover,
+          selectConnectedWord, anyClues, getClues, sayClues, getDefinition, updateDiscovered,
+          displayWord, highlightWord, clearHighlighting, repeatAnswer, IsCorrectAnswer, getHelp } from "./functions.ts";
 
 const inspector = createBrowserInspector();
 
@@ -13,796 +18,34 @@ const azureCredentials = {
 };
 
 const azureLanguageCredentials = {
-  endpoint: "https://nlult2216.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview" /** your Azure CLU prediction URL */,
-  key: NLU_KEY /** reference to your Azure CLU key */,
-  deploymentName: "crosswords" /** your Azure CLU deployment */,
-  projectName: "crosswords" /** your Azure CLU project name */,
+  endpoint: "https://nlult2216.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview",
+  key: NLU_KEY,
+  deploymentName: "crosswords",
+  projectName: "crosswords",
 };
 
 const settings: Settings = {
-  azureLanguageCredentials: azureLanguageCredentials /** global activation of NLU */,
+  azureLanguageCredentials: azureLanguageCredentials,
   azureCredentials: azureCredentials,
   azureRegion: "northeurope",
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
   locale: "en-US",
   ttsDefaultVoice: "en-US-DavisMultilingualNeural",
-  /* speechRecognitionEndpointId: "9fb1d792-feb6-47ef-aac9-ec2e46998109" */
 };
 
-const words0En: puzzle = {
-  finger: {
-    definition: {
-      english: "Part of your hand",
-      french: "Une partie de ta main"
-    },
-    connections: {
-      luggage: {letter: "G", position: 3}
-    },
-    location: "1.3",
-    across: false
-  },
-  watch: {
-    definition: {
-      english: "Worn on your wrist that tells time",
-      french: "À ton poignet, elle donne l'heure"
-    },
-    connections: {
-      hour: {letter: "H", position: 1},
-      luggage: {letter: "A", position: 5},
-    },
-    location: "3.5",
-    across: false
-  },
-  laptop: {
-    definition: {
-      english: "Portable computer",
-      french: "Ordinateur portable"
-    },
-    connections: {
-      luggage: {letter: "L", position: 1}
-    },
-    location: "4.1",
-    across: false
-  },
-  luggage: {
-    definition: {
-      english: "Travel bag",
-      french: "Sac de voyage"
-    },
-    connections: {
-      laptop: {letter: "L", position: 1},
-      watch: {letter: "A", position: 2},
-      finger: {letter: "G", position: 4},
-    },
-    location: "4.1",
-    across: true
-  },
-  hour: {
-    definition: {
-      english: "A period of 60 minutes",
-      french: "Une durée de 60 minutes"},
-    connections: {
-      watch: {letter: "H", position: 5}
-    },
-    location: "7.5",
-    across: true
-  },
-}
+console.log(IsCorrectAnswer('toi ?', 'toit', 'french'))
+console.log(IsCorrectAnswer('mentir\xA0?', 'mentir', 'french'))
+console.log(IsCorrectAnswer('en fumée', 'enfumer', 'french'))
 
-const words0Fr: puzzle = {
-  oiseau: {
-    definition: {
-      english: "an animal with feathers and wings",
-      french: "un animal couverts de plumes et qui a des ailes"
-    },
-    connections: {
-      printemps: {letter: "I", position: 3}
-    },
-    location: "2.3",
-    across: false
-  },
-  fleur: {
-    definition: {
-      english: "the part of a plant that is coloured and has a pleasant smell",
-      french: "la partie d'une plante qui est colorée et parfumée"
-    },
-    connections: {
-      printemps: {letter: "E", position: 6},
-    },
-    location: "1.6",
-    across: false
-  },
-  papillon: {
-    definition: {
-      english: "an insect with large, coloured wings",
-      french: "un insecte avec de larges ailes colorées"
-    },
-    connections: {
-      printemps: {letter: "P", position: 8},
-      bourgeon: {letter: "O", position: 7}
-    },
-    location: "3.8",
-    across: false
-  },
-  fraise: {
-    definition: {
-      english: "a juicy red fruit that can be found in the woods",
-      french: "un fruit rouge juteux que l'on peut trouver dans les bois"
-    },
-    connections: {
-      bourgeon: {letter: "R", position: 4},
-      miel: {letter: "I", position: 2},
-    },
-    location: "8.5",
-    across: false
-  },
-  printemps: {
-    definition: {
-      english: "the season of the year between winter and summer",
-      french: "la saison entre l'hiver et l'été"},
-    connections: {
-      oiseau: {letter: "I", position: 2},
-      fleur: {letter: "E", position: 3},
-      papillon: {letter: "P", position: 1}
-    },
-    location: "3.1",
-    across: true
-  },
-  bourgeon: {
-    definition: {
-      english: "newly formed leaf or flower that has not yet unfolded",
-      french: "bouton de fleur"},
-    connections: {
-      fraise: {letter: "R", position: 2},
-      papillon: {letter: "O", position: 7}
-    },
-    location: "9.2",
-    across: true 
-  },
-  miel: {
-    definition: {
-      english: "some sweet made by bees",
-      french: "une douceur préparée par les abeilles"},
-    connections: {
-      fraise: {letter: "I", position: 4},
-    },
-    location: "11.4",
-    across: true 
-  },
-}
-
-const words1En: puzzle = {
-  walk: {
-    definition: {
-      english: "Eyes is to see as leg is to...",
-      french: "Les yeux pour voir et les jambes pour..."
-    },
-    connections: {
-      library: {letter: "L", position: 1}
-    },
-    location: "1.3",
-    across: true
-  },
-  sunday: {
-    definition: {
-      english: "Holiday of the week",
-      french: "Congé hebdomadaire"
-    },
-    connections: {
-      smooth: {letter: "S", position: 1},
-      library: {letter: "A", position: 5},
-    },
-    location: "5.1",
-    across: true
-  },
-  team: {
-    definition: {
-      english: "Playing game together",
-      french: "Joue ensemble"
-    },
-    connections: {
-      tiger: {letter: "T", position: 1},
-      september: {letter: "M", position: 6}
-    },
-    location: "8.9",
-    across: true
-  },
-  teacher: {
-    definition: {
-      english: "A person who teaches in school",
-      french: "Une personne qui enseigne à l'école"
-    },
-    connections: {
-      smooth: {letter: "T", position: 5},
-      house: {letter: "H", position: 1},
-      four: {letter: "R", position: 4},
-    },
-    location: "9.1",
-    across: true
-  },
-  hundred: {
-    definition: {
-      english: "58 + 42 =",
-      french: "58 + 42 ="},
-    connections: {
-      house: {letter: "U", position: 3},
-      tiger: {letter: "E", position: 4}
-    },
-    location: "11.4",
-    across: true
-  },
-  red: {
-    definition: {
-      english: "Traffic color light which means stop",
-      french: "Couleur de feu qui signale l'arrêt obligatoire"},
-    connections: {
-      september: {letter: "R", position: 9},
-    },
-    location: "11.12",
-    across: true
-  },
-  camel: {
-    definition: {
-      english: "Ship of the desert",
-      french: "Vaisseau du désert"},
-    connections: {
-      house: {letter: "E", position: 5},
-    },
-    location: "13.2",
-    across: true
-  },
-  library: {
-    definition: {
-      english: "Collection of books",
-      french: "Collection de livres"},
-    connections: {
-      walk: {letter: "L", position: 3},
-      sunday: {letter: "A", position: 5}
-    },
-    location: "1.5",
-    across: false
-  },
-  september: {
-    definition: {
-      english: "Ninth month of the year",
-      french: "Neuvième mois de l'année"},
-    connections: {
-      team: {letter: "M", position: 4},
-      red: {letter: "R", position: 1}
-    },
-    location: "3.12",
-    across: false
-  },
-  smooth: {
-    definition: {
-      english: "Opposite of rough",
-      french: "Contraire de rugueux"},
-    connections: {
-      sunday: {letter: "S", position: 1},
-      teacher: {letter: "T", position: 1}
-    },
-    location: "5.1",
-    across: false
-  },
-  four: {
-    definition: {
-      english: "How many bails are required in cricket?",
-      french: "Combien faut-il de barrettes au cricket ?"},
-    connections: {
-      teacher: {letter: "R", position: 7},
-    },
-    location: "6.7",
-    across: false
-  },
-  tiger: {
-    definition: {
-      english: "National animal of India",
-      french: "Animal national de l´Inde"},
-    connections: {
-      team: {letter: "T", position: 1},
-      hundred: {letter: "E", position: 6}
-    },
-    location: "8.9",
-    across: false
-  },
-  house: {
-    definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
-    },
-    location: "9.5",
-    across: false
-  },
-}
-
-const words1Fr: puzzle = {
-  équerre: {
-    definition: {
-      english: "used for drawing right angles",
-      french: "pour tracer des angles droits"
-    },
-    connections: {
-      élu: {letter: "E", position: 1}
-    },
-    location: "1.3",
-    across: true
-  },
-  parapluie: {
-    definition: {
-      english: "protection against the rain",
-      french: "protège de la pluie"
-    },
-    connections: {
-      ami: {letter: "A", position: 1},
-      lettres: {letter: "L", position: 1},
-      élu: {letter: "U", position: 3},
-    },
-    location: "3.3",
-    across: true
-  },
-  fraise: {
-    definition: {
-      english: "a red fruit",
-      french: "fruit rouge"
-    },
-    connections: {
-      neuf: {letter: "F", position: 4},
-      armoire: {letter: "A", position: 1},
-      ami: {letter: "I", position: 3},
-    },
-    location: "5.1",
-    across: true
-  },
-  toit: {
-    definition: {
-      english: "covers a building",
-      french: "couvre la maison"
-    },
-    connections: {
-      lettres: {letter: "T", position: 4},
-      singe: {letter: "I", position: 2},
-    },
-    location: "6.8",
-    across: true
-  },
-  mentir: {
-    definition: {
-      english: "to say something untrue",
-      french: "tromper"},
-    connections: {
-      armoire: {letter: "M", position: 3},
-      tuyau: {letter: "T", position: 1},
-      lettres: {letter: "R", position: 5},
-    },
-    location: "7.3",
-    across: true
-  },
-  suer: {
-    definition: {
-      english: "to have sweat come through the skin's pores",
-      french: "mouiller sa chemise"},
-    connections: {
-      lettres: {letter: "S", position: 7},
-      singe: {letter: "E", position: 5}
-    },
-    location: "9.8",
-    across: true
-  },
-  mur: {
-    definition: {
-      english: "separates rooms in the house",
-      french: "sépare les pièces d'une maison"},
-    connections: {
-      film: {letter: "M", position: 4},
-      armoire: {letter: "R", position: 6},
-    },
-    location: "10.1",
-    across: true
-  },
-  enfumer: {
-    definition: {
-      english: "to fill with smoke",
-      french: "remplir de fumée"},
-    connections: {
-      armoire: {letter: "E", position: 7},
-      tuyau: {letter: "U", position: 5}
-    },
-    location: "11.3",
-    across: true
-  },
-  élu: {
-    definition: {
-      english: "chosen by voting",
-      french: "choisi par vote"},
-    connections: {
-      équerre: {letter: "E", position: 7},
-      parapluie: {letter: "U", position: 7}
-    },
-    location: "1.9",
-    across: false
-  },
-  neuf: {
-    definition: {
-      english: "odd number",
-      french: "chiffre impair"},
-    connections: {
-      fraise: {letter: "F", position: 1},
-    },
-    location: "2.1",
-    across: false
-  },
-  ami: {
-    definition: {
-      english: "a person you like",
-      french: "mon meilleur copain"},
-    connections: {
-      parapluie: {letter: "A", position: 2},
-      fraise: {letter: "I", position: 4},
-    },
-    location: "3.4",
-    across: false
-  },
-  lettres: {
-    definition: {
-      english: "they are delivered by the postman",
-      french: "le facteur les distribue"},
-    connections: {
-      parapluie: {letter: "L", position: 6},
-      toit: {letter: "T", position: 1},
-      mentir: {letter: "R", position: 6},
-      suer: {letter: "S", position: 1},
-    },
-    location: "3.8",
-    across: false
-  },
-  armoire: {
-    definition: {
-      english: "furniture for storing clothes",
-      french: "on y range nos vêtements"},
-    connections: {
-      fraise: {letter: "A", position: 3},
-      mentir: {letter: "M", position: 1},
-      mur: {letter: "R", position: 3},
-      enfumer : {letter: "E", position: 1},
-    },
-    location: "5.3",
-    across: false
-  },
-  singe: {
-    definition: {
-      english: "swing from branch to branch",
-      french: "saute de branche en branche"},
-    connections: {
-      toit: {letter: "I", position: 3},
-      suer: {letter: "E", position: 3},
-    },
-    location: "5.10",
-    across: false
-  },
-  film: {
-    definition: {
-      english: "shown in a cinema",
-      french: "on le regarde au cinéma"},
-    connections: {
-      mur: {letter: "M", position: 1},
-    },
-    location: "7.1",
-    across: false
-  },
-  tuyau: {
-    definition: {
-      english: "supplies water into the house",
-      french: "amène l'eau dans la maison"},
-    connections: {
-      mentir: {letter: "T", position: 4},
-      enfumer: {letter: "U", position: 5},
-    },
-    location: "7.6",
-    across: false
-  }
-}
-
-const puzzles: {[index: number] : {[language: string] : puzzle}} = {
-  0: {english: words0En, french: words0Fr},
-  1: {english: words1En, french: words1Fr},
-}
-const discovered: { [word: string]: boolean } = {}
-
-
-function detectedLanguage(entities: any) {
-  return !!entities.find( x => x.category === "language")
-}
-
-function getLanguage(entities: any) {
-  let obj_lang = entities.find( x => x.category === "language")
-  let index_lang = entities.indexOf(obj_lang)
-  return entities[index_lang].text.toLowerCase()
-}
-
-function detectedLevel(entities: any) {
-  return !!entities.find( x => x.category === "level")
-}
-
-function getLevel(entities: any) {
-  let obj_level = entities.find( x => x.category === "level")
-  let index_level = entities.indexOf(obj_level)
-  return entities[index_level].text.toLowerCase()
-}
-
-/* function below needed because can't find a way to access the entity list key from CLU */
-function getLevelAsNumber(level: string) {
-  let levelAsNumber = undefined
-  if (level == "0" || level == "zero" || level == "0th" || level == "zeroth" || level == "training" || level == "train") {
-    levelAsNumber = 0
-  }
-  else if (level == "1" || level == "one" || level == "1st" || level == "first" || level == "beginner" || level == "beginners") {
-    levelAsNumber = 1
-  }
-  else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
-    levelAsNumber = 0
-  }
-  return levelAsNumber
-  }
-
-function detectedYes(entities: any) {
- return !!entities.find( x => x.category === "yes")
-}
-
-function detectedNo(entities: any) {
-  return !!entities.find( x => x.category === "no")
-}
-
-function initPuzzle(element: HTMLElement, words: puzzle){
-  let lastColumns : number[] = []
-  let lastRows : number[] = []
-  let whites: string[] = []
-  for (let word of Object.keys(words)) {
-    if (words[word].across == true) {
-      let row: number = Number(words[word].location.split(".")[0])
-      let firstColumn: number = Number(words[word].location.split(".")[1])
-      let lastColumn: number = firstColumn + word.length
-      lastColumns.push(lastColumn)
-      for (let step = 0; step < word.length; step++) {
-        let tileColumn: number = firstColumn + step
-        let tileId: string = row + "." + tileColumn.toString()
-        whites.push(tileId)
-      }
-    }
-    else {
-      let column: number = Number(words[word].location.split(".")[1])
-      let firstRow: number = Number(words[word].location.split(".")[0])
-      let lastRow: number = firstRow + word.length
-      lastRows.push(lastRow)
-      for (let step = 0; step < word.length; step++) {
-        let tileRow: number = firstRow + step
-        let tileId: string = tileRow.toString() + "." + column
-        whites.push(tileId)
-      }
-    }
-  }
-  let numberColumns: number = Math.max(...lastColumns)
-  let numberRows: number = Math.max(...lastRows)
-  let stringHTML: string = `<div id="crossword"><table><tbody>`
-  for (let row = 1; row < numberRows; row++) {
-    stringHTML += `<tr>`
-    for (let column = 1; column < numberColumns; column++) {
-      if (whites.includes(`${row}.${column}`)) {
-        stringHTML += `<td id="${row}.${column}" class="white"></td>`
-      }
-      else {
-        stringHTML += `<td class="dark"></td>`
-      }
-    }
-    stringHTML += `</tr>`
-  }
-  stringHTML += `</tbody></table></div>`
-  element.innerHTML = stringHTML
-}
-
-
-function selectWord(words: puzzle, wordToFind: string|null) {
-  let filteredWords = Object.keys(words!).filter((word)=> !discovered[word])
-  if (Object.keys(discovered).length < Object.keys(words!).length -1) {
-    filteredWords = filteredWords.filter((word)=> !(word==wordToFind))
-  }
-  const i = Math.floor(Math.random()*filteredWords.length);
-  return filteredWords[i];
-}
-
-function StillConnectedWordsToDiscover(words: puzzle, word:string) {
-  const connectedWords = Object.keys(words[word].connections)
-  const ConnectedWordsToDiscover = connectedWords.filter((word)=> !discovered[word])
-  return !!ConnectedWordsToDiscover.length
-}
-
-function selectConnectedWord(words: puzzle, word: string) {
-  const connectedWords = Object.keys(words[word].connections)
-  const filteredConnectedWords = connectedWords.filter((word)=> !discovered[word])
-  const i = Math.floor(Math.random()*filteredConnectedWords.length);
-  return filteredConnectedWords[i]
-}
-
-function anyClues(words: puzzle, word: string) {
-  const connectedWords = Object.keys(words[word].connections)
-  const discoveredConnectedWords = connectedWords.filter((word)=> discovered[word])
-  return !!discoveredConnectedWords.length
-}
-
-function getClues(words: puzzle, word:string) {
-  const connectedWords = Object.keys(words[word].connections)
-  const discoveredConnectedWords = connectedWords.filter((word) => discovered[word])
-  const clues : clue[] = []
-  for (let connectedWord of discoveredConnectedWords) {
-    let thisclue: clue = {letter: words[connectedWord].connections[word].letter, position: words[connectedWord].connections[word].position}
-    clues.push(thisclue)
-  }
-  return clues
-}
-
-function sayClues(clues: clue[]) {
-  clues.sort((a, b) => a.position - b.position);
-  let utterance : string = ""
-  for (let clue of clues) {
-    let thisutterance: string  = `letter "${clue.letter}" in position ${clue.position}, `
-    utterance += thisutterance
-  }
-  return utterance
-}
-
-function getDefinition(words: puzzle, word: string, language: string) {
-  let utterance : string = words[word].definition[language]
-  if (language == 'french'){
-    utterance = '<lang xml:lang="fr-FR">' + utterance + '</lang>'
-  }
-  return utterance
-}
-
-function updateDiscovered(word: string) {
-  discovered[word] = true
-}
-
-function displayWord(words: puzzle, word:string) {
-  let location: string = words[word].location
-  let row: string = location.split(".")[0]
-  let column: string = location.split(".")[1]
-  let across: boolean = words[word].across
-  let length : number = word.length
-  if (across == true) {
-    for (let step = 0; step < length; step++) {
-      let tileColumn: number = Number(column) + step
-      let tileId: string = row + "." + tileColumn.toString()
-      let tile: HTMLElement = document.getElementById(tileId)!
-      tile.textContent = word[step].toUpperCase()
-    }
-  }
-  else {
-    for (let step = 0; step < length; step++) {
-      let tileRow: number = Number(row) + step
-      let tileId: string = tileRow.toString() + "." + column
-      let tile: HTMLElement = document.getElementById(tileId)!
-      tile.textContent = word[step].toUpperCase()
-    }
-  }
-}
-
-function highlightWord(words: puzzle, word: string) {
-  let location: string = words[word].location
-  let row: string = location.split(".")[0]
-  let column: string = location.split(".")[1]
-  let across: boolean = words[word].across
-  let length : number = word.length
-  if (across == true) {
-    for (let step = 0; step < length; step++) {
-      let tileColumn: number = Number(column) + step
-      let tileId: string = row + "." + tileColumn.toString()
-      let tile: HTMLElement = document.getElementById(tileId)!
-      tile.setAttribute("class", "yellow")
-    }
-  }
-  else {
-    for (let step = 0; step < length; step++) {
-      let tileRow: number = Number(row) + step
-      let tileId: string = tileRow.toString() + "." + column
-      let tile: HTMLElement = document.getElementById(tileId)!
-      tile.setAttribute("class", "yellow")
-    }
-  }
-}
-
-function clearHighlighting(words: puzzle, word: string | null) {
-  if (word ==  null) {
-  }
-  else {
-    let location: string = words[word!].location
-    let row: string = location.split(".")[0]
-    let column: string = location.split(".")[1]
-    let across: boolean = words[word!].across
-    let length : number = word!.length
-    if (across == true) {
-      for (let step = 0; step < length; step++) {
-        let tileColumn: number = Number(column) + step
-        let tileId: string = row + "." + tileColumn.toString()
-        let tile: HTMLElement = document.getElementById(tileId)!
-        tile.setAttribute("class", "white")
-      }
-    }
-    else {
-      for (let step = 0; step < length; step++) {
-        let tileRow: number = Number(row) + step
-        let tileId: string = tileRow.toString() + "." + column
-        let tile: HTMLElement = document.getElementById(tileId)!
-        tile.setAttribute("class", "white")
-      }
-    }
-  }
-}
-
-function repeatAnswer(answer: string, language: string) {
-  let utterance: string = answer
-  if (language == "french") {
-    utterance ='<lang xml:lang="fr-FR">' + utterance + '</lang>'
-  }
-  return utterance
-}
-
-/* TODO: fix problem of non matching TOI ?/TOIT and MENTIR ?/MENTIR */
-function IsCorrectAnswer(answer: string, wordToFind: string, language: string) {
-  let isCorrect: boolean = false
-  if (language == 'english') {
-    if (answer == wordToFind) { isCorrect = true }
-    else if ((answer == '100' && wordToFind == 'hundred') ||
-            (answer == '4' && wordToFind == 'four') ) { isCorrect = true }
-  }
-  else {
-    if (answer == wordToFind) { isCorrect = true }
-    else if ((answer == '9' && wordToFind == 'neuf') ||
-            (answer == wordToFind + 's') ||
-            (wordToFind == answer + 's') ||
-            (answer === 'mentir ?' && wordToFind === 'mentir') ||
-            (answer === 'toi ?' && wordToFind === 'toit')) { isCorrect = true }
-  }
-  return isCorrect
-}
-
-console.log(IsCorrectAnswer('mentir ?', 'mentir', 'french'))
-
-function getHelp(word: string, words: puzzle, clues: clue[])  {
-  let allPositions : number[] = []
-  let location: string = words[word].location
-  let length : number = word.length
-  for (let step = 0; step < length; step++) {
-      let letterPosition: number = 1 + step
-      allPositions.push(letterPosition)
-  }
-  let unknownPositions: number[] = allPositions
-  if (clues.length != 0) {
-    let knownPositions : number[] = []
-    for (let clue of clues) {
-      knownPositions.push(clue.position)
-    }
-    unknownPositions = allPositions.filter(x => !knownPositions.includes(x))
-  }
-  const i = Math.floor(Math.random()*unknownPositions.length);
-  let randomPosition = unknownPositions[i]
-  let randomLetter = word[randomPosition-1]
-  let help: clue = {letter: randomLetter, position: randomPosition}
-  return help
-}
-
+export const discovered: { [word: string]: boolean } = {}
 
 const dmMachine = setup({
   types: {
-    /** you might need to extend these */
     context: {} as DMContext,
     events: {} as DMEvents,
   },
   actions: {
-    /** define your actions here */
     "spst.speak": ({ context }, params: { utterance: string }) =>
       context.spstRef.send({
         type: "SPEAK",
@@ -815,7 +58,8 @@ const dmMachine = setup({
           type: "SPEAK",
           value: {
             utterance: params.utterance,
-            voice: "fr-FR-HenriNeural"
+            voice: "fr-FR-HenriNeural",
+            locale: "fr-FR"
           },
       }),
     "spst.listen.en": ({ context }) =>
@@ -832,7 +76,7 @@ const dmMachine = setup({
     "spst.listen.nlu": ({ context }) =>
        context.spstRef.send({
          type: "LISTEN",
-         value: { nlu: true } /** Local activation of NLU */,
+         value: { nlu: true },
        }),
   },
 }).createMachine({
@@ -1036,7 +280,7 @@ const dmMachine = setup({
         },
         InitializePuzzle: {
           entry: ({ context }) => initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!),
-          always: { target: "Instructions" },
+          always: { target: "Play" }, /* TO BE REDIRECTED TO INSTRUCTIONS */
         },
         Instructions: {
           entry: {
@@ -1152,17 +396,22 @@ const dmMachine = setup({
                 },
                 LISTEN_COMPLETE: [ 
                     {
-                      target: "CheckAnswer",
+                      target: "LogVariables",
                       guard: ({ context }) => !!context.givenAnswer,
                     },
                     { target: "#DM.NoInput" },
                 ],
               },
             },
+            LogVariables :{
+              entry: ({ context }) => (console.log('givenAnswer:', context.givenAnswer!, ',', 'wordTofind:', context.wordToFind!,',', 'languageSol:', context.languageSol!), 
+              console.log('IsCorrectAnswer:', IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!))),
+              always: 'CheckAnswer'
+            },
             CheckAnswer: {
               id: "CheckAnswer",
               entry: {
-                type: "spst.speak",
+                 type: "spst.speak",
                 params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)} ${
                   IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) || context.givenAnswer == 'help'?
                   context.givenAnswer == 'help' ? "." : ", and that's correct" : ", and that's not correct"}`})
@@ -1263,7 +512,7 @@ const dmMachine = setup({
                 { target: "GiveLengthClues",
                   guard: ({ context }) => (context.yn! == "yes"),
                 },
-                { actions: ({ context }) => clearHighlighting(context.words!, context.wordToFind!),
+                { actions: ({ context }) => (clearHighlighting(context.words!, context.wordToFind!), context.clues = []),
                   target: "SelectWord",
                   guard: ({ context }) => (context.yn! == "no"),
                 },
@@ -1272,7 +521,7 @@ const dmMachine = setup({
             },    
             UpdateDiscovered: {
               id: "UpdateDiscovered",
-              entry: ({ context }) => (updateDiscovered(context.wordToFind!),
+              entry: ({ context }) => (updateDiscovered(context.wordToFind!), context.clues = [],
               displayWord(context.words!, context.wordToFind!), clearHighlighting(context.words!, context.wordToFind!)),
               always: [
                 { target: "Done",
@@ -1284,6 +533,9 @@ const dmMachine = setup({
                 },
                 { target: "SelectWord" },
               ]
+            },
+            ProposeNextLevel: {
+
             },
             Done: {
               entry: {type: "spst.speak",

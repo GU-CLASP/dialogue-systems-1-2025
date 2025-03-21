@@ -103,7 +103,7 @@ button:focus-visible {
   }
 }
 
-
+/* style adapted from https://code2care.org/html/crossword-puzzle-pure-html-css-javascript/ */
 table {
   text-align: center;
   padding:10px;
