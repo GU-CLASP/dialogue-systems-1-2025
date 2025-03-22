@@ -132,11 +132,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
@@ -285,11 +285,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
@@ -401,11 +401,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
@@ -515,11 +515,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
@@ -629,11 +629,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
@@ -743,11 +743,11 @@ const dmMachine = setup({
         LISTEN_COMPLETE: [
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.5,
+            guard: ({ context }) => !!context.plainResult && !context.confidence && context.plainResult![0]["confidence"] < 0.3,
           },
           {
             target: ".Clarification",
-            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.5,
+            guard: ({ context }) => !!context.lastResult && !context.confidence && context.lastResult!["intents"][0]["confidenceScore"] < 0.3,
           },
           {
             target: ".MyBad",
