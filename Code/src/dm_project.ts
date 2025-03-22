@@ -38,7 +38,7 @@ console.log(IsCorrectAnswer('toi ?', 'toit', 'french'))
 console.log(IsCorrectAnswer('mentir\xA0?', 'mentir', 'french'))
 console.log(IsCorrectAnswer('en fumée', 'enfumer', 'french'))
 
-export const discovered: { [word: string]: boolean } = {}
+export let discovered: { [word: string]: boolean } = {}
 
 const dmMachine = setup({
   types: {
@@ -279,7 +279,7 @@ const dmMachine = setup({
           }
         },
         InitializePuzzle: {
-          entry: ({ context }) => initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!),
+          entry: ({ context }) => (initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!), discovered = {}),
           always: { target: "Play" }, /* TO BE REDIRECTED TO INSTRUCTIONS */
         },
         Instructions: {
