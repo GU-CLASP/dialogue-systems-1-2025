@@ -399,27 +399,6 @@ const dmMachine = setup({
                 ],
               },
             },
-            /* IntroRepeatAnswer: {
-              entry: { type: "spst.speak.en", params: { utterance: `You just said:` } },
-              on: { SPEAK_COMPLETE:
-                [
-                  { target: "RepeatAnswerEn",
-                    guard: ({ context }) =>  context.languageSol == 'english'
-                  },
-                  { target: "RepeatAnswerFr"},
-                ],
-              },
-            },
-            RepeatAnswerEn: {
-              entry: { type: "spst.speak.en",
-                params: ({ context }) => ( { utterance: `${context.givenAnswer!}` }) },
-              on: { SPEAK_COMPLETE: "CheckAnswer" },
-            },
-            RepeatAnswerFr: {
-              entry: { type: "spst.speak.fr",
-                params: ({ context }) => ( { utterance: `${context.givenAnswer!}` }) },
-              on: { SPEAK_COMPLETE: "CheckAnswer" },
-            }, */
             CheckAnswer: {
               id: "CheckAnswer",
               entry: {

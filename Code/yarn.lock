@@ -1873,7 +1873,7 @@ __metadata:
   resolution: "code@workspace:."
   dependencies:
     "@statelyai/inspect": ^0.4.0
-    speechstate: ^2.10.0
+    speechstate: ^2.11.0
     typescript: ~5.6.2
     vite: ^6.0.5
     xstate: ^5.19.2
@@ -3598,14 +3598,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"speechstate@npm:^2.10.0":
-  version: 2.10.0
-  resolution: "speechstate@npm:2.10.0"
+"speechstate@npm:^2.11.0":
+  version: 2.11.0
+  resolution: "speechstate@npm:2.11.0"
   dependencies:
     "@vladmaraev/web-speech-cognitive-services-davi": ^2.0.16
     web-speech-cognitive-services: ^8.1.1
     xstate: ^5.17.4
-  checksum: c6688d2b701064c852c4ed7554724343ee86fc4e6c61df7e42c90610f9f37a1807ee32a94724347095de5d2299056a232515e5e3b233bd763b814821770031b5
+  checksum: 80db38d43348bbafd4a62d82a62bdd0e9246dd2e165652eeb70edadf612866e7f7d5fe4e654d58587605300e9787c486b682b20985a921e427750cccea98c61c
   languageName: node
   linkType: hard
 

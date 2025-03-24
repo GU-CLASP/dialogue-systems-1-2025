@@ -257,13 +257,22 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (answer === wordToFind + 's\xA0?') ||
             (answer === 'toi\xA0?' && wordToFind === 'toit') ||
             (answer === 'en fumée' && wordToFind === 'enfumer') ||
-            (answer === 'modeler' && wordToFind === 'modelée') ||
-            (answer === 'ériger' && wordToFind === 'érigées') ||
             (answer === 'ignore' && wordToFind === 'ignée') ||
             (answer === 'attelle' && wordToFind === 'atèle') ||
             (answer === 'nez' && wordToFind === 'née') ||
             (answer === 'emery' && wordToFind === 'emeri') ||
-            (answer === "l'eau" && wordToFind === 'lot') ) { isCorrect = true }
+            (answer === "l'eau" && wordToFind === 'lot') ||
+            (answer === "et" && wordToFind === 'es') ||
+            (answer === "lit" && wordToFind === 'lee') ||
+            (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'é') ||
+            (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'és') ||
+            (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'ée') ||
+            (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'ées') ||
+            (wordToFind.slice(-2) === 'er' && answer === wordToFind.slice(0,-2) + 'é') ||
+            (wordToFind.slice(-2) === 'er' && answer === wordToFind.slice(0,-2) + 'és') ||
+            (wordToFind.slice(-2) === 'er' && answer === wordToFind.slice(0,-2) + 'ée') ||
+            (wordToFind.slice(-2) === 'er' && answer === wordToFind.slice(0,-2) + 'ées') )
+            { isCorrect = true }
   }
   return isCorrect
 }
