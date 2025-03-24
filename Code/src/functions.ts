@@ -2,21 +2,21 @@ import { puzzle, clue } from "./types.ts"
 import { discovered } from "./dm_project.ts"
 
 export function detectedLanguage(entities: any) {
-  return !!entities.find( x => x.category === "language")
+  return !!entities.find( (x: any) => x.category === "language")
 }
 
 export function getLanguage(entities: any) {
-  let obj_lang = entities.find( x => x.category === "language")
+  let obj_lang = entities.find( (x: any)=> x.category === "language")
   let index_lang = entities.indexOf(obj_lang)
   return entities[index_lang].text.toLowerCase()
 }
 
 export function detectedLevel(entities: any) {
-  return !!entities.find( x => x.category === "level")
+  return !!entities.find( (x: any)=> x.category === "level")
 }
 
 export function getLevel(entities: any) {
-  let obj_level = entities.find( x => x.category === "level")
+  let obj_level = entities.find( (x: any)=> x.category === "level")
   let index_level = entities.indexOf(obj_level)
   return entities[index_level].text.toLowerCase()
 }
@@ -37,11 +37,11 @@ export function getLevelAsNumber(level: string) {
   }
 
 export function detectedYes(entities: any) {
- return !!entities.find( x => x.category === "yes")
+ return !!entities.find( (x: any)=> x.category === "yes")
 }
 
 export function detectedNo(entities: any) {
-  return !!entities.find( x => x.category === "no")
+  return !!entities.find( (x: any)=> x.category === "no")
 }
 
 export function initPuzzle(element: HTMLElement, words: puzzle){
