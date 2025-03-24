@@ -9,3 +9,7 @@
     
         scp -r dist/* eduserv:/srv/www/gusxxxxxx/
 5.  Access your app at <https://eduserv.flov.gu.se:9000/gusxxxxxx> (protected by password).
+
+Note: in some cases, the access rights are incorrectly set. In this case you are likely to see the HTML page but other code won’t load. In this case run the following command in your `/srv/www/gusxxxxxx/` directory:
+    
+    chmod -R a+rX assets
