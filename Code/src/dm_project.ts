@@ -34,10 +34,6 @@ const settings: Settings = {
   ttsDefaultVoice: "en-US-DavisMultilingualNeural",
 };
 
-console.log(IsCorrectAnswer('toi ?', 'toit', 'french'))
-console.log(IsCorrectAnswer('mentir\xA0?', 'mentir', 'french'))
-console.log(IsCorrectAnswer('en fumée', 'enfumer', 'french'))
-
 export let discovered: { [word: string]: boolean } = {}
 
 const dmMachine = setup({
@@ -46,7 +42,7 @@ const dmMachine = setup({
     events: {} as DMEvents,
   },
   actions: {
-    "spst.speak": ({ context }, params: { utterance: string }) =>
+    "spst.speak.en": ({ context }, params: { utterance: string }) =>
       context.spstRef.send({
         type: "SPEAK",
         value: {
@@ -58,7 +54,7 @@ const dmMachine = setup({
           type: "SPEAK",
           value: {
             utterance: params.utterance,
-            voice: "fr-FR-HenriNeural",
+            voice: "fr-FR-VivienneMultilingualNeural",
             locale: "fr-FR"
           },
       }),
@@ -102,13 +98,13 @@ const dmMachine = setup({
     },
     Greeting: {
       id: "Greeting",
-      entry: { type: "spst.speak", params: { utterance: `Hi! Welcome to the voiced crosswords!` } },
+      entry: { type: "spst.speak.en", params: { utterance: `Hi! Welcome to the voiced crosswords!` } },
       on: { SPEAK_COMPLETE: "Main" },
     },
     NoInput: {
       entry: {
-        type: "spst.speak",
-        params: { utterance: `I can't hear you!` },
+        type: "spst.speak.en",
+        params: { utterance: `Sorry, I didn't hear you` },
       },
       on: { SPEAK_COMPLETE: "Main.hist" },
     },
@@ -125,8 +121,8 @@ const dmMachine = setup({
           initial: "AskLanguageSol",
           states: {
             AskLanguageSol: {
-              entry: { type: "spst.speak", params: { utterance: `Why not combine fun and learning?
-                Both puzzles'solutions and definitions are available in English and French.
+              entry: { type: "spst.speak.en", params: { utterance: `Why not combine fun and learning?
+                Both puzzles' solutions and definitions are available in English and French.
                 You can choose any combinations of those two languages.
                 Which language do you want to select for solutions?` } },
               on: { SPEAK_COMPLETE: "ListenLanguageSol" },
@@ -159,7 +155,7 @@ const dmMachine = setup({
             },
             CheckLanguageSol: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
                       context.languageSol! == "english" || context.languageSol! == "french" || context.languageSol! != "notDetected"?
                       context.languageSol! == "english" || context.languageSol! == "french" ?
@@ -176,7 +172,7 @@ const dmMachine = setup({
               },
             },
             AskLanguageDef: {
-              entry: { type: "spst.speak", params: { utterance: `Which language do you want to select for definitions?` } },
+              entry: { type: "spst.speak.en", params: { utterance: `Which language do you want to select for definitions?` } },
               on: { SPEAK_COMPLETE: "ListenLanguageDef" },
             },
             ListenLanguageDef: {
@@ -207,7 +203,7 @@ const dmMachine = setup({
             },
             CheckLanguageDef: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
                       context.languageDef! == "english" || context.languageDef! == "french" || context.languageDef! != "notDetected"?
                       context.languageDef! == "english" || context.languageDef! == "french" ?
@@ -224,7 +220,7 @@ const dmMachine = setup({
               },
             },
             AskLevel: {
-              entry: { type: "spst.speak", params: { utterance: `There are 3 different levels of difficulty.
+              entry: { type: "spst.speak.en", params: { utterance: `There are 3 different levels of difficulty.
                 Level 0 - to train and familiarize yourself with the game.
                 Level 1 - for beginners. And Level 2 - for more advanced players.
                 Which level do you want to play?` } },
@@ -258,7 +254,7 @@ const dmMachine = setup({
             },
             CheckLevel: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
                       getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 || context.level! != "notDetected"?
                       getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 ?
@@ -280,11 +276,11 @@ const dmMachine = setup({
         },
         InitializePuzzle: {
           entry: ({ context }) => (initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!), discovered = {}),
-          always: { target: "Play" }, /* TO BE REDIRECTED TO INSTRUCTIONS */
+          always: { target: "Play" },
         },
         Instructions: {
           entry: {
-            type: "spst.speak",
+            type: "spst.speak.en",
             params: ({ context }) => ( { utterance: `Before we start, please listen carefully to the following instructions.
               Level ${getLevelAsNumber(context.level!)} puzzle in ${context.languageSol!} counts ${
                 Object.keys(puzzles[getLevelAsNumber(context.level!)!][context.languageSol!]).length} words to find.
@@ -329,7 +325,7 @@ const dmMachine = setup({
             },
             GiveLengthClues:{
               id: "GiveLengthClues",
-              entry: { type: "spst.speak",
+              entry: { type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
                   anyClues(context.words!, context.wordToFind!) || context.clues!.length != 0 ? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
               on: { SPEAK_COMPLETE: [ 
@@ -342,13 +338,13 @@ const dmMachine = setup({
             },
             GiveDefinitionEn:{
               id: "GiveDefinitionEn",
-              entry: { type: "spst.speak",
+              entry: { type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: `${getDefinition(context.words!, context.wordToFind!, context.languageDef!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             GiveDefinitionFr:{
               id: "GiveDefinitionFr",
-              entry: { type: "spst.speak",
+              entry: { type: "spst.speak.fr",
                 params: ({ context }) => ( { utterance: ` ${ getDefinition(context.words!, context.wordToFind!, context.languageDef!)}` }) },
               on: { SPEAK_COMPLETE: "LetThink" },
             },
@@ -395,24 +391,41 @@ const dmMachine = setup({
                   actions: assign({ givenAnswer: null })
                 },
                 LISTEN_COMPLETE: [ 
-                    {
-                      target: "LogVariables",
-                      guard: ({ context }) => !!context.givenAnswer,
+                    { target: "CheckAnswer",
+                      guard: ({ context }) => !!context.givenAnswer
                     },
+                   
                     { target: "#DM.NoInput" },
                 ],
               },
             },
-            LogVariables :{
-              entry: ({ context }) => (console.log('givenAnswer:', context.givenAnswer!, ',', 'wordTofind:', context.wordToFind!,',', 'languageSol:', context.languageSol!), 
-              console.log('IsCorrectAnswer:', IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!))),
-              always: 'CheckAnswer'
+            /* IntroRepeatAnswer: {
+              entry: { type: "spst.speak.en", params: { utterance: `You just said:` } },
+              on: { SPEAK_COMPLETE:
+                [
+                  { target: "RepeatAnswerEn",
+                    guard: ({ context }) =>  context.languageSol == 'english'
+                  },
+                  { target: "RepeatAnswerFr"},
+                ],
+              },
             },
+            RepeatAnswerEn: {
+              entry: { type: "spst.speak.en",
+                params: ({ context }) => ( { utterance: `${context.givenAnswer!}` }) },
+              on: { SPEAK_COMPLETE: "CheckAnswer" },
+            },
+            RepeatAnswerFr: {
+              entry: { type: "spst.speak.fr",
+                params: ({ context }) => ( { utterance: `${context.givenAnswer!}` }) },
+              on: { SPEAK_COMPLETE: "CheckAnswer" },
+            }, */
             CheckAnswer: {
               id: "CheckAnswer",
               entry: {
-                 type: "spst.speak",
-                params: ({ context }) => ( { utterance: `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)} ${
+                 type: "spst.speak.en",
+                params: ({ context }) => ( { utterance: 
+                  `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)} ${
                   IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) || context.givenAnswer == 'help'?
                   context.givenAnswer == 'help' ? "." : ", and that's correct" : ", and that's not correct"}`})
                 },
@@ -439,14 +452,14 @@ const dmMachine = setup({
             },
             RefuseHelp: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params:  { utterance: `I already gave you all the clues! Let's recap'` }
                 },
                 on: { SPEAK_COMPLETE: "GiveLengthClues" },
             },
             GiveHelp: {
              entry: {
-              type: "spst.speak",
+              type: "spst.speak.en",
               params: ({ context }) => ( { utterance: `I'm happy to help you. Here is some additional clue: ${
                 sayClues([context.help!])}. You have now 5 more seconds to think.`})
               },
@@ -455,14 +468,14 @@ const dmMachine = setup({
                 target: "LetThink" },}
             },
             Encourage:{
-              entry: { type: "spst.speak",
+              entry: { type: "spst.speak.en",
                 params: { utterance: `Keep trying, you're almost there! That's the last word to find!` } },
               on: { SPEAK_COMPLETE: "GiveLengthClues"},
             },
             AskTryAgain:{
               id: "AskTryAgain",
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: { utterance: "Do you want to try again and propose another answer?"},
               },
               on: { SPEAK_COMPLETE: "ListenTryAgain"},
@@ -503,7 +516,7 @@ const dmMachine = setup({
             CheckTryAgain: {
               id: "CheckTryAgain",
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
                   context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
                   "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
@@ -541,7 +554,7 @@ const dmMachine = setup({
             },
             ReachedLastLevel:{
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: { utterance: `Well done! You just completed the crossword puzzle level 2.
                   You are welcome to come back again any time!`}
                 },
@@ -549,7 +562,7 @@ const dmMachine = setup({
             },
             ProposeNextLevel: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: `Well done! You just completed the crossword puzzle level ${
                   getLevelAsNumber(context.level!)}. Do you want to continue playing and move to the next level?`})
                 },
@@ -589,7 +602,7 @@ const dmMachine = setup({
             },
             CheckNextLevel: {
               entry: {
-                type: "spst.speak",
+                type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
                   context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
                   `Great! Let's pick the puzzle level ${getLevelAsNumber(context.level!)!+ 1}`:

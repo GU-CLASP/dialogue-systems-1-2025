@@ -31,7 +31,7 @@ export function getLevelAsNumber(level: string) {
     levelAsNumber = 1
   }
   else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
-    levelAsNumber = 0
+    levelAsNumber = 2
   }
   return levelAsNumber
   }
@@ -143,9 +143,6 @@ export function sayClues(clues: clue[]) {
 
 export function getDefinition(words: puzzle, word: string, language: string) {
   let utterance : string = words[word].definition[language]
-  if (language == 'french'){
-    utterance = '<lang xml:lang="fr-FR">' + utterance + '</lang>'
-  }
   return utterance
 }
 
@@ -257,8 +254,16 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (answer === wordToFind + 'es') ||
             (wordToFind === answer + 'es') ||
             (answer === wordToFind + '\xA0?') ||
+            (answer === wordToFind + 's\xA0?') ||
             (answer === 'toi\xA0?' && wordToFind === 'toit') ||
-            (answer === 'en fumée' && wordToFind === 'enfumer')) { isCorrect = true }
+            (answer === 'en fumée' && wordToFind === 'enfumer') ||
+            (answer === 'modeler' && wordToFind === 'modelée') ||
+            (answer === 'ériger' && wordToFind === 'érigées') ||
+            (answer === 'ignore' && wordToFind === 'ignée') ||
+            (answer === 'attelle' && wordToFind === 'atèle') ||
+            (answer === 'nez' && wordToFind === 'née') ||
+            (answer === 'emery' && wordToFind === 'emeri') ||
+            (answer === "l'eau" && wordToFind === 'lot') ) { isCorrect = true }
   }
   return isCorrect
 }
