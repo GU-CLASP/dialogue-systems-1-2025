@@ -5,10 +5,16 @@ export interface DMContext {
   spstRef: AnyActorRef;
   lastResult: Hypothesis[] | null;
   nameResult: string | "";
-  dayResult: string | "null";
-  timeResult: string | "null";
-  nluIntent: string | "null";
-  nluEntities: Hypothesis[] | null;
+  dayResult: string | "";
+  timeResult: string | "";
+  silCount: number;
+  numHumans: number;
+  numPets: number;
+  waterRequired: number;
+  userGuess: number;
+  waterBadge: string | "";
+  // nluIntent: string | "";
+  // nluEntities: Hypothesis[] | null;
 }
 
 export type DMEvents = SpeechStateExternalEvent | { type: "CLICK" } | {type: "DONE"};
