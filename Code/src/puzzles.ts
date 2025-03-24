@@ -481,527 +481,927 @@ const words1Fr: puzzle = {
   }
 }
 
-
+/* puzzle adapted from https://weekly.kingfeatures.com/?team=games-and-puzzles */
 const words2En: puzzle = {
-  UN: {
+  gap: {
     definition: {
-      english: "international organization set up after WWII to encourage political and economic cooperation",
-      french: ""
+      english: "space",
+      french: "espace"
     },
     connections: {
-      library: {letter: "L", position: 1}
+      gas: {letter: "G", position: 1},
+      aga: {letter: "A", position: 1},
+      pot: {letter: "P", position: 1},
     },
     location: "1.1",
     across: true
   },
-  share: {
+  halos: {
     definition: {
-      english: "part ownership of a company that can be bought and sold in stock markets",
-      french: ""
+      english: "angel's illuminants",
+      french: "lumières des anges"
     },
     connections: {
-      smooth: {letter: "S", position: 1},
-      library: {letter: "A", position: 5},
+      helped: {letter: "H", position: 1},
+      allstar: {letter: "A", position: 1},
+      lei: {letter: "L", position: 1},
+      octet: {letter: "O", position: 1},
+      steres: {letter: "S", position: 1},
     },
-    location: "1.4",
+    location: "1.5",
     across: true
   },
-  growth: {
+  sum: {
     definition: {
-      english: "increase in goods and services production often used to define an economy's success",
-      french: ""
+      english: "total",
+      french: "total"
     },
     connections: {
-      tiger: {letter: "T", position: 1},
-      september: {letter: "M", position: 6}
+      satisfied: {letter: "S", position: 1},
+      upon: {letter: "U", position: 1},
+      mete: {letter: "M", position: 1},
     },
-    location: "1.10",
+    location: "1.11",
     across: true
   },
-  aid: {
+  ago: {
     definition: {
-      english: "anything given from one country to another for helping people in need",
-      french: ""
+      english: "past",
+      french: "passé"
     },
     connections: {
-      smooth: {letter: "T", position: 5},
-      house: {letter: "H", position: 1},
-      four: {letter: "R", position: 4},
+      gas: {letter: "A", position: 2},
+      aga: {letter: "G", position: 2},
+      pot: {letter: "O", position: 2},
     },
-    location: "2.16",
+    location: "2.1",
     across: true
   },
-  monopoly: {
+  elect: {
     definition: {
-      english: "when a single business controls most of a market or supply chain",
-      french: ""},
+      english: "vote into office",
+      french: "voter"
+    },
     connections: {
-      house: {letter: "U", position: 3},
-      tiger: {letter: "E", position: 4}
+      helped: {letter: "E", position: 2},
+      allstar: {letter: "L", position: 2},
+      lei: {letter: "E", position: 2},
+      octet: {letter: "C", position: 2},
+      steres: {letter: "T", position: 2},
+    },
+    location: "2.5",
+    across: true
+  },
+  ape: {
+    definition: {
+      english: "gorilla",
+      french: "gorille"
+    },
+    connections: {
+      satisfied: {letter: "A", position: 2},
+      upon: {letter: "P", position: 2},
+      mete: {letter: "E", position: 2},
+    },
+    location: "2.11",
+    across: true
+  },
+  satellite: {
+    definition: {
+      english: "moon, for instance",
+      french: "la lune, par exemple"
+    },
+    connections: {
+      gas: {letter: "S", position: 3},
+      aga: {letter: "A", position: 3},
+      pot: {letter: "T", position: 3},
+      elk: {letter: "E", position: 1},
+      helped: {letter: "L", position: 3},
+      allstar: {letter: "L", position: 3},
+      lei: {letter: "I", position: 3},
+      octet: {letter: "T", position: 3},
+      steres: {letter: "E", position: 3},
     },
     location: "3.1",
     across: true
   },
-  informal: {
+  tot: {
     definition: {
-      english: "an economy where buying and selling isn't regulated by the government",
-      french: ""},
-    connections: {
-      september: {letter: "R", position: 9},
+      english: "youngster",
+      french: "bambin"
     },
-    location: "4.10",
+    connections: {
+      satisfied: {letter: "T", position: 3},
+      upon: {letter: "O", position: 3},
+      mete: {letter: "T", position: 3},
+    },
+    location: "3.11",
     across: true
   },
-  utility: {
+  lps: {
     definition: {
-      english: "Ship of the desert",
-      french: "Vaisseau du désert"},
-    connections: {
-      house: {letter: "E", position: 5},
+      english: "CD's forerunners",
+      french: "ancêtres du CD"
     },
-    location: "5.3",
+    connections: {
+      elk: {letter: "L", position: 2},
+      helped: {letter: "P", position: 4},
+      allstar: {letter: "S", position: 4},
+    },
+    location: "4.4",
     across: true
   },
-  exports: {
+  ermine: {
     definition: {
-      english: "Collection of books",
-      french: "Collection de livres"},
-    connections: {
-      walk: {letter: "L", position: 3},
-      sunday: {letter: "A", position: 5}
+      english: "winter weasel",
+      french: "belette d'hiver"
     },
-    location: "7.5",
+    connections: {
+      octet: {letter: "E", position: 4},
+      steres: {letter: "R", position: 4},
+      mead: {letter: "M", position: 1},
+      satisfied: {letter: "I", position: 4},
+      upon: {letter: "N", position: 4},
+      mete: {letter: "E", position: 4},
+    },
+    location: "4.8",
     across: true
   },
-  employs: {
+  basket: {
     definition: {
-      english: "Ninth month of the year",
-      french: "Neuvième mois de l'année"},
-    connections: {
-      team: {letter: "M", position: 4},
-      red: {letter: "R", position: 1}
+      english: "easter egg container",
+      french: "on y met les oeufs de pâques"
     },
-    location: "7.13",
+    connections: {
+      bars: {letter: "B", position: 1},
+      abel: {letter: "A", position: 1},
+      saturdays: {letter: "S", position: 1},
+      elk: {letter: "K", position: 3},
+      helped: {letter: "E", position: 5},
+      allstar: {letter: "T", position: 5},
+    },
+    location: "5.1",
     across: true
   },
-  costs: {
+  tees: {
     definition: {
-      english: "Opposite of rough",
-      french: "Contraire de rugueux"},
-    connections: {
-      sunday: {letter: "S", position: 1},
-      teacher: {letter: "T", position: 1}
+      english: "golf props",
+      french: "chevilles de golf"
     },
-    location: "9.1",
+    connections: {
+      octet: {letter: "T", position: 5},
+      steres: {letter: "E", position: 5},
+      mead: {letter: "E", position: 2},
+      satisfied: {letter: "S", position: 5},
+    },
+    location: "5.8",
     across: true
   },
-  bailout: {
+  aba: {
     definition: {
-      english: "How many bails are required in cricket?",
-      french: "Combien faut-il de barrettes au cricket ?"},
-    connections: {
-      teacher: {letter: "R", position: 7},
+      english: "American Bankers Association",
+      french: "American Bankers Association"
     },
-    location: "9.11",
+    connections: {
+      bars: {letter: "A", position: 2},
+      abel: {letter: "B", position: 2},
+      saturdays: {letter: "A", position: 2},
+    },
+    location: "6.1",
     across: true
   },
-  asia: {
+  dam: {
     definition: {
-      english: "National animal of India",
-      french: "Animal national de l´Inde"},
+      english: "water barrier",
+      french: "barrière à eau"
+    },
     connections: {
-      team: {letter: "T", position: 1},
-      hundred: {letter: "E", position: 6}
+      helped: {letter: "D", position: 6},
+      allstar: {letter: "A", position: 6},
+      meg: {letter: "M", position: 1},
+    },
+    location: "6.5",
+    across: true
+  },
+  safes: {
+    definition: {
+      english: "vaults",
+      french: "chambres fortes"
+    },
+    connections: {
+      steres: {letter: "S", position: 6},
+      mead: {letter: "A", position: 3},
+      satisfied: {letter: "F", position: 6},
+      erne: {letter: "E", position: 1},
+      seer: {letter: "S", position: 1},
+    },
+    location: "6.9",
+    across: true
+  },
+  retd: {
+    definition: {
+      english: "abbreviation for 'on pension' ",
+      french: "retraité abrégé"
+    },
+    connections: {
+      bars: {letter: "R", position: 3},
+      abel: {letter: "E", position: 3},
+      saturdays: {letter: "T", position: 3},
+      drug: {letter: "D", position: 1},
+    },
+    location: "7.1",
+    across: true
+  },
+  res: {
+    definition: {
+      english: "in medias...",
+      french: "in medias..."
+    },
+    connections: {
+      allstar: {letter: "R", position: 7},
+      meg: {letter: "E", position: 2},
+      saltine: {letter: "S", position: 1},
+    },
+    location: "7.6",
+    across: true
+  },
+  dire: {
+    definition: {
+      english: "tragic",
+      french: "tragique"
+    },
+    connections: {
+      mead: {letter: "D", position: 4},
+      satisfied: {letter: "I", position: 7},
+      erne: {letter: "R", position: 2},
+      seer: {letter: "E", position: 2},
+    },
+    location: "7.10",
+    across: true
+  },
+  slurs: {
+    definition: {
+      english: "speaks unclearly",
+      french: "articule mal"
+    },
+    connections: {
+      bars: {letter: "S", position: 4},
+      abel: {letter: "L", position: 4},
+      saturdays: {letter: "U", position: 4},
+      drug: {letter: "R", position: 2},
+      seesaw: {letter: "S", position: 1},
+    },
+    location: "8.1",
+    across: true
+  },
+  gal: {
+    definition: {
+      english: "guy's counterpart",
+      french: "une femme, familièrement"
+    },
+    connections: {
+      meg: {letter: "G", position: 3},
+      saltine: {letter: "A", position: 2},
+      leaned: {letter: "L", position: 1},
+    },
+    location: "8.7",
+    across: true
+  },
+  ene: {
+    definition: {
+      english: "away from WSW",
+      french: "à l'opposé de OSO"
+    },
+    connections: {
+      satisfied: {letter: "E", position: 8},
+      erne: {letter: "N", position: 3},
+      seer: {letter: "E", position: 3},
+    },
+    location: "8.11",
+    across: true
+  },
+  rued: {
+    definition: {
+      english: "regretted",
+      french: "regretté"
+    },
+    connections: {
+      saturdays: {letter: "R", position: 5},
+      drug: {letter: "U", position: 3},
+      seesaw: {letter: "E", position: 2},
+      drama: {letter: "D", position: 1},
+    },
+    location: "9.3",
+    across: true
+  },
+  leader: {
+    definition: {
+      english: "maestro",
+      french: "maestro"
+    },
+    connections: {
+      saltine: {letter: "L", position: 3},
+      leaned: {letter: "E", position: 2},
+      add: {letter: "A", position: 1},
+      satisfied: {letter: "D", position: 9},
+      erne: {letter: "E", position: 4},
+      seer: {letter: "R", position: 4},
+    },
+    location: "9.8",
+    across: true
+  },
+  badger: {
+    definition: {
+      english: "animal for the Wisconsin",
+      french: "blaireau"
+    },
+    connections: {
+      bram: {letter: "B", position: 1},
+      anna: {letter: "A", position: 1},
+      saturdays: {letter: "D", position: 6},
+      drug: {letter: "G", position: 4},
+      seesaw: {letter: "E", position: 3},
+      drama: {letter: "R", position: 2},
+    },
+    location: "10.1",
+    across: true
+  },
+  tad: {
+    definition: {
+      english: "slight amount",
+      french: "une petite quantité"
+    },
+    connections: {
+      saltine: {letter: "T", position: 4},
+      leaned: {letter: "A", position: 3},
+      add: {letter: "D", position: 2},
+    },
+    location: "10.8",
+    across: true
+  },
+  rna: {
+    definition: {
+      english: "genetic messenger",
+      french: "messager génétique"
+    },
+    connections: {
+      bram: {letter: "R", position: 2},
+      anna: {letter: "N", position: 2},
+      saturdays: {letter: "A", position: 7},
     },
     location: "11.1",
     across: true
   },
-  labour: {
+  satindoll: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "Duke Ellington classic",
+      french: "un classique de Duke Ellington"
     },
-    location: "11.6",
+    connections: {
+      seesaw: {letter: "S", position: 4},
+      drama: {letter: "A", position: 3},
+      tin: {letter: "T", position: 1},
+      saltine: {letter: "I", position: 5},
+      leaned: {letter: "N", position: 4},
+      add: {letter: "D", position: 3},
+      owe: {letter: "O", position: 1},
+      low: {letter: "L", position: 1},
+      lee: {letter: "L", position: 1},
+    },
+    location: "11.5",
     across: true
   },
-  unit: {
+  any: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "whatever number",
+      french: "n'importe quel nombre"
     },
-    location: "11.15",
+    connections: {
+      bram: {letter: "A", position: 3},
+      anna: {letter: "N", position: 3},
+      saturdays: {letter: "Y", position: 8},
+    },
+    location: "12.1",
     across: true
   },
-  me: {
+  amine: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "derivative of ammonia",
+      french: "dérivé de l'ammoniac"
     },
-    location: "13.3",
+    connections: {
+      seesaw: {letter: "A", position: 5},
+      drama: {letter: "M", position: 4},
+      tin: {letter: "I", position: 2},
+      saltine: {letter: "N", position: 6},
+      leaned: {letter: "E", position: 5},
+    },
+    location: "12.5",
     across: true
   },
-  monetary: {
+  woe: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
+      english: "trouble",
+      french: "gros problème"
+    },
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      owe: {letter: "W", position: 2},
+      low: {letter: "O", position: 2},
+      lee: {letter: "E", position: 2},
+    },
+    location: "12.11",
+    across: true
+  },
+  mas: {
+    definition: {
+      english: "'more' in Spanish",
+      french: "'plus' en Espagnol"
+    },
+    connections: {
+      bram: {letter: "M", position: 4},
+      anna: {letter: "A", position: 4},
+      saturdays: {letter: "S", position: 9},
+    },
+    location: "13.1",
+    across: true
+  },
+  waned: {
+    definition: {
+      english: "subsided",
+      french: "affaibli"
+    },
+    connections: {
+      seesaw: {letter: "W", position: 6},
+      drama: {letter: "A", position: 5},
+      tin: {letter: "N", position: 3},
+      saltine: {letter: "E", position: 7},
+      leaned: {letter: "D", position: 6},
+    },
+    location: "13.5",
+    across: true
+  },
+  ewe: {
+    definition: {
+      english: "ram's mate",
+      french: "partenaire du bélier"
+    },
+    connections: {
+      owe: {letter: "E", position: 3},
+      low: {letter: "W", position: 3},
+      lee: {letter: "E", position: 3},
     },
     location: "13.11",
     across: true
   },
-  wages: {
+  gas: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "petrol",
+      french: "essence"
     },
-    location: "14.5",
-    across: true
-  },
-  vote: {
-    definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      gap: {letter: "G", position: 1},
+      ago: {letter: "A", position: 1},
+      satellite: {letter: "S", position: 1},
     },
-    location: "15.1",
-    across: true
+    location: "1.1",
+    across: false
   },
-  bbc: {
+  bars: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "behind them in jail",
+      french: "en prison, on est derrière"
     },
-    location: "15.11",
-    across: true
-  },
-  snp: {
-    definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      basket: {letter: "B", position: 1},
+      aba: {letter: "A", position: 1},
+      retd: {letter: "R", position: 1},
+      slurs: {letter: "S", position: 1},
     },
-    location: "15.16",
-    across: true
+    location: "5.1",
+    across: false
   },
-  NGO: {
+  bram: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
+      english: "first name of Stoker, author of 'Dracula'",
+      french: "prénom de Stoker, auteur de 'Dracula'"
+    },
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      badger: {letter: "B", position: 1},
+      rna: {letter: "R", position: 1},
+      any: {letter: "A", position: 1},
+      mas: {letter: "M", position: 1},
+    },
+    location: "10.1",
+    across: false
+  },
+  aga: {
+    definition: {
+      english: "khan title",
+      french: "titre Khan"
+    },
+    connections: {
+      gap: {letter: "A", position: 2},
+      ago: {letter: "G", position: 2},
+      satellite: {letter: "A", position: 2},
     },
     location: "1.2",
     across: false
   },
-  happiness: {
+  abel: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
+      english: "first victim",
+      french: "première victime"
+    },
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      basket: {letter: "A", position: 2},
+      aba: {letter: "B", position: 2},
+      retd: {letter: "E", position: 2},
+      slurs: {letter: "L", position: 2},
+    },
+    location: "5.2",
+    across: false
+  },
+  anna: {
+    definition: {
+      english: "actress Paquin",
+      french: "prénom de Paquin, actrice"
+    },
+    connections: {
+      badger: {letter: "A", position: 2},
+      rna: {letter: "N", position: 2},
+      any: {letter: "N", position: 2},
+      mas: {letter: "A", position: 2},
+    },
+    location: "10.2",
+    across: false
+  },
+  pot: {
+    definition: {
+      english: "cauldron",
+      french: "chaudron"
+    },
+    connections: {
+      gap: {letter: "P", position: 3},
+      ago: {letter: "O", position: 3},
+      satellite: {letter: "T", position: 3},
+    },
+    location: "1.3",
+    across: false
+  },
+  saturdays: {
+    definition: {
+      english: "halves of weekends",
+      french: "des moitiés de weekends"
+    },
+    connections: {
+      basket: {letter: "S", position: 3},
+      aba: {letter: "A", position: 3},
+      retd: {letter: "T", position: 3},
+      slurs: {letter: "U", position: 3},
+      rued: {letter: "R", position: 1},
+      badger: {letter: "D", position: 3},
+      rna: {letter: "A", position: 3},
+      any: {letter: "Y", position: 3},
+      mas: {letter: "S", position: 3},
+    },
+    location: "5.3",
+    across: false
+  },
+  elk: {
+    definition: {
+      english: "wapiti",
+      french: "wapiti"
+    },
+    connections: {
+      satellite: {letter: "E", position: 4},
+      lps: {letter: "L", position: 1},
+      basket: {letter: "K", position: 4},
+    },
+    location: "3.4",
+    across: false
+  },
+  drug: {
+    definition: {
+      english: "pharmaceutical",
+      french: "médicament"
+    },
+    connections: {
+      retd: {letter: "D", position: 4},
+      slurs: {letter: "R", position: 4},
+      rued: {letter: "U", position: 2},
+      badger: {letter: "G", position: 4},
+    },
+    location: "7.4",
+    across: false
+  },
+  helped: {
+    definition: {
+      english: "lent a hand",
+      french: "donné un coup de main"
+    },
+    connections: {
+      halos: {letter: "H", position: 1},
+      elect: {letter: "E", position: 1},
+      satellite: {letter: "L", position: 5},
+      lps: {letter: "P", position: 2},
+      basket: {letter: "E", position: 5},
+      dam: {letter: "D", position: 1},
     },
     location: "1.5",
     across: false
   },
-  gini: {
+  seesaw: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "teeter-totter",
+      french: "balançoire"
     },
-    location: "1.10",
+    connections: {
+      slurs: {letter: "S", position: 5},
+      rued: {letter: "E", position: 3},
+      badger: {letter: "E", position: 5},
+      satindoll: {letter: "S", position: 1},
+      amine: {letter: "A", position: 1},
+      waned: {letter: "W", position: 1},
+    },
+    location: "8.5",
     across: false
   },
-  GDP: {
+  allstar: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "outstanding athlete",
+      french: "joueur exceptionnel"
     },
-    location: "1.18",
+    connections: {
+      halos: {letter: "A", position: 2},
+      elect: {letter: "L", position: 2},
+      satellite: {letter: "L", position: 6},
+      lps: {letter: "S", position: 3},
+      basket: {letter: "T", position: 6},
+      dam: {letter: "A", position: 2},
+      res: {letter: "R", position: 1},
+    },
+    location: "1.6",
     across: false
   },
-  adam: {
+  drama: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "Pulitzer prize category",
+      french: "categorie de prix Pulitzer"
     },
-    location: "2.16",
+    connections: {
+      rued: {letter: "D", position: 4},
+      badger: {letter: "R", position: 6},
+      satindoll: {letter: "A", position: 2},
+      amine: {letter: "M", position: 2},
+      waned: {letter: "A", position: 2},
+    },
+    location: "9.6",
     across: false
   },
-  marx: {
+  lei: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "islander's neckwear",
+      french: "collier de fleurs hawaïen"
     },
-    location: "3.1",
+    connections: {
+      halos: {letter: "L", position: 3},
+      elect: {letter: "E", position: 3},
+      satellite: {letter: "I", position: 7},
+    },
+    location: "1.7",
     across: false
   },
-  competition: {
+  meg: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "informal for megabyte",
+      french: "megaoctet informel"
     },
-    location: "3.13",
+    connections: {
+      dam: {letter: "M", position: 3},
+      res: {letter: "E", position: 2},
+      gal: {letter: "G", position: 1},
+    },
+    location: "6.7",
     across: false
   },
-  no: {
+  tin: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "can material",
+      french: "métal pour canette"
     },
-    location: "4.11",
+    connections: {
+      satindoll: {letter: "T", position: 3},
+      amine: {letter: "I", position: 3},
+      waned: {letter: "N", position: 3},
+    },
+    location: "11.7",
     across: false
   },
-  two: {
+  octet: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "group of eight",
+      french: "groupe de huit"
     },
-    location: "5.8",
+    connections: {
+      halos: {letter: "O", position: 4},
+      elect: {letter: "C", position: 4},
+      satellite: {letter: "T", position: 8},
+      ermine: {letter: "E", position: 1},
+      tees: {letter: "T", position: 1},
+    },
+    location: "1.8",
     across: false
   },
-  ft: {
+  saltine: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "cracker type",
+      french: "sorte de buiscuit salé"
     },
-    location: "6.10",
+    connections: {
+      res: {letter: "S", position: 3},
+      gal: {letter: "A", position: 2},
+      leader: {letter: "L", position: 1},
+      tad: {letter: "T", position: 1},
+      satindoll: {letter: "I", position: 4},
+      amine: {letter: "N", position: 4},
+      waned: {letter: "E", position: 4},
+    },
+    location: "7.8",
     across: false
   },
-  soft: {
+  steres: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "cordwood measures",
+      french: "unités de mesure du bois"
     },
-    location: "6.17",
+    connections: {
+      halos: {letter: "S", position: 5},
+      elect: {letter: "T", position: 5},
+      satellite: {letter: "E", position: 9},
+      ermine: {letter: "R", position: 2},
+      tees: {letter: "E", position: 2},
+      safes: {letter: "S", position: 1},
+    },
+    location: "1.9",
     across: false
   },
-  goods: {
+  leaned: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "tilted",
+      french: "incliné"
     },
-    location: "7.2",
+    connections: {
+      gal: {letter: "L", position: 3},
+      leader: {letter: "E", position: 2},
+      tad: {letter: "A", position: 2},
+      satindoll: {letter: "N", position: 5},
+      amine: {letter: "E", position: 5},
+      waned: {letter: "D", position: 5},
+    },
+    location: "8.9",
     across: false
   },
-  pay: {
+  mead: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "an alcoholic drink made from honey",
+      french: "boisson alcoolisé à base de miel"
     },
-    location: "7.7",
+    connections: {
+      ermine: {letter: "M", position: 3},
+      tees: {letter: "E", position: 3},
+      safes: {letter: "A", position: 2},
+      dire: {letter: "D", position: 1},
+    },
+    location: "4.10",
     across: false
   },
-  subprime: {
+  add: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "find the sum",
+      french: "trouver la somme"
     },
-    location: "7.11",
+    connections: {
+      leader: {letter: "A", position: 3},
+      tad: {letter: "D", position: 3},
+      satindoll: {letter: "D", position: 6}
+    },
+    location: "9.10",
     across: false
   },
-  product: {
+  satisfied: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "content",
+      french: "content"
     },
-    location: "7.15",
+    connections: {
+      sum: {letter: "S", position: 1},
+      ape: {letter: "A", position: 1},
+      tot: {letter: "T", position: 1},
+      ermine: {letter: "I", position: 4},
+      tees: {letter: "S", position: 4},
+      safes: {letter: "F", position: 3},
+      dire: {letter: "I", position: 2},
+      ene: {letter: "E", position: 1},
+      leader: {letter: "D", position: 4},
+    },
+    location: "1.11",
     across: false
   },
-  trade: {
+  owe: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "have bills",
+      french: "doit payer des factures"
     },
-    location: "9.4",
+    connections: {
+      satindoll: {letter: "O", position: 7},
+      woe: {letter: "W", position: 1},
+      ewe: {letter: "E", position: 1},
+    },
+    location: "11.11",
     across: false
   },
-  boom: {
+  upon: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "on",
+      french: "sur"
     },
-    location: "9.9",
+    connections: {
+      sum: {letter: "U", position: 2},
+      ape: {letter: "P", position: 2},
+      tot: {letter: "O", position: 2},
+      ermine: {letter: "N", position: 5},
+    },
+    location: "1.12",
     across: false
   },
-  global: {
+  erne: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "sea eagle",
+      french: "aigle de mer"
     },
-    location: "10.6",
+    connections: {
+      safes: {letter: "E", position: 4},
+      dire: {letter: "R", position: 3},
+      ene: {letter: "N", position: 2},
+      leader: {letter: "E", position: 5},
+    },
+    location: "6.12",
     across: false
   },
-  toy: {
+  low: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "depressed",
+      french: "déprimé"
     },
-    location: "11.18",
+    connections: {
+      satindoll: {letter: "L", position: 8},
+      woe: {letter: "O", position: 2},
+      ewe: {letter: "W", position: 2},
+    },
+    location: "11.12",
     across: false
   },
-  guv: {
+  mete: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "apportion (out)",
+      french: "avec 'out', signifie 'imputer' "
     },
-    location: "13.1",
+    connections: {
+      sum: {letter: "M", position: 3},
+      ape: {letter: "E", position: 3},
+      tot: {letter: "T", position: 3},
+      ermine: {letter: "E", position: 6},
+    },
+    location: "1.13",
     across: false
   },
-  MMT: {
+  seer: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "prognosticator",
+      french: "devin"
     },
-    location: "13.3",
+    connections: {
+      safes: {letter: "S", position: 5},
+      dire: {letter: "E", position: 4},
+      ene: {letter: "E", position: 3},
+      leader: {letter: "R", position: 6},
+    },
+    location: "6.13",
     across: false
   },
-  fee: {
+  lee: {
     definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      english: "shelter wire",
+      french: "côté à l'abri du vent"
     },
-    location: "13.8",
-    across: false
-  },
-  EEC: {
-    definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
     connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
+      satindoll: {letter: "L", position: 9},
+      woe: {letter: "E", position: 3},
+      ewe: {letter: "E", position: 3},
     },
-    location: "13.14",
-    across: false
-  },
-  run: {
-    definition: {
-      english: "A place where we live",
-      french: "Un lieu de vie"},
-    connections: {
-      teacher: {letter: "H", position: 5},
-      hundred: {letter: "U", position: 2},
-      camel: {letter: "E", position: 4},
-    },
-    location: "13.17",
+    location: "11.13",
     across: false
   },
 }
-
 /* puzzle adapted from CROISÉS Niveau 4/5, Nº122, page 3 (2025). Sport Cérébral. */
 const words2Fr: puzzle = {
   barrique: {
@@ -1576,5 +1976,5 @@ const words2Fr: puzzle = {
 export const puzzles: {[index: number] : {[language: string] : puzzle}} = {
   0: {english: words0En, french: words0Fr},
   1: {english: words1En, french: words1Fr},
-  2: {english: words1En, french: words2Fr},
+  2: {english: words2En, french: words2Fr},
 }

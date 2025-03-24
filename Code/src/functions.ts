@@ -242,7 +242,11 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
   if (language === 'english') {
     if (answer === wordToFind) { isCorrect = true }
     else if ((answer === '100' && wordToFind === 'hundred') ||
-            (answer === '4' && wordToFind === 'four') ) { isCorrect = true }
+            (answer === '4' && wordToFind === 'four') ||
+            (answer === 'mass' && wordToFind === 'mas') ||
+            (answer === 'steers' && wordToFind === 'steres') ||
+            (answer === 'lay' && wordToFind === 'lei') ||
+            (answer === 'all-star' && wordToFind === 'allstar')) { isCorrect = true }
   }
   else {
     if (answer === wordToFind) { isCorrect = true }

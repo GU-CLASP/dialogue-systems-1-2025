@@ -276,7 +276,7 @@ const dmMachine = setup({
         },
         InitializePuzzle: {
           entry: ({ context }) => (initPuzzle(document.querySelector<HTMLDivElement>("#puzzle")!, context.words!), discovered = {}),
-          always: { target: "Play" },
+          always: { target: "Instructions" },
         },
         Instructions: {
           entry: {
@@ -349,7 +349,7 @@ const dmMachine = setup({
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
-              after: { 5000:
+              after: { 2000: /* timer set to 2s instead of 5s for the demo */
                 [
                 { target: "ListenAnswerEn",
                   guard: ({ context }) => context.languageSol! == "english" },
