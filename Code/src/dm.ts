@@ -158,14 +158,14 @@ const dmMachine = setup({
       },
       states: {
 
-        // NoInput: {
-        //   id: "NoInput",
-        //   entry: {
-        //     type: "spst.speak",
-        //     params: {utterance: "I can't hear you"}
-        //   },
-        //   on: { CLICK: "PromptGreeting"} /** don't know where to send people if there is no input */
-        // },
+        NoInput: {
+          id: "NoInput",
+          entry: {
+            type: "spst.speak",
+            params: {utterance: "I can't hear you"}
+          },
+          on: { CLICK: "PromptGreeting"} /** don't know where to send people if there is no input */
+        },
 
 
         PromptGreeting: {
