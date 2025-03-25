@@ -158,14 +158,14 @@ const dmMachine = setup({
       },
       states: {
 
-        NoInput: {
-          id: "NoInput",
-          entry: {
-            type: "spst.speak",
-            params: {utterance: "I can't hear you"}
-          },
-          on: { CLICK: "PromptGreeting"} /** don't know where to send people if there is no input */
-        },
+        // NoInput: {
+        //   id: "NoInput",
+        //   entry: {
+        //     type: "spst.speak",
+        //     params: {utterance: "I can't hear you"}
+        //   },
+        //   on: { CLICK: "PromptGreeting"} /** don't know where to send people if there is no input */
+        // },
 
 
         PromptGreeting: {
@@ -188,7 +188,7 @@ const dmMachine = setup({
             {target : "PromptGreeting"},
             ],
             ASR_NOINPUT: {
-              target: "NoInput",
+              target: "PromptGreeting",
             },
           },
         },
@@ -225,7 +225,7 @@ const dmMachine = setup({
               {target : "PromptWho"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "PromptWho",
               },
           },
         },
@@ -261,7 +261,7 @@ const dmMachine = setup({
               {target : "PromptDay"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "PromptDay",
               },
           },
         },
@@ -295,7 +295,7 @@ const dmMachine = setup({
               {target : "PromptWholeDay"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "PromptWholeDay",
               },
           },
         },
@@ -325,12 +325,12 @@ const dmMachine = setup({
                 target: "ProcessingConfirmWholeDay",
               },
               {guard: ({event}) => getDeny(event.value[0].utterance),
-                target: "ProcessingDay",
+                target: "PromptWho",
               },              
               {target : "PromptWholeDay"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "ProcessingWholeDayAffirmative",
               },
           },
         },
@@ -373,7 +373,7 @@ const dmMachine = setup({
               {target : "PromptTimeStart"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "PromptTimeStart",
               },
           },
         },
@@ -407,7 +407,7 @@ const dmMachine = setup({
               {target : "PromptTimeStop"},
             ],
               ASR_NOINPUT: {
-                target: "NoInput",
+                target: "PromptTimeStop",
               },
           },
         },
@@ -442,7 +442,7 @@ const dmMachine = setup({
               {target : "PromptConfirmDetails"},
             ],
             ASR_NOINPUT: {
-              target: "NoInput",
+              target: "PromptConfirmDetails",
             },
           },
         },
@@ -459,7 +459,7 @@ const dmMachine = setup({
         PromptAppointmentBooked: {
           entry: { type: "spst.speak",
           params: { utterance: `Your appointment has been booked`}},
-          on: {SPEAK_COMPLETE: "#Greeting"}
+          on: {SPEAK_COMPLETE: "#Prepare"}
         },
       },
     },
