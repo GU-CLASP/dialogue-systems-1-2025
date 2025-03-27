@@ -135,7 +135,7 @@ const dmMachine = setup({
                   actions: assign(({ event }) => { 
                     return { lastResult: event.nluValue, languageSol: getLanguage(event.nluValue.entities) }; 
                   }),
-                  guard: (({ event }) => event.nluValue.topIntent == "set language" && detectedLanguage(event.nluValue.entities))
+                  guard: (({ event }) => event.nluValue.topIntent === "set language" && detectedLanguage(event.nluValue.entities))
                   },
                   { 
                   actions: assign({ languageSol: "notDetected" })
@@ -157,15 +157,15 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
-                      context.languageSol! == "english" || context.languageSol! == "french" || context.languageSol! != "notDetected"?
-                      context.languageSol! == "english" || context.languageSol! == "french" ?
+                      context.languageSol! === "english" || context.languageSol! === "french" || context.languageSol! !== "notDetected"?
+                      context.languageSol! === "english" || context.languageSol! === "french" ?
                       "OK, well noted" : "Solutions are available only in English or French" :
                       "Sorry, I didn't get the language. Do you want the solutions in English or French?"}`}),
               },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "AskLanguageDef",
-                    guard: ({ context }) => (context.languageSol! == "english" || context.languageSol! == "french"),
+                    guard: ({ context }) => (context.languageSol! === "english" || context.languageSol! === "french"),
                   },
                   { target: "ListenLanguageSol" },
                 ],
@@ -183,7 +183,7 @@ const dmMachine = setup({
                   actions: assign(({ event }) => { 
                     return { lastResult: event.nluValue, languageDef: getLanguage(event.nluValue.entities) }; 
                   }),
-                  guard: (({ event }) => event.nluValue.topIntent == "set language" && detectedLanguage(event.nluValue.entities))
+                  guard: (({ event }) => event.nluValue.topIntent === "set language" && detectedLanguage(event.nluValue.entities))
                   },
                   { 
                   actions: assign({ languageDef: "notDetected" })
@@ -205,15 +205,15 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
-                      context.languageDef! == "english" || context.languageDef! == "french" || context.languageDef! != "notDetected"?
-                      context.languageDef! == "english" || context.languageDef! == "french" ?
+                      context.languageDef! === "english" || context.languageDef! === "french" || context.languageDef! !== "notDetected"?
+                      context.languageDef! === "english" || context.languageDef! === "french" ?
                       "Got it." : "Definitions are available only in English or French" :
                       "Sorry, I didn't get the language. Do you want the definitions in English or French?"}`}),
               },
               on: { SPEAK_COMPLETE:
                 [ 
                   { target: "AskLevel",
-                    guard: ({ context }) => (context.languageDef! == "english" || context.languageDef! == "french"),
+                    guard: ({ context }) => (context.languageDef! === "english" || context.languageDef! === "french"),
                   },
                   { target: "ListenLanguageDef" },
                 ],
@@ -234,7 +234,7 @@ const dmMachine = setup({
                   actions: assign(({ event }) => { 
                     return { lastResult: event.nluValue, level: getLevel(event.nluValue.entities) }; 
                   }),
-                  guard: (({ event }) => event.nluValue.topIntent == "set level" && detectedLevel(event.nluValue.entities))
+                  guard: (({ event }) => event.nluValue.topIntent === "set level" && detectedLevel(event.nluValue.entities))
                   },
                   { 
                   actions: assign({ level: "notDetected" })
@@ -256,8 +256,8 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
-                      getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 || context.level! != "notDetected"?
-                      getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2 ?
+                      getLevelAsNumber(context.level!) === 0 || getLevelAsNumber(context.level!) === 1 || getLevelAsNumber(context.level!) === 2 || context.level! !== "notDetected"?
+                      getLevelAsNumber(context.level!) === 0 || getLevelAsNumber(context.level!) === 1 || getLevelAsNumber(context.level!) === 2 ?
                       `You selected level ${getLevelAsNumber(context.level!)}.` : "Only levels 0, 1 and 2 are available" :
                       "Sorry, I didn't get the level. Do you want to play level 0, level 1 or level 2?"}`})
               },
@@ -266,7 +266,7 @@ const dmMachine = setup({
                   { actions: assign(({ context }) => { return { words: puzzles[getLevelAsNumber(context.level!)!][context.languageSol!] }}),
                     target: "#DM.Main.InitializePuzzle",
                     guard: ({ context }) => 
-                      (getLevelAsNumber(context.level!) == 0 || getLevelAsNumber(context.level!) == 1 || getLevelAsNumber(context.level!) == 2),
+                      (getLevelAsNumber(context.level!) === 0 || getLevelAsNumber(context.level!) === 1 || getLevelAsNumber(context.level!) === 2),
                   },
                   { target: "ListenLevel" },
                 ],
@@ -327,11 +327,11 @@ const dmMachine = setup({
               id: "GiveLengthClues",
               entry: { type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: `In ${context.wordToFind!.length} letters ${
-                  anyClues(context.words!, context.wordToFind!) || context.clues!.length != 0 ? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
+                  anyClues(context.words!, context.wordToFind!) || context.clues!.length !== 0 ? `and with ${sayClues(context.clues!)}:`: ":"}` }) },
               on: { SPEAK_COMPLETE: [ 
                 {
                   target: "GiveDefinitionEn",
-                  guard: ({ context }) => context.languageDef == "english"
+                  guard: ({ context }) => context.languageDef === "english"
                 },
                 { target: "GiveDefinitionFr" },
             ], },
@@ -349,10 +349,10 @@ const dmMachine = setup({
               on: { SPEAK_COMPLETE: "LetThink" },
             },
             LetThink:{
-              after: { 2000: /* timer set to 2s instead of 5s for the demo */
+              after: { 5000:
                 [
                 { target: "ListenAnswerEn",
-                  guard: ({ context }) => context.languageSol! == "english" },
+                  guard: ({ context }) => context.languageSol! === "english" },
                 { target: "ListenAnswerFr"}
                 ]
               }
@@ -405,23 +405,23 @@ const dmMachine = setup({
                  type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: 
                   `You just said: ${repeatAnswer(context.givenAnswer!, context.languageSol!)} ${
-                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) || context.givenAnswer == 'help'?
-                  context.givenAnswer == 'help' ? "." : ", and that's correct" : ", and that's not correct"}`})
+                  IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!) || context.givenAnswer === 'help'?
+                  context.givenAnswer === 'help' ? "." : ", and that's correct" : ", and that's not correct"}`})
                 },
               on: { SPEAK_COMPLETE:
                 [ 
                   { actions: assign(({ context }) => { return { help: getHelp(context.wordToFind!, context.words!, context.clues!) }}),
                     target: "GiveHelp",
-                    guard: ({ context }) => context.givenAnswer! == 'help' && context.clues!.length < context.wordToFind!.length,
+                    guard: ({ context }) => context.givenAnswer! === 'help' && context.clues!.length < context.wordToFind!.length,
                   },
                   { target: "RefuseHelp",
-                    guard: ({ context }) => context.givenAnswer! == 'help' && context.clues!.length == context.wordToFind!.length,
+                    guard: ({ context }) => context.givenAnswer! === 'help' && context.clues!.length === context.wordToFind!.length,
                   },
                   { target: "UpdateDiscovered",
                     guard: ({ context }) => (IsCorrectAnswer(context.givenAnswer!, context.wordToFind!, context.languageSol!)),
                   },
                   { target: "Encourage",
-                    guard: ({ context }) => Object.keys(discovered).length == Object.keys(context.words!).length -1
+                    guard: ({ context }) => Object.keys(discovered).length === Object.keys(context.words!).length -1
                   },
                   {
                     target: "AskTryAgain"
@@ -497,16 +497,16 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
-                  context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
+                  context.yn! === "yes" || context.yn! === "no" ? context.yn! === "yes" ?
                   "OK, let me repeat": "OK, let's move on to the next word then": "Please, reply yes or no"}`})
                 },
               on: { SPEAK_COMPLETE: [ 
                 { target: "GiveLengthClues",
-                  guard: ({ context }) => (context.yn! == "yes"),
+                  guard: ({ context }) => (context.yn! === "yes"),
                 },
                 { actions: ({ context }) => (clearHighlighting(context.words!, context.wordToFind!), context.clues = []),
                   target: "SelectWord",
-                  guard: ({ context }) => (context.yn! == "no"),
+                  guard: ({ context }) => (context.yn! === "no"),
                 },
                 { target: "AskTryAgain" },
               ],},
@@ -517,12 +517,12 @@ const dmMachine = setup({
               displayWord(context.words!, context.wordToFind!), clearHighlighting(context.words!, context.wordToFind!)),
               always: [
                 { target: "ProposeNextLevel",
-                  guard: ({ context }) => ( Object.keys(discovered).length == Object.keys(context.words!).length &&
+                  guard: ({ context }) => ( Object.keys(discovered).length === Object.keys(context.words!).length &&
                   getLevelAsNumber(context.level!)! < 2 )
                 },
                 { target: "ReachedLastLevel",
-                  guard: ({ context }) => ( Object.keys(discovered).length == Object.keys(context.words!).length &&
-                  getLevelAsNumber(context.level!)! == 2 )
+                  guard: ({ context }) => ( Object.keys(discovered).length === Object.keys(context.words!).length &&
+                  getLevelAsNumber(context.level!)! === 2 )
                 },
                 {
                   target: "SelectConnectedWord",
@@ -583,7 +583,7 @@ const dmMachine = setup({
               entry: {
                 type: "spst.speak.en",
                 params: ({ context }) => ( { utterance: ` ${
-                  context.yn! == "yes" || context.yn! == "no" ? context.yn! == "yes" ?
+                  context.yn! === "yes" || context.yn! === "no" ? context.yn! === "yes" ?
                   `Great! Let's pick the puzzle level ${getLevelAsNumber(context.level!)!+ 1}`:
                    "I hope you had some fun! Come back again when you want to play!": "Please, reply yes or no"}`})
                 },
@@ -592,10 +592,10 @@ const dmMachine = setup({
                   { actions: assign(({ context }) => { return { level: ((getLevelAsNumber(context.level!)!+1).toString()),
                     words: puzzles[getLevelAsNumber(context.level!)!+1][context.languageSol!] }}),
                     target: "#DM.Main.InitializePuzzle",
-                    guard: ({ context }) => context.yn! == 'yes',
+                    guard: ({ context }) => context.yn! === 'yes',
                   },
                   { target: "Done",
-                    guard: ({ context }) => context.yn! == 'no',
+                    guard: ({ context }) => context.yn! === 'no',
                   },
                   { target: "ListenNextLevel" }
                 ],

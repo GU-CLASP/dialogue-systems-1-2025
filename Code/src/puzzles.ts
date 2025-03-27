@@ -1406,7 +1406,7 @@ const words2En: puzzle = {
 const words2Fr: puzzle = {
   barrique: {
     definition: {
-      english: "",
+      english: "it's filled with wine",
       french: "est remplie de vin"
     },
     connections: {
@@ -1423,8 +1423,8 @@ const words2Fr: puzzle = {
   },
   afin: {
     definition: {
-      english: "",
-      french: "peut accompagner un desseim"
+      english: "used to express a purpose",
+      french: "peut accompagner un dessein"
     },
     connections: {
       adresse: {letter: "A", position: 1},
@@ -1436,7 +1436,7 @@ const words2Fr: puzzle = {
   },
   idée: {
     definition: {
-      english: "",
+      english: "we want to get rid of the dark one",
       french: "on chasse la noire"
     },
     connections: {
@@ -1450,7 +1450,7 @@ const words2Fr: puzzle = {
   },
   assidu: {
     definition: {
-      english: "",
+      english: "doesn't miss anything",
       french: "qui ne rate rien"
     },
     connections: {
@@ -1466,7 +1466,7 @@ const words2Fr: puzzle = {
   },
   papeete: {
     definition: {
-      english: "",
+      english: "tahitian port",
       french: "port de Vahinés"},
     connections: {
       bipolaire: {letter: "P", position: 3},
@@ -1482,7 +1482,7 @@ const words2Fr: puzzle = {
   },
   grime: {
     definition: {
-      english: "",
+      english: "ridiculous old man",
       french: "vieillard ridicule"},
     connections: {
       ignées: {letter: "G", position: 2},
@@ -1496,7 +1496,7 @@ const words2Fr: puzzle = {
   },
   omerta: {
     definition: {
-      english: "",
+      english: "a law against the law",
       french: "une loi contraire à la loi"},
     connections: {
       bipolaire: {letter: "O", position: 4},
@@ -1511,7 +1511,7 @@ const words2Fr: puzzle = {
   },
   aneto: {
     definition: {
-      english: "",
+      english: "a lofty one in Spain",
       french: "grand d'Espagne"},
     connections: {
       agréer: {letter: "A", position: 1},
@@ -1525,7 +1525,7 @@ const words2Fr: puzzle = {
   },
   lot: {
     definition: {
-      english: "",
+      english: "if it's big, it's the jackpot",
       french: "on peut tirer le gros"},
     connections: {
       bipolaire: {letter: "L", position: 5},
@@ -1537,7 +1537,7 @@ const words2Fr: puzzle = {
   },
   orages: {
     definition: {
-      english: "",
+      english: "atmospheric disturbances",
       french: "perturbations atmosphériques"},
     connections: {
       étourdi: {letter: "O", position: 3},
@@ -1552,7 +1552,7 @@ const words2Fr: puzzle = {
   },
   do: {
     definition: {
-      english: "",
+      english: "on the stave",
       french: "sur la portée"},
     connections: {
       modelée: {letter: "D", position: 3},
@@ -1563,7 +1563,7 @@ const words2Fr: puzzle = {
   },
   écu: {
     definition: {
-      english: "",
+      english: "old coin",
       french: "sonnait et trébuchait"},
     connections: {
       répétés: {letter: "E", position: 6},
@@ -1575,7 +1575,7 @@ const words2Fr: puzzle = {
   },
   tresser: {
     definition: {
-      english: "",
+      english: "to interweave three strips in a pattern",
       french: "bosser pour obtenir du galon"},
     connections: {
       atèle: {letter: "T", position: 2},
@@ -1591,7 +1591,7 @@ const words2Fr: puzzle = {
   },
   insurgée: {
     definition: {
-      english: "",
+      english: "looks mutinous",
       french: "a un air mutin"},
     connections: {
       bipolaire: {letter: "I", position: 7},
@@ -1608,7 +1608,7 @@ const words2Fr: puzzle = {
   },
   éole: {
     definition: {
-      english: "",
+      english: "ruler of the winds",
       french: "un type dans le vent"},
     connections: {
       adresse: {letter: "E", position: 7},
@@ -1621,7 +1621,7 @@ const words2Fr: puzzle = {
   },
   ré: {
     definition: {
-      english: "",
+      english: "small island",
       french: "petite terre"},
     connections: {
       bipolaire: {letter: "R", position: 8},
@@ -1632,7 +1632,7 @@ const words2Fr: puzzle = {
   },
   idoles: {
     definition: {
-      english: "",
+      english: "they are admired, especially by young people",
       french: "les jeunes ont les leurs"},
     connections: {
       cuir: {letter: "I", position: 3},
@@ -1647,7 +1647,7 @@ const words2Fr: puzzle = {
   },
   lee: {
     definition: {
-      english: "",
+      english: "Bruce, movie star ",
       french: "bruce au cinéma"},
     connections: {
       sole: {letter: "L", position: 3},
@@ -1659,7 +1659,7 @@ const words2Fr: puzzle = {
   },
   emeri: {
     definition: {
-      english: "",
+      english: "abrasive powder",
       french: "certains y sont bouchés"},
     connections: {
       bipolaire: {letter: "E", position: 9},
@@ -1672,7 +1672,7 @@ const words2Fr: puzzle = {
   },
   érigées: {
     definition: {
-      english: "",
+      english: "raised",
       french: "dressées"},
     connections: {
       atèle: {letter: "E", position: 5},
@@ -1687,7 +1687,7 @@ const words2Fr: puzzle = {
   },
   bipolaire: {
     definition: {
-      english: "",
+      english: "affected by mood disorders",
       french: "avec un trouble de l'humeur"},
     connections: {
       barrique: {letter: "B", position: 1},
@@ -1704,7 +1704,7 @@ const words2Fr: puzzle = {
   },
   adamo: {
     definition: {
-      english: "",
+      english: "he sings 'la nuit'",
       french: "il chante 'la nuit'"},
     connections: {
       barrique: {letter: "A", position: 2},
@@ -1718,7 +1718,7 @@ const words2Fr: puzzle = {
   },
   nem: {
     definition: {
-      english: "",
+      english: "has conquered western palates",
       french: "a conquis les palais occidentaux"},
     connections: {
       insurgée: {letter: "N", position: 2},
@@ -1730,7 +1730,7 @@ const words2Fr: puzzle = {
   },
   répétés: {
     definition: {
-      english: "",
+      english: "previewed",
       french: "joués en avant première"},
     connections: {
       barrique: {letter: "R", position: 3},
@@ -1746,7 +1746,7 @@ const words2Fr: puzzle = {
   },
   réer: {
     definition: {
-      english: "",
+      english: "to sound like a roe deer",
       french: "faire le chevreuil"},
     connections: {
       barrique: {letter: "R", position: 4},
@@ -1759,7 +1759,7 @@ const words2Fr: puzzle = {
   },
   cuir: {
     definition: {
-      english: "",
+      english: "treated animal skin",
       french: "peau de vache"},
     connections: {
       écu: {letter: "C", position: 2},
@@ -1772,7 +1772,7 @@ const words2Fr: puzzle = {
   },
   étourdi: {
     definition: {
-      english: "",
+      english: "dizzy",
       french: "grisé"},
     connections: {
       papeete: {letter: "E", position: 5},
@@ -1788,7 +1788,7 @@ const words2Fr: puzzle = {
   },
   qatar: {
     definition: {
-      english: "",
+      english: "OPEC member",
       french: "membre de l'OPEP"},
     connections: {
       barrique: {letter: "Q", position: 6},
@@ -1802,7 +1802,7 @@ const words2Fr: puzzle = {
   },
   go: {
     definition: {
-      english: "",
+      english: "short gigabyte",
       french: "en avant à Londres"},
     connections: {
       insurgée: {letter: "G", position: 6},
@@ -1813,7 +1813,7 @@ const words2Fr: puzzle = {
   },
   usé: {
     definition: {
-      english: "",
+      english: "worn out",
       french: "répété à maintes reprises"},
     connections: {
       barrique: {letter: "U", position: 7},
@@ -1825,7 +1825,7 @@ const words2Fr: puzzle = {
   },
   atèle: {
     definition: {
-      english: "",
+      english: "more monkey than spider",
       french: "plus singe qu'araignée"},
     connections: {
       orages: {letter: "A", position: 3},
@@ -1839,7 +1839,7 @@ const words2Fr: puzzle = {
   },
   es: {
     definition: {
-      english: "",
+      english: "in the paradigm of 'to be'",
       french: "forme d'être"},
     connections: {
       barrique: {letter: "E", position: 8},
@@ -1850,7 +1850,7 @@ const words2Fr: puzzle = {
   },
   agréer: {
     definition: {
-      english: "",
+      english: "to approve",
       french: "approuver"},
     connections: {
       aneto: {letter: "A", position: 1},
@@ -1865,7 +1865,7 @@ const words2Fr: puzzle = {
   },
   ignée: {
     definition: {
-      english: "",
+      english: "ablaze",
       french: "embrasée"},
     connections: {
       assidu: {letter: "I", position: 4},
@@ -1879,7 +1879,7 @@ const words2Fr: puzzle = {
   },
   si: {
     definition: {
-      english: "",
+      english: "allows to dream",
       french: "clef des rêves"},
     connections: {
       idoles: {letter: "S", position: 6},
@@ -1890,7 +1890,7 @@ const words2Fr: puzzle = {
   },
   adresse: {
     definition: {
-      english: "",
+      english: "transmits",
       french: "fait parvenir"},
     connections: {
       afin: {letter: "A", position: 1},
@@ -1906,7 +1906,7 @@ const words2Fr: puzzle = {
   },
   fuit: {
     definition: {
-      english: "",
+      english: "lacks courage",
       french: "manque de courage"},
     connections: {
       afin: {letter: "F", position: 2},
@@ -1919,7 +1919,7 @@ const words2Fr: puzzle = {
   },
   sole: {
     definition: {
-      english: "",
+      english: "often touches bottom",
       french: "elle touche souvent le fond"},
     connections: {
       tresser: {letter: "S", position: 5},
@@ -1932,7 +1932,7 @@ const words2Fr: puzzle = {
   },
   modelée: {
     definition: {
-      english: "",
+      english: "formed from a plastic substance",
       french: "pétrie comme une pâte"},
     connections: {
       grime: {letter: "M", position: 4},
@@ -1948,7 +1948,7 @@ const words2Fr: puzzle = {
   },
   née: {
     definition: {
-      english: "",
+      english: "come to term",
       french: "venue à terme"},
     connections: {
       afin: {letter: "N", position: 4},
@@ -1959,7 +1959,7 @@ const words2Fr: puzzle = {
   },
   orées: {
     definition: {
-      english: "",
+      english: "edges of the forest",
       french: "passages forestiers"},
     connections: {
       do: {letter: "O", position: 2},

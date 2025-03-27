@@ -24,13 +24,13 @@ export function getLevel(entities: any) {
 /* function below needed because can't find a way to access the entity list key from CLU */
 export function getLevelAsNumber(level: string) {
   let levelAsNumber = undefined
-  if (level == "0" || level == "zero" || level == "0th" || level == "zeroth" || level == "training" || level == "train") {
+  if (level === "0" || level === "zero" || level === "0th" || level === "zeroth" || level === "training" || level === "train") {
     levelAsNumber = 0
   }
-  else if (level == "1" || level == "one" || level == "1st" || level == "first" || level == "beginner" || level == "beginners") {
+  else if (level === "1" || level === "one" || level === "1st" || level === "first" || level === "beginner" || level === "beginners") {
     levelAsNumber = 1
   }
-  else if (level == "2" || level == "two" || level == "2nd" || level == "second" || level == "advanced") {
+  else if (level === "2" || level === "two" || level === "2nd" || level === "second" || level === "advanced") {
     levelAsNumber = 2
   }
   return levelAsNumber
@@ -44,12 +44,13 @@ export function detectedNo(entities: any) {
   return !!entities.find( (x: any)=> x.category === "no")
 }
 
+/* HTML code adapted from https://code2care.org/html/crossword-puzzle-pure-html-css-javascript/ */
 export function initPuzzle(element: HTMLElement, words: puzzle){
   let lastColumns : number[] = []
   let lastRows : number[] = []
   let whites: string[] = []
   for (let word of Object.keys(words)) {
-    if (words[word].across == true) {
+    if (words[word].across === true) {
       let row: number = Number(words[word].location.split(".")[0])
       let firstColumn: number = Number(words[word].location.split(".")[1])
       let lastColumn: number = firstColumn + word.length
@@ -95,7 +96,7 @@ export function initPuzzle(element: HTMLElement, words: puzzle){
 export function selectWord(words: puzzle, wordToFind: string|null) {
   let filteredWords = Object.keys(words!).filter((word)=> !discovered[word])
   if (Object.keys(discovered).length < Object.keys(words!).length -1) {
-    filteredWords = filteredWords.filter((word)=> !(word==wordToFind))
+    filteredWords = filteredWords.filter((word)=> !(word===wordToFind))
   }
   const i = Math.floor(Math.random()*filteredWords.length);
   return filteredWords[i];
@@ -156,7 +157,7 @@ export function displayWord(words: puzzle, word:string) {
   let column: string = location.split(".")[1]
   let across: boolean = words[word].across
   let length : number = word.length
-  if (across == true) {
+  if (across === true) {
     for (let step = 0; step < length; step++) {
       let tileColumn: number = Number(column) + step
       let tileId: string = row + "." + tileColumn.toString()
@@ -180,7 +181,7 @@ export function highlightWord(words: puzzle, word: string) {
   let column: string = location.split(".")[1]
   let across: boolean = words[word].across
   let length : number = word.length
-  if (across == true) {
+  if (across === true) {
     for (let step = 0; step < length; step++) {
       let tileColumn: number = Number(column) + step
       let tileId: string = row + "." + tileColumn.toString()
@@ -199,7 +200,7 @@ export function highlightWord(words: puzzle, word: string) {
 }
 
 export function clearHighlighting(words: puzzle, word: string | null) {
-  if (word ==  null) {
+  if (word ===  null) {
   }
   else {
     let location: string = words[word!].location
@@ -207,7 +208,7 @@ export function clearHighlighting(words: puzzle, word: string | null) {
     let column: string = location.split(".")[1]
     let across: boolean = words[word!].across
     let length : number = word!.length
-    if (across == true) {
+    if (across === true) {
       for (let step = 0; step < length; step++) {
         let tileColumn: number = Number(column) + step
         let tileId: string = row + "." + tileColumn.toString()
@@ -228,7 +229,7 @@ export function clearHighlighting(words: puzzle, word: string | null) {
 
 export function repeatAnswer(answer: string, language: string) {
   let utterance: string = answer
-  if (language == "french") {
+  if (language === "french") {
     utterance ='<lang xml:lang="fr-FR">' + utterance + '</lang>'
   }
   return utterance
@@ -236,7 +237,7 @@ export function repeatAnswer(answer: string, language: string) {
 
 /* function below needed to handle cases of mis-recognition by ASR
 like numbers transcribed with numerical value instead of lexical value
-or unpronounced letters in French */
+or unpronounced letters in French or homophones...*/
 export function IsCorrectAnswer(answer: string, wordToFind: string, language: string) {
   let isCorrect: boolean = false
   if (language === 'english') {
@@ -246,7 +247,22 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (answer === 'mass' && wordToFind === 'mas') ||
             (answer === 'steers' && wordToFind === 'steres') ||
             (answer === 'lay' && wordToFind === 'lei') ||
-            (answer === 'all-star' && wordToFind === 'allstar')) { isCorrect = true }
+            ((answer === 'all-star' || answer === 'all star') && wordToFind === 'allstar') ||
+            (answer === 'some' && wordToFind === 'sum') ||
+            (answer === 'meade' && wordToFind === 'mead') ||
+            (answer === 'tease' && wordToFind === 'tees') ||
+            ((answer === 'brahm' || answer === 'brum') && wordToFind === 'bram') ||
+            ((answer === 'dial' || answer === 'dyer') && wordToFind === 'dire') ||
+            (answer === 'sere' && wordToFind === 'seer') ||
+            (answer === 'oh' && wordToFind === 'owe') ||
+            ((answer === 'dem' || answer === 'them') && wordToFind === 'dam')||
+            ((answer === 'slurps' || answer === 'slaus') && wordToFind === 'slurs') ||
+            (answer === 'rude' && wordToFind === 'rued') ||
+            (answer === 'a mine' && wordToFind === 'amine') ||
+            (answer === 'meet' && wordToFind === 'mete') ||
+            (answer === 'able' && wordToFind === 'abel') ||
+            (answer === 'dyer' && wordToFind === 'mete') ||
+            (answer === "lp's" && wordToFind === 'lps')) { isCorrect = true }
   }
   else {
     if (answer === wordToFind) { isCorrect = true }
@@ -259,6 +275,7 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (wordToFind === answer + 'es') ||
             (answer === wordToFind + '\xA0?') ||
             (answer === wordToFind + 's\xA0?') ||
+            (wordToFind + '\xA0?' === answer + 's\xA0?') ||
             (answer === 'toi\xA0?' && wordToFind === 'toit') ||
             (answer === 'en fumée' && wordToFind === 'enfumer') ||
             (answer === 'ignore' && wordToFind === 'ignée') ||
@@ -266,8 +283,10 @@ export function IsCorrectAnswer(answer: string, wordToFind: string, language: st
             (answer === 'nez' && wordToFind === 'née') ||
             (answer === 'emery' && wordToFind === 'emeri') ||
             (answer === "l'eau" && wordToFind === 'lot') ||
-            (answer === "et" && wordToFind === 'es') ||
+            ((answer === "et" || answer === 'hé') && wordToFind === 'es') ||
             (answer === "lit" && wordToFind === 'lee') ||
+            (answer === "anneto" && wordToFind === 'aneto') ||
+            (answer === "aigu" && wordToFind === 'écu') ||
             (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'é') ||
             (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'és') ||
             (answer.slice(-2) === 'er' && wordToFind === answer.slice(0,-2) + 'ée') ||
@@ -290,7 +309,7 @@ export function getHelp(word: string, words: puzzle, clues: clue[])  {
       allPositions.push(letterPosition)
   }
   let unknownPositions: number[] = allPositions
-  if (clues.length != 0) {
+  if (clues.length !== 0) {
     let knownPositions : number[] = []
     for (let clue of clues) {
       knownPositions.push(clue.position)
