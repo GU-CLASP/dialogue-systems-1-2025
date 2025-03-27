@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,4 +10,60 @@
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
+</html> -->
+
+
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="src/style.css">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Guess the intruder[!]</title>
+    </head>
+    <body>
+    <div>
+    <h2><i>Guess the Intruder</i></h2>
+    </div>
+    <div>
+    <p id="instructions">
+        In this game, you'll have the chance to interrogate 6 people that are now in the same place about their role in this context.  
+        <b>Your goal is to guess which person does not belong in the context.</b>
+        You can ask each person multiple questions, that will be answered with a variation of yes/no answers.
+        Whenever you want to switch to ask the next person, just say: "next". 
+        Try to keep your questions the least personal as possible. For example, don't ask questions such as <i>'Do you like what you're doing?'; </i> 
+        But you can ask if what they're doing is stressful or if where they are is a happy place or not. If you want some inspiration for what to ask, press the <i>help</i> button.
+      </p>         
+       <p id="wish"> <i>Good luck and enjoy!</i> </p> </body> 
+  </div>
+    <p id="hospital" class="answer"> 
+     Game over
+     <br><br>              
+     The context was a <i>hospital</i>. Person 1 was a doctor, person 2 was a nurse, person 3 was an intern doctor, person 4 was a patient, person 5 was a visitor. <b>The intruder was person 6</b>.
+    </p>
+    <p id="theater" class="answer">  
+     Game over  
+     <br><br>                
+     The context was a <i>theater</i>. Person 1 was an actress, person 2 was a spectator, person 4 was a guard, person 5 was a salesperson at the ticket office, person 6 was an usher. <b>The intruder was person 3</b>.
+    </p>
+    <p id="police station" class="answer"> 
+     Game over 
+     <br><br>         
+     The context was a <i>police station</i>. Person 2 was a policeman, person 3 was a victim, person 4 was a secretary, person 5 was a civilian, person 6 was an arrested person. <b>The intruder was person 1</b>.
+    </p> 
+    <!-- <div id="win" style="display: none;">You won!</div>     -->
+    <button type="button" id="startGame">Start Game</button>
+    <div id="personButtons" style="display: none;">
+       <button type="button" class="personButton" id="1">Person 1</button>
+       <button type="button" class="personButton" id="2">Person 2</button>
+       <button type="button" class="personButton" id="3">Person 3</button>
+       <button type="button" class="personButton" id="4">Person 4</button>
+       <button type="button" class="personButton" id="5">Person 5</button>
+       <button type="button" class="personButton" id="6">Person 6</button>
+    </div>
+    <button type="button" style="display: none;" id="help">Help</button>
+    <div id="helpMessage" style="display: none;">Suggested categories to ask about: safety, health, entertainment, collaboration, stress</div>
+    <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
