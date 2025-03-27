@@ -1,23 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { createActor, assign } from "xstate";
-import { speechstate, Settings } from "speechstate";
-import { setup } from "xstate"
+import { assign, createActor, setup } from "xstate";
+import { Settings, speechstate } from "speechstate";
+import { createBrowserInspector } from "@statelyai/inspect";
+import { KEY } from "./azure";
+import { DMContext, DMEvents } from "./types";
 
-const maze = [
-  ["#", "#", "#", "#", "#"],
-  ["#", "S", " ", "D", "#"],
-  ["#", "#", "#", " ", "#"],
-  ["#", "Q", "#", "E", "#"],
-  ["#", "#", "#", "#", "#"],
-];
+const inspector = createBrowserInspector();
 
-const startPos = { x: 1, y: 1 };
+const azureCredentials = {
+  endpoint: "https://northeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
+  key: KEY,
+};
 
 const settings: Settings = {
-  azureCredentials: {
-    endpoint: "https://northeurope.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
-    key: "YOUR_AZURE_KEY",
-  },
+  azureCredentials,
   azureRegion: "northeurope",
   asrDefaultCompleteTimeout: 0,
   asrDefaultNoInputTimeout: 5000,
@@ -25,197 +20,387 @@ const settings: Settings = {
   ttsDefaultVoice: "en-US-DavisNeural",
 };
 
-const grammar = {
+interface GrammarEntry {
+  move?: string;
+  ask?: string;
+  confirm?: boolean;
+}
+
+const grammar: Record<string, GrammarEntry> = {
   "go up": { move: "up" },
   "go down": { move: "down" },
   "go left": { move: "left" },
   "go right": { move: "right" },
+    "up": { move: "up" },
+    "down": { move: "down" },
+    "left": { move: "left" },
+    "right": { move: "right" },
   "where am i": { ask: "position" },
+  yes: { confirm: true },
+  no: { confirm: false },
 };
 
-const getMoveDirection = (utterance: string): string | null => {
-  return grammar[utterance]?.move || null;
-};
+function normalize(str: string) {
+  return str.toLowerCase().trim().replace(/[.?!]/g, "");
+}
 
-const isAt = (pos: any, target: any) => pos.x === target.x && pos.y === target.y;
+function getMoveDirection(utterance: string): string | null {
+  return grammar[normalize(utterance)]?.move || null;
+}
 
-const getNextPos = (pos: any, dir: string) => {
-  const delta: any = {
+function isAskPosition(utterance: string): boolean {
+  return grammar[normalize(utterance)]?.ask === "position";
+}
+
+function getConfirmation(utterance: string): boolean | null {
+  const val = grammar[normalize(utterance)]?.confirm;
+  return val !== undefined ? val : null;
+}
+
+const maze = [
+  ["#", "#", "#", "#", "#"],
+  ["Q", "S", " ", " ", "#"],
+  [" ", "#", "Q", " ", "Q"],
+  [" ", " ", "#", "E", "#"],
+  ["#", "Q", " ", "?", "#"],
+];
+
+const startPos = { x: 1, y: 1 };
+
+function getNextPos(pos: { x: number; y: number }, dir: string) {
+  const delta: Record<string, { x: number; y: number }> = {
     up: { x: 0, y: -1 },
     down: { x: 0, y: 1 },
     left: { x: -1, y: 0 },
     right: { x: 1, y: 0 },
   };
-  const next = { x: pos.x + delta[dir].x, y: pos.y + delta[dir].y };
-  return next;
-};
+  return { x: pos.x + delta[dir].x, y: pos.y + delta[dir].y };
+}
 
-const spMachine = setup({
+const promptMessages = [
+  "Where do you want to go?",
+  "Which way next?",
+  "What's your move next?",
+  "Pick a direction.",
+  "Where should I head?",
+];
+
+function renderMaze(container: HTMLElement, pos: { x: number; y: number }) {
+  const html = maze
+    .map((row, y) =>
+      row
+        .map((cell, x) => {
+          const isPlayer = pos.x === x && pos.y === y;
+          const display = isPlayer ? "🧍" : cell === "#" ? "⬛" : cell === "E" ? "🏁" : cell === "Q" ? "❓" : "⬜";
+          return `<span style="display:inline-block;width:50px;height:50px;font-size:32px;text-align:center">${display}</span>`;
+        })
+        .join("")
+    )
+    .join("<br>");
+  container.innerHTML = html;
+}
+
+const dmMachine = setup({
   types: {
-    context: {} as {
-      spstRef: any;
-      playerPos: { x: number; y: number };
-      speech: string;
-      moveDirection?: string;
-    },
-    events: {} as any,
+    context: {} as DMContext,
+    events: {} as DMEvents,
   },
   actions: {
-    speak: ({ context }, params: { utterance: string }) =>
+    "spst.speak": ({ context }, params: { utterance: string }) =>
       context.spstRef.send({ type: "SPEAK", value: { utterance: params.utterance } }),
-    listen: ({ context }) => context.spstRef.send({ type: "LISTEN" }),
+    "spst.listen": ({ context }) => context.spstRef.send({ type: "LISTEN" }),
   },
 }).createMachine({
-  id: "maze",
+  id: "DM",
   initial: "Prepare",
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }),
+    lastResult: null,
     playerPos: startPos,
-    speech: "",
+    moveDirection: null,
+    speech: null,
+    showMaze: true,
+    inDarkZone: false,
+    awaitingWhereAmI: false,
+    promptIndex:0,
   }),
+  on: {
+    LISTEN_COMPLETE: [
+      {
+        target: ".CheckGrammar",
+        guard: ({ context }) => !!context.lastResult,
+      },
+      {
+        target: ".NoInput",
+        actions: assign({ lastResult: () => null }),
+      },
+    ],
+  },
   states: {
     Prepare: {
       entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
-      on: { ASRTTS_READY: "Welcome" },
+      on: { ASRTTS_READY: "WaitToStart" },
+    },
+    WaitToStart: {
+      on: { CLICK: "Welcome" },
     },
     Welcome: {
-      entry: {
-        type: "speak",
-        params: { utterance: "Welcome to the maze game. Where do you want to go?" },
-      },
-      on: { SPEAK_COMPLETE: "ListenCommand" },
+      entry: { type: "spst.speak", params: { utterance: "Welcome to the maze game. Where do you want to go?" } },
+      on: { SPEAK_COMPLETE: "GetCommand" },
     },
-    ListenCommand: {
-      entry: { type: "listen" },
+    NoInput: {
+      entry: { type: "spst.speak", params: { utterance: "I can't hear you. Try again." } },
+      on: { SPEAK_COMPLETE: "GetCommand" },
+    },
+    InvalidInput: {
+      entry: { type: "spst.speak", params: { utterance: "I didn't understand. Try again." } },
+      on: { SPEAK_COMPLETE: "GetCommand" },
+    },
+    GetCommand: {
+      entry: { type: "spst.listen" },
       on: {
         RECOGNISED: {
-          actions: assign(({ event }) => ({
-            moveDirection: getMoveDirection(event.value[0].utterance),
-          })),
-          target: "MovePlayer",
+          actions: assign(({ event }) => ({ lastResult: event.value })),
         },
         ASR_NOINPUT: {
-          actions: assign({ speech: "I couldn't hear you. Please say it again." }),
-          target: "Speak",
+          actions: assign({ lastResult: () => null }),
         },
       },
     },
-    MovePlayer: {
-      always: [
-        {
-          cond: ({ context }) => {
-            if (!context.moveDirection) return false;
-            const next = getNextPos(context.playerPos, context.moveDirection);
-            return maze[next.y][next.x] !== "#";
-          },
-          actions: assign(({ context }) => ({
-            playerPos: getNextPos(context.playerPos, context.moveDirection!),
-          })),
-          target: "CheckEvent",
-        },
-        {
-          actions: assign({ speech: "There's a wall. Try a different direction." }),
-          target: "Speak",
-        },
-      ],
-    },
-    CheckEvent: {
-      always: [
-        {
-          cond: ({ context }) => isAt(context.playerPos, { x: 3, y: 1 }),
-          target: "DarkRoom",
-        },
-        {
-          cond: ({ context }) => isAt(context.playerPos, { x: 1, y: 3 }),
-          target: "QuizRoom",
-        },
-        {
-          cond: ({ context }) => isAt(context.playerPos, { x: 3, y: 3 }),
-          target: "Victory",
-        },
-        { target: "Speak" },
-      ],
-    },
-    DarkRoom: {
-      entry: assign({ speech: "It's too dark here. Move carefully." }),
-      always: "Speak",
-    },
-    QuizRoom: {
-      entry: assign({
-        speech: "Riddle: 'It has no body and no shadow, it reflects in water but never gets wet. What is it?'",
+    CheckGrammar: {
+      entry: assign(({ context }) => {
+        const utterance = context.lastResult?.[0]?.utterance || "";
+
+        let updates: Partial<DMContext> = {
+          moveDirection: null,
+          speech: null,
+        };
+
+                if (context.awaitingWhereAmI && isAskPosition(utterance)) {
+          return {
+            ...updates,
+            speech: `You are at row ${context.playerPos.y+1}, column ${context.playerPos.x+1}. Let's move to a brighter spot.`,
+            awaitingWhereAmI: false,
+            moveDirection: null,
+          };
+        }
+
+        const confirm = getConfirmation(utterance);
+
+        if (confirm === true) {
+          return {
+            ...updates,
+            speech: "Ask me where you are.",
+            awaitingWhereAmI: true,
+            inDarkZone: false,
+          };
+        }
+        if (confirm === false) {
+          return {
+            ...updates,
+            speech: "Okay. Then",
+            inDarkZone: false,
+          };
+        }
+
+
+        const direction = getMoveDirection(utterance);
+        if (direction) {
+          return {
+            ...updates,
+            moveDirection: direction,
+            speech: `You just said: '${utterance}'. Moving ${direction}.`,
+          };
+        }
+
+        if (isAskPosition(utterance)) {
+          return {
+            ...updates,
+            speech: `You are at position X: ${context.playerPos.x}, Y: ${context.playerPos.y}`,
+          };
+        }
+
+        return {
+          ...updates,
+          speech: `You just said: '${utterance}', but it's not in my commands.`,
+        };
       }),
-      on: { "": "AskQuiz" },
+      always: [
+        {
+          guard: ({ context }) => !!context.moveDirection,
+          target: "MovePlayer",
+        },
+        {
+          guard: ({ context }) => context.speech !== null,
+          target: "SpeakFeedback",
+        },
+        { target: "InvalidInput" },
+      ],
     },
-    AskQuiz: {
-      entry: { type: "speak", params: ({ context }) => ({ utterance: context.speech }) },
-      on: { SPEAK_COMPLETE: "GetQuizAnswer" },
+    MovePlayer: {
+      entry: assign(({ context }) => {
+        const dir = context.moveDirection;
+        const next = dir ? getNextPos(context.playerPos, dir) : context.playerPos;
+        const cell = maze[next.y]?.[next.x];
+
+        if (!cell || cell === "#") {
+          return { speech: "There's a wall. Try a different direction." };
+        }
+
+        if (cell === "E") {
+          return {
+            playerPos: next,
+            speech: "Congratulations! You've reached the goal!",
+            showMaze: true,
+            inDarkZone: false,
+          };
+        }
+
+        if (cell === "Q") {
+          return {
+            playerPos: next,
+            speech: "Hmm... it's dark here. Do you need help?",
+            showMaze: false,
+            inDarkZone: true,
+          };
+        }
+
+        return {
+          playerPos: next,
+          speech: `You moved ${dir}.`,
+          showMaze: true,
+          inDarkZone: false,
+        };
+      }),
+      always: [
+        {
+          guard: ({ context }) => maze[context.playerPos.y][context.playerPos.x] === "E",
+          target: "Final",
+        },
+        {
+          guard: ({ context }) => context.inDarkZone,
+          target: "AskHelpResponse",
+        },
+        { target: "SpeakFeedback" },
+      ],
     },
-    GetQuizAnswer: {
-      entry: { type: "listen" },
+    AskHelpResponse: {
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({
+          utterance: context.speech ?? "Do you need help?",
+        }),
+      },
+      on: { SPEAK_COMPLETE: "WaitForHelpResponse" },
+    },
+ WaitForHelpResponse: {
+      entry: { type: "spst.listen" },
       on: {
         RECOGNISED: [
           {
-            cond: ({ event }) => event.value[0].utterance.toLowerCase().includes("mirror"),
-            actions: assign({ speech: "Correct! You may proceed." }),
-            target: "Speak",
+            guard: ({ event }) => {
+              const utterance = event.value?.[0]?.utterance || "";
+              const confirm = getConfirmation(utterance);
+              return confirm === true || confirm === false;
+            },
+            actions: assign(({ event }) => ({ lastResult: event.value })),
+            target: "CheckGrammar",
           },
           {
-            actions: assign({ speech: "Incorrect. Try again." }),
-            target: "Speak",
+            target: "InvalidInput",
+          },
+        ],
+        ASR_NOINPUT: {
+          actions: assign({ lastResult: () => null }),
+          target: "NoInput",
+        },
+      },
+    },
+    SpeakFeedback: {
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({ utterance: context.speech ?? "" }),
+      },
+      on: {
+        SPEAK_COMPLETE: [
+          {
+            guard: ({ context }) => context.awaitingWhereAmI === true,
+            target: "GetCommand",
+          },
+          {
+            target: "PromptNext",
+            actions: assign({ moveDirection: () => null, speech: () => null }),
           },
         ],
       },
     },
-    Speak: {
-      entry: { type: "speak", params: ({ context }) => ({ utterance: context.speech }) },
-      on: { SPEAK_COMPLETE: "ListenCommand" },
+    PromptNext: {
+  entry: {
+    type: "spst.speak",
+    params: ({ context }) => ({
+      utterance: promptMessages[context.promptIndex % promptMessages.length],
+    }),
+  },
+  on: {
+    SPEAK_COMPLETE: {
+      target: "GetCommand",
+      actions: assign(({ context }) => ({
+        promptIndex: context.promptIndex + 1,
+      })),
     },
-    Victory: {
+  },
+},
+    Final: {
       entry: {
-        type: "speak",
-        params: { utterance: "Congratulations! You've escaped the maze." },
+        type: "spst.speak",
+        params: { utterance: "Congratulations! You've reached the goal!" },
       },
+      on: { SPEAK_COMPLETE: "Done" },
     },
+    Done: { type: "final" },
   },
 });
 
-const mazeActor = createActor(spMachine).start();
+const dmActor = createActor(dmMachine, {
+  inspect: inspector.inspect,
+}).start();
 
-export default function App() {
-  const [snapshot, setSnapshot] = useState(mazeActor.getSnapshot());
+export function setupButton(element: HTMLButtonElement) {
+  const mazeContainer = document.createElement("div");
+  mazeContainer.style.marginTop = "16px";
+  element.parentElement?.appendChild(mazeContainer);
 
-  useEffect(() => {
-    const sub = mazeActor.subscribe(setSnapshot);
-    return () => sub.unsubscribe();
-  }, []);
+  element.addEventListener("click", () => {
+    dmActor.send({ type: "CLICK" });
+  });
 
-  const pos = snapshot.context.playerPos;
+  dmActor.subscribe((snapshot) => {
+    const { playerPos, showMaze, lastResult } = snapshot.context;
 
-  return (
-    <div className="p-4 text-center">
-      <h1 className="text-2xl font-bold mb-4">🎙️ Voice Maze Game</h1>
-      <div className="grid grid-cols-5 gap-1 w-fit mx-auto">
-        {maze.map((row, y) =>
-          row.map((cell, x) => {
-            const isPlayer = pos.x === x && pos.y === y;
-            return (
-              <div
-                key={`${x}-${y}`}
-                className={`w-10 h-10 text-center text-xl flex items-center justify-center border
-                  ${cell === "#" ? "bg-gray-700" :
-                    cell === "E" ? "bg-green-400" :
-                      cell === "Q" ? "bg-yellow-300" :
-                        cell === "D" ? "bg-purple-300" :
-                          "bg-white"}
-                  ${isPlayer ? "border-4 border-blue-500" : ""}`}
-              >
-                {isPlayer ? "🧍" : ""}
-              </div>
-            );
-          })
-        )}
-      </div>
-      <div className="mt-4 text-lg italic">{snapshot.context.speech}</div>
-    </div>
-  );
+    if (showMaze) renderMaze(mazeContainer, playerPos);
+    else mazeContainer.innerHTML = "";
+
+    const utterance = lastResult?.[0]?.utterance;
+
+    if (snapshot.matches("Final")) {
+      element.innerText = "🎉 Game Over! You escaped!";
+    } else if (snapshot.matches("WaitToStart")) {
+      element.innerText = "▶️ Click to Start";
+    } else if (snapshot.matches("GetCommand")||
+      snapshot.matches("WaitForHelpResponse")) {
+      element.innerText = "🎧 Listening...";
+    } else if (
+      snapshot.matches("NoInput")) {
+        element.innerText = "❓ Try again";
+    } else if (utterance) {
+      element.innerText = `You said: ${utterance}`;
+    } else {
+      element.innerText = "Start Listening";
+    }
+
+    console.group("[Maze Game State Update]");
+    console.log("State:", snapshot.value);
+    console.log("Context:", snapshot.context);
+    console.groupEnd();
+  });
 }
