@@ -1,0 +1,26 @@
+Now, try similar cases and reflect on the outcome:
+
+1. Can you think of any names of fictional places, people or objects that are not recognized? (Keep your final project in mind!)
+
+2. If not, can you try any scientific names for plants, animals, geologic terms, etc., or names for classic musical pieces and authors?
+Are there any real location names or names of people that are also not properly transcribed?
+
+3. Do you think any specific accent you are using makes words difficult to process?
+
+4. Write some sample code to show confidence scores in speech recogniton, or you can log it in the console. How good are those scores?
+Think about how this problem, transcription of something we did not intent to say, could be solved. Why do you think recognition falters in the examples that you tried?
+
+Write a very brief (half-page) report on your experience with ASR for your case-study. Save it as Lab3A.md in the root directory of your project (or .txt or .pdf, just not a Word document).
+
+1. I tried a number of different terms for fictional concepts. My settings were geared towards American English, and I generally pronounce words in a way that is fitting to that accent. Terms like 'Hogwarts' and 'Narnia' are transcribed correctly and with high confidence scores (confidences 0.81038845 and 0.83161813 respectively). Terms like 'Giedi Prime', 'Siridar-Baron' and 'House Atreides' (branching out to the Dune fictional universe) are generally not correctly transcribed, and with lower confidence scores. 'Giedi' was transcribed as 'GD', 'Siridar-Baron' as 'Cyridor, Baron' or 'Citidar, Baron'. 'House Atreides' was logged as 'House Tradings' or 'House Betrayes'. The confidence scored ranged from 0.5 to 0.06. When I tried fictional places from a different language (Dutch), they were also not transcribed correctly: 'Rammeldam' as 'Ramadan, or 'Luilekkerland' as 'Lau liquor loans' (both with scores around 0.15). This is unsurprising, given that the language settings give the recognition a 'ball park' to aim in when processing speech. 
+
+2.
+
+The same goes for saying non-fictional terms from another language when that language setting is not used. 'Göteborg' is very unconfidently transcribed as 'Yotomora' (0.04652973). It kind of matches my pronounciation here, but it is not something that is recognizable as US English. If I pronounce it in an American way, it is recognized as the English term 'Gothenburg' (0.6325786). The Dutch city of 'Leiden' is guessed to be 'Laden', which is how an American would say it. Dutch names for authors are also 'anglified': 'Karel van het Reve' becomes 'Carol from the Jason' (0.073134154) or 'Carol vondadredo' (0.11999941). His brother, author Gerard van het Reve, undergoes the same fate: 'Herrat Fonadreda' (0.07185583) or 'Head art fundraiser' (0.08035357). Words that were roughly correctly transcribed but with low confidence were: 'Béla Bartók' (Bella Bartok, 0.34594554), 'Turdus merula' (Terus Merula, 0.10425979) and 'Paleoproterozoic' ('Paleo. Protoresoric', 0.32435343)
+
+
+3. 
+In Dutch, consonants are often devoiced in word-final positions. Hence, words like 'bed' and 'mug' are pronounced with a devoiced alveolar plosive, which causes them to be recognized as their English counterparts 'bet' and 'muck'. While not all examples are as obvious as this, this is a phonological rule that often seemed to play a part.
+
+
+In terms of how this relates to mine and Amanda's final project: the goal in our game is to guess a word that is both a known word in English, and also in a target language. The point is to pronounce it as suitable in the target language, so that it completes the sentence it belongs to (which is also in the target language). This is also crucial in completing the game, as the settings for the 'dialogue machine' will be in the target language. 
